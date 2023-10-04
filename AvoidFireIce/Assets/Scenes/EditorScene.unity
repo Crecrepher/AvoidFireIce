@@ -1281,53 +1281,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!1 &90680338
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 90680339}
-  - component: {fileID: 90680340}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &90680339
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 90680338}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &90680340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 90680338}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02222e1e4f9ac0e4b97f8bd1270a0ce5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilemap: {fileID: 0}
-  FireColor: {r: 1, g: 0.7171394, b: 0.0047169924, a: 1}
-  IceColor: {r: 0.25943398, g: 0.6837878, b: 1, a: 1}
 --- !u!1 &403332954
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,6 +1594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fda7daf106c0e084898cca824afcd338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lr: {fileID: 0}
   sr: -10
   sc: -8
   rowCount: 20
@@ -2826,12 +2780,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 800, y: 480}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2896,7 +2850,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 231, y: 212}
+  m_AnchoredPosition: {x: 292, y: 200}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1582987341
@@ -3484,15 +3438,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilemap: {fileID: 79341812}
   DrawZone: {fileID: 1373767909}
+  tileToDraw: {fileID: 0}
   PlayerMark: {fileID: 1345922225736372792, guid: 6da42a0ae8c77e942be61e7144d97965, type: 3}
   Wall: {fileID: 4334450896631550447, guid: 78623d8a0412b8c4886cfe714dd53343, type: 3}
   EnemyDefault: {fileID: 8418221147820081248, guid: a5ed80e804700a24ab219bc2e0dba8df, type: 3}
+  SelectedObject: {fileID: 0}
+  playerSpawnPoint: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 678923917}
   - {fileID: 900166527}
-  - {fileID: 90680339}
   - {fileID: 1018571425}
   - {fileID: 1460169727}
