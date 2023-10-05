@@ -29,12 +29,31 @@ public class StageSaveLoader : MonoBehaviour
         public List<EnemyInfo> enemys;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Save("Test");
+            Debug.Log("Saved");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Load();
+            Debug.Log("Loaded");
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Clear();
+            Debug.Log("Clear");
+        }
+    }
+
     public void Save(string fileName)
     {
         var saveData = new SaveData();
         saveData.playerStartPos = GameObject.FindGameObjectWithTag("PlayerStart").transform.position;
-        var walls = GameObject.FindGameObjectsWithTag("Wall");
 
+        var walls = GameObject.FindGameObjectsWithTag("Wall");
         foreach (var wall in walls)
         {
             var wallInfo = new WallInfo
@@ -42,6 +61,16 @@ public class StageSaveLoader : MonoBehaviour
                 position = wall.transform.position,
             };
             saveData.walls.Add(wallInfo);
+        }
+
+        var enemies = GameObject.FindGameObjectsWithTag("Enemies");
+        foreach (var enemy in enemies)
+        {
+            var enemyInfo = new EnemyInfo
+            {
+                position = enemy.transform.position,
+            };
+            saveData.enemys.Add(enemyInfo);
         }
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
@@ -53,4 +82,24 @@ public class StageSaveLoader : MonoBehaviour
         File.WriteAllText(path, json);
     }
 
+    public void Clear()
+    {
+        var cubes = GameObject.FindGameObjectsWithTag("Cube");
+        foreach (var cube in cubes)
+        {
+            Destroy(cube);
+        }
+    }
+
+    public void Load()
+    {
+        var path = Path.Combine(Application.persistentDataPath, "cubes.json");
+        var json = File.ReadAllText(path);
+        var cubeList = JsonConvert.DeserializeObject<List<CubeData>>(json, new Vector3Converter(), new QuaternionConverter());
+        foreach (var pos in cubeList)
+        {
+            GameObject obj = Instantiate(prefab, pos.Position, pos.Rotation);
+            obj.transform.localScale = pos.Scale;
+        }
+    }
 }
