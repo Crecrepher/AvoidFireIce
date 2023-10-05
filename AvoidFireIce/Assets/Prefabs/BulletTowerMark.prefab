@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8319022764120519669}
   - component: {fileID: 7164563249873224466}
   - component: {fileID: 2036380031495696831}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BulletTowerMark
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -26,11 +26,11 @@ public class EditorManager : MonoBehaviour
     private void Awake()
     {
         string a = PlayerPrefs.GetString("StageName");
-        if (PlayerPrefs.GetString("StageName") != null)
+        if (PlayerPrefs.GetString("StageName") != "")
         {
             StageSaveLoader.instance.Load(PlayerPrefs.GetString("StageName"));
-        }    
-        
+        }
+
     }
 
     private void OnEnable()
@@ -43,14 +43,14 @@ public class EditorManager : MonoBehaviour
         float mapWidth = tilemap.cellBounds.size.x * tilemap.cellSize.x;
         float mapHeight = tilemap.cellBounds.size.y * tilemap.cellSize.y;
         float targetOrthographicSize = Mathf.Max(mapWidth, mapHeight) * 0.5f;
-        Camera.main.orthographicSize = targetOrthographicSize*1.2f;
+        Camera.main.orthographicSize = targetOrthographicSize * 1.2f;
 
         Camera.main.transform.position = new Vector3(0, -3, Camera.main.transform.position.z);
     }
 
     public void StartTesting()
-    { 
-        if(GameObject.FindGameObjectWithTag("PlayerStart") == null)
+    {
+        if (GameObject.FindGameObjectWithTag("PlayerStart") == null)
         {
             Debug.LogWarning("Need PlayerStartPos!");
             return;

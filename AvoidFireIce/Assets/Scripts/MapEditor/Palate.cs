@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public enum ObjectType
 {
@@ -19,14 +20,13 @@ public class Palate : MonoBehaviour
 {
     public Tilemap tilemap;
     public BoxCollider2D DrawZone;
+    public ToggleGroup ObjectPalateGroup;
 
     public List<GameObject> PalateObjects;
 
     private GameObject SelectedObject;
 
     public LayerMask usedLayer;
-
-    public GameObject currentObjectParents;
     private GameObject currentObject;
 
 
@@ -42,20 +42,35 @@ public class Palate : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && SelectedObject != null && MouseAvailable())
         {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
-
-            //tilemap.SetTile(cellPosition, tileToDraw);
-            if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
+            if (!ToggleChecker())
             {
-                var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
-                if (playerSpawnPoint != null)
+                Vector3 mouseDownPos = Input.mousePosition;
+                Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
+                RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
+
+                if (hit.collider != null)
                 {
-                    Destroy(playerSpawnPoint);
+                    GameObject selectedObject = hit.collider.gameObject;
+                    HandleSelection(selectedObject);
                 }
             }
-            GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
-            HandleSelection(madeObject);
+            else
+            {
+                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
+
+                if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
+                {
+                    var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
+                    if (playerSpawnPoint != null)
+                    {
+                        Destroy(playerSpawnPoint);
+                    }
+                }
+                GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
+                HandleSelection(madeObject);
+            }
+
         }
 
         //if (Input.GetMouseButtonDown(0))
@@ -90,6 +105,20 @@ public class Palate : MonoBehaviour
 
         //}
     }
+
+    private bool ToggleChecker()
+    {
+        Toggle[] toggles = ObjectPalateGroup.GetComponentsInChildren<Toggle>();
+        foreach (Toggle toggle in toggles)
+        {
+            if (toggle.isOn)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private bool MouseAvailable()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -107,10 +136,8 @@ public class Palate : MonoBehaviour
         {
             currentObject.GetComponent<SpriteRenderer>().color = Color.white;
         }
-        currentObject.transform.SetParent(null);
         currentObject = selectedObject;
         selectedObject.GetComponent<SpriteRenderer>().color = Color.yellow;
-        selectedObject.transform.SetParent(currentObjectParents.transform);
     }
 
     //public void ChangeFunc(int funcCode)
@@ -125,7 +152,7 @@ public class Palate : MonoBehaviour
 
     public void MoveVerticalCurrentObj(float distance)
     {
-        currentObject.transform.position = currentObject.transform.position + new Vector3(0,distance,0);
+        currentObject.transform.position = currentObject.transform.position + new Vector3(0, distance, 0);
     }
 
     public void MoveHorizontalCurrentObj(float distance)
@@ -135,16 +162,26 @@ public class Palate : MonoBehaviour
 
     public void RotateCurrentObj(float rotation)
     {
-        currentObject.transform.Rotate(0f,0f,rotation);
+        currentObject.transform.Rotate(0f, 0f, rotation);
     }
 
     public void FlipXCurrentObj()
     {
-        currentObject.transform.localScale = new Vector3(currentObject.transform.localScale.x * -1, 1,1);
+        GameObject obj = new GameObject("Parent");
+        obj.transform.position = currentObject.transform.position;
+        currentObject.transform.SetParent(obj.transform);
+        obj.transform.localScale = new Vector3(obj.transform.localScale.x * -1, 1, 1);
+        currentObject.transform.SetParent(null);
+        DestroyImmediate(obj);
     }
     public void FlipYCurrentObj()
     {
-        currentObject.transform.localScale = new Vector3(1, currentObject.transform.localScale.y * -1, 1);
+        GameObject obj = new GameObject("Parent");
+        obj.transform.position = currentObject.transform.position;
+        currentObject.transform.SetParent(obj.transform);
+        obj.transform.localScale = new Vector3(1, obj.transform.localScale.y * -1, 1);
+        currentObject.transform.SetParent(null);
+        DestroyImmediate(obj);
     }
 
     public void DeleteCurrentObj()
@@ -155,7 +192,7 @@ public class Palate : MonoBehaviour
 
     public void DuplicateCurrentObj()
     {
-        GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f,0.5f,0), currentObject.transform.rotation);
+        GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0.5f, 0), currentObject.transform.rotation);
         HandleSelection(madeObject);
     }
 }

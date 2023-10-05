@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4058296218660652616}
   - component: {fileID: 6467747499230603281}
   - component: {fileID: 855402310667357931}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: RayTowerMark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
