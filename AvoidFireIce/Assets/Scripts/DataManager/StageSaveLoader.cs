@@ -4,6 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
 using static QuaternionConverter;
+using static UnityEditor.PlayerSettings;
 
 public class WallInfo
 {
@@ -29,6 +30,24 @@ public class StageSaveLoader : MonoBehaviour
         public List<EnemyInfo> enemys;
     }
 
+    public static StageSaveLoader instance
+    {
+        get
+        {
+            if (saveLoader == null)
+            {
+                saveLoader = FindObjectOfType<StageSaveLoader>();
+            }
+            return saveLoader;
+        }
+    }
+
+    private static StageSaveLoader saveLoader;
+
+    public GameObject playerStartPosPrefab;
+    public GameObject wallPrefab;
+    public GameObject enemyPrefab;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -38,7 +57,7 @@ public class StageSaveLoader : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Load();
+            Load("Test");
             Debug.Log("Loaded");
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -51,6 +70,9 @@ public class StageSaveLoader : MonoBehaviour
     public void Save(string fileName)
     {
         var saveData = new SaveData();
+        saveData.walls = new List<WallInfo>();
+        saveData.enemys = new List<EnemyInfo>();
+
         saveData.playerStartPos = GameObject.FindGameObjectWithTag("PlayerStart").transform.position;
 
         var walls = GameObject.FindGameObjectsWithTag("Wall");
@@ -63,7 +85,7 @@ public class StageSaveLoader : MonoBehaviour
             saveData.walls.Add(wallInfo);
         }
 
-        var enemies = GameObject.FindGameObjectsWithTag("Enemies");
+        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (var enemy in enemies)
         {
             var enemyInfo = new EnemyInfo
@@ -84,22 +106,34 @@ public class StageSaveLoader : MonoBehaviour
 
     public void Clear()
     {
-        var cubes = GameObject.FindGameObjectsWithTag("Cube");
-        foreach (var cube in cubes)
+        var walls = GameObject.FindGameObjectsWithTag("Wall");
+        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var wall in walls)
         {
-            Destroy(cube);
+            Destroy(wall);
         }
+        foreach (var enemy in enemies)
+        {
+            Destroy(enemy);
+        }
+        Destroy(GameObject.FindGameObjectWithTag("PlayerStart"));
     }
 
-    public void Load()
+    public void Load(string fileName)
     {
-        var path = Path.Combine(Application.persistentDataPath, "cubes.json");
+        var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         var json = File.ReadAllText(path);
-        var cubeList = JsonConvert.DeserializeObject<List<CubeData>>(json, new Vector3Converter(), new QuaternionConverter());
-        foreach (var pos in cubeList)
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new Vector2Converter(), new WallInfoConverter(), new EnemyInfoConverter());
+
+        GameObject playerStartPos = Instantiate(playerStartPosPrefab, saveData.playerStartPos, Quaternion.identity);
+
+        foreach (var wall in saveData.walls)
         {
-            GameObject obj = Instantiate(prefab, pos.Position, pos.Rotation);
-            obj.transform.localScale = pos.Scale;
+            GameObject obj = Instantiate(wallPrefab, wall.position, Quaternion.identity);
+        }
+        foreach (var enemy in saveData.enemys)
+        {
+            GameObject obj = Instantiate(enemyPrefab, enemy.position, Quaternion.identity);
         }
     }
 }
