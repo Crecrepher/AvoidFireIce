@@ -25,6 +25,7 @@ public class EditorManager : MonoBehaviour
 
     private void Awake()
     {
+        Defines.instance.DefineColor();
         string a = PlayerPrefs.GetString("StageName");
         if (PlayerPrefs.GetString("StageName") != "")
         {

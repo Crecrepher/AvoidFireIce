@@ -50,21 +50,21 @@ public class StageSaveLoader : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Save("Test");
-            Debug.Log("Saved");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Load("Test");
-            Debug.Log("Loaded");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            Clear();
-            Debug.Log("Clear");
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    Save("Test");
+        //    Debug.Log("Saved");
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    Load("Test");
+        //    Debug.Log("Loaded");
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    Clear();
+        //    Debug.Log("Clear");
+        //}
     }
 
     public void Save(string fileName)

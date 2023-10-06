@@ -231,6 +231,7 @@ GameObject:
   - component: {fileID: 296340325}
   - component: {fileID: 296340324}
   - component: {fileID: 296340326}
+  - component: {fileID: 296340327}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -253,8 +254,6 @@ MonoBehaviour:
   tilemap: {fileID: 635094533}
   StageName: 
   isTestMode: 0
-  FireColor: {r: 1, g: 0.7171394, b: 0.0047169924, a: 1}
-  IceColor: {r: 0.25943398, g: 0.6837878, b: 1, a: 1}
 --- !u!4 &296340325
 Transform:
   m_ObjectHideFlags: 0
@@ -285,6 +284,21 @@ MonoBehaviour:
   playerPrefab: {fileID: 8132463686520649109, guid: 6d35109a428c0e04d860bce0c568067b, type: 3}
   wallPrefab: {fileID: 4334450896631550447, guid: 78623d8a0412b8c4886cfe714dd53343, type: 3}
   enemyPrefab: {fileID: 8418221147820081248, guid: a5ed80e804700a24ab219bc2e0dba8df, type: 3}
+--- !u!114 &296340327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296340323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8429d0b77df744343b8d32561a0f1ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FireColor: {r: 0, g: 0, b: 0, a: 0}
+  IceColor: {r: 0, g: 0, b: 0, a: 0}
+  DangerColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &635094528
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,26 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-public enum ObjectType
-{
-    BulletTower,
-    RayTower,
-    Bullet,
-    Ray,
-    Wall,
-    Glass,
-    PlayerMark,
-    Star,
-}
+
 
 public class Palate : MonoBehaviour
 {
     public Tilemap tilemap;
     public BoxCollider2D DrawZone;
     public ToggleGroup ObjectPalateGroup;
+    public GameObject InfoButton;
+    public InfoWindow infoWindow;
 
     public List<GameObject> PalateObjects;
 
@@ -40,10 +34,11 @@ public class Palate : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && SelectedObject != null && MouseAvailable())
+        if (Input.GetMouseButtonDown(0))
         {
             if (!ToggleChecker())
             {
+                
                 Vector3 mouseDownPos = Input.mousePosition;
                 Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
                 RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
@@ -53,22 +48,39 @@ public class Palate : MonoBehaviour
                     GameObject selectedObject = hit.collider.gameObject;
                     HandleSelection(selectedObject);
                 }
+                else
+                {
+                    if (!IsPointerOverUIObject())
+                    {
+                        ReleaseSelection();
+                    }
+                }
             }
             else
             {
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
-
-                if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
+                if (SelectedObject != null && MouseAvailable())
                 {
-                    var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
-                    if (playerSpawnPoint != null)
+                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
+
+                    if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
                     {
-                        Destroy(playerSpawnPoint);
+                        var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
+                        if (playerSpawnPoint != null)
+                        {
+                            Destroy(playerSpawnPoint);
+                        }
+                    }
+                    GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
+                    HandleSelection(madeObject);
+                }
+                else
+                {
+                    if (!IsPointerOverUIObject())
+                    {
+                        ReleaseSelection();
                     }
                 }
-                GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
-                HandleSelection(madeObject);
             }
 
         }
@@ -119,6 +131,16 @@ public class Palate : MonoBehaviour
         return false;
     }
 
+    bool IsPointerOverUIObject()
+    {
+        List<RaycastResult> results = new List<RaycastResult>();
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+
+        return results.Count > 0;
+    }
+
     private bool MouseAvailable()
     {
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -132,12 +154,29 @@ public class Palate : MonoBehaviour
 
     private void HandleSelection(GameObject selectedObject)
     {
-        if (currentObject != null)
-        {
-            currentObject.GetComponent<SpriteRenderer>().color = Color.white;
-        }
+        ReleaseSelection();
         currentObject = selectedObject;
         selectedObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+        selectedObject.layer = 0;
+        InfoButton.SetActive(true);
+    }
+
+    private void ReleaseSelection()
+    {
+        if (currentObject != null)
+        {
+            if (currentObject.CompareTag("Enemy"))
+            {
+                currentObject.GetComponent<DangerObject>().SetColor();
+            }
+            else
+            {
+                currentObject.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            currentObject.layer = 6;
+        }
+        InfoButton.SetActive(false);
+        infoWindow.CloseWindow();
     }
 
     //public void ChangeFunc(int funcCode)
@@ -174,6 +213,7 @@ public class Palate : MonoBehaviour
         currentObject.transform.SetParent(null);
         DestroyImmediate(obj);
     }
+
     public void FlipYCurrentObj()
     {
         GameObject obj = new GameObject("Parent");
@@ -188,11 +228,17 @@ public class Palate : MonoBehaviour
     {
         Destroy(currentObject);
         currentObject = null;
+        InfoButton.SetActive(false);
     }
 
     public void DuplicateCurrentObj()
     {
         GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0.5f, 0), currentObject.transform.rotation);
         HandleSelection(madeObject);
+    }
+
+    public void OpenCurrentObjectInfo() 
+    {
+        infoWindow.OpenWindow(currentObject);
     }
 }
