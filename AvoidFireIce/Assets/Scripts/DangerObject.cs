@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class DangerObject : MonoBehaviour
 {
     public Element element = Element.Fire;
-    private SpriteRenderer spr;
+    public bool isRay = false;
+    protected SpriteRenderer spr;
 
     private void Awake()
     { 
@@ -22,7 +24,7 @@ public class DangerObject : MonoBehaviour
         }
     }
 
-    public void SetColor()
+    virtual public void SetColor()
     {
         switch (element)
         {
@@ -36,5 +38,17 @@ public class DangerObject : MonoBehaviour
                 spr.color = Defines.instance.DangerColor;
                 break;
         }
+        if (isRay)
+        {
+            Color alp = spr.color;
+            alp.a = 0.2f;
+            spr.color = alp;
+        }
+    }
+
+    public void SetElement(Element val)
+    {
+        element = val;
+        SetColor();
     }
 }
