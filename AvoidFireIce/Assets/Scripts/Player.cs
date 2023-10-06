@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
 
 
 
-    private void Awake()
+    private void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
         spr = GetComponent<SpriteRenderer>();
@@ -60,10 +60,10 @@ public class Player : MonoBehaviour
         switch (CurrentElemental)
         {
             case Element.Fire:
-                spr.color = GameManager.instance.FireColor;
+                spr.color = Defines.instance.FireColor;
                 break;
             case Element.Ice:
-                spr.color = GameManager.instance.IceColor;
+                spr.color = Defines.instance.IceColor;
                 break;
         }
     }

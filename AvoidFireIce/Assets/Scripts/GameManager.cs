@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public enum Element
-{
-    Fire,
-    Ice,
-    None,
-}
 
 public class GameManager : MonoBehaviour
 {
@@ -24,15 +18,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-   private static GameManager gameManager;
+    private static GameManager gameManager;
 
-   public Tilemap tilemap;
+    public Tilemap tilemap;
+    public string StageName;
+    public bool isTestMode = false;
 
-   public Color FireColor = new Color(133, 153, 63);
-   public Color IceColor = new Color(44, 202, 51);
-
-    private void OnEnable()
+    private void Awake()
     {
+        Defines.instance.DefineColor();
+        if (PlayerPrefs.GetString("StageName") != null)
+        {
+            StageName = PlayerPrefs.GetString("StageName");
+            StageManager.instance.Load(StageName);
+        }
         AdjustCameraOrthographicSize();
     }
 
