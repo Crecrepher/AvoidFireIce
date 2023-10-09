@@ -46,7 +46,7 @@ public class UiFunction : MonoBehaviour
 
     public void StartStage(string stageNum)
     {
-        PlayerPrefs.SetString("StageName", $"Assets/Stages/{stageNum}");
+        PlayerPrefs.SetString("StageName", stageNum);
         PlayerPrefs.SetInt("StageType", (int)StageType.Official);
         SceneManager.LoadScene("GameScene");
     }

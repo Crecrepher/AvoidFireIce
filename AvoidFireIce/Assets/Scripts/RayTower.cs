@@ -20,7 +20,7 @@ public class RayTower : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        RayLineRenderer = GetComponent<LineRenderer>();
+        RayLineRenderer = gameObject.GetComponentInChildren<LineRenderer>();
         dangerObject = GetComponent<DangerObject>();
         RayLineRenderer.positionCount = 2;
         RayLineRenderer.enabled = true;
@@ -63,7 +63,7 @@ public class RayTower : MonoBehaviour
     public void SetRayColor()
     {
         Color color = Color.red;
-        if (dangerObject = null)
+        if (dangerObject == null)
         {
             dangerObject = GetComponent<DangerObject>();
         }

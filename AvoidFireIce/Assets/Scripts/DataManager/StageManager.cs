@@ -25,6 +25,26 @@ public class StageManager : MonoBehaviour
 
     public List<GameObject> ObjsPrefab;
 
+    public void LoadStage(string fileName)
+    {
+        var path = "Stages/" + fileName;
+        var json = Resources.Load<TextAsset>(path).text;
+        //var json = File.ReadAllText(path);
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
+
+        foreach (var loadedObj in saveData.objects)
+        {
+            GameObject obj = Instantiate(ObjsPrefab[loadedObj.code], loadedObj.pos, loadedObj.rot);
+            if (Defines.instance.isHaveElement(loadedObj.code))
+            {
+                DangerObject dangerObj = obj.GetComponent<DangerObject>();
+                dangerObj.element = (Element)loadedObj.element;
+                dangerObj.SetColor();
+            }
+        }
+
+    }
+
     public void Load(string fileName)
     {
         var path = fileName + ".json";

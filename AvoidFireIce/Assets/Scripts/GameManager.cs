@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,6 +33,8 @@ public class GameManager : MonoBehaviour
     public GameObject WinWindow;
     public List<GameObject> SpecialObjsStage1;
 
+    public TMP_Text DeathCounter;
+
     private void Awake()
     {
         isWin = false;
@@ -44,11 +47,12 @@ public class GameManager : MonoBehaviour
         else if (PlayerPrefs.GetString("StageName") != null)
         {
             StageName = PlayerPrefs.GetString("StageName");
-            StageManager.instance.Load(StageName);
+            StageManager.instance.LoadStage(StageName);
             Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
         }
         AdjustCameraOrthographicSize();
-        Debug.Log(Application.persistentDataPath);
+        Debug.Log(StageName);
+        DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
 
     private void Update()
@@ -88,6 +92,8 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
+        int death = PlayerPrefs.GetInt("DeathCount");
+        PlayerPrefs.SetInt("DeathCount", ++death);
         Invoke("ResetGame", RestartDelay);
     }
 
