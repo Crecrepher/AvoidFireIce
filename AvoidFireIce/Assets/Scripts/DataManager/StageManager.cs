@@ -27,7 +27,7 @@ public class StageManager : MonoBehaviour
 
     public void Load(string fileName)
     {
-        var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
+        var path = fileName + ".json";
         var json = File.ReadAllText(path);
         var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
 
@@ -44,8 +44,4 @@ public class StageManager : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape)) { SceneManager.LoadScene("EditorScene"); }
-    }
 }

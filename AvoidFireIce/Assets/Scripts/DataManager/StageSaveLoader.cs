@@ -118,7 +118,6 @@ public class StageSaveLoader : MonoBehaviour
         Debug.Log(path);
 
         var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter());
-        Debug.Log(json);
 
         File.WriteAllText(path, json);
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
@@ -29,12 +30,34 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Defines.instance.DefineColor();
-        if (PlayerPrefs.GetString("StageName") != null)
+        if ((StageType)PlayerPrefs.GetInt("StageType") == StageType.Editing && PlayerPrefs.GetString("TestStageName") != null)
+        {
+            StageName = PlayerPrefs.GetString("TestStageName");
+            StageManager.instance.Load(StageName);
+        }
+        else if (PlayerPrefs.GetString("StageName") != null)
         {
             StageName = PlayerPrefs.GetString("StageName");
             StageManager.instance.Load(StageName);
         }
         AdjustCameraOrthographicSize();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            switch ((StageType)PlayerPrefs.GetInt("StageType"))
+            {
+                case StageType.Official:
+                case StageType.Custom:
+                    SceneManager.LoadScene("TitleScene");
+                    break;
+                case StageType.Editing:
+                    SceneManager.LoadScene("EditorScene");
+                    break;
+            }
+        }
     }
 
     private void AdjustCameraOrthographicSize()

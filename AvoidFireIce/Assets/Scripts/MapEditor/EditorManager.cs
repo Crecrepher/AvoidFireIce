@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 public class EditorManager : MonoBehaviour
 {
@@ -31,12 +32,21 @@ public class EditorManager : MonoBehaviour
         {
             StageSaveLoader.instance.Load(PlayerPrefs.GetString("StageName"));
         }
-
+        Debug.Log(PlayerPrefs.GetString("StageName"));
     }
 
     private void OnEnable()
     {
         AdjustCameraOrthographicSize();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            StageSaveLoader.instance.Save(PlayerPrefs.GetString("StageName"));
+            SceneManager.LoadScene("TitleScene");
+        }
     }
 
     private void AdjustCameraOrthographicSize()
@@ -62,8 +72,10 @@ public class EditorManager : MonoBehaviour
             Debug.LogWarning("Need Star!");
             return;
         }
-        StageSaveLoader.instance.Save("sys\\TeSt6212");
-        PlayerPrefs.SetString("StageName", "sys\\TeSt6212");
+        StageSaveLoader.instance.Save(PlayerPrefs.GetString("StageName"));
+        StageSaveLoader.instance.Save("sys/TeSt6212");
+        PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");
+        PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
         SceneManager.LoadScene("GameScene");
     }
 

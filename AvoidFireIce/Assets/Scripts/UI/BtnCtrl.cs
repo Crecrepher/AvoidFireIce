@@ -14,17 +14,6 @@ public class BtnCtrl : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         defaultScale = btnScale.localScale;
     }
-    public void OnBtnClick()
-    {
-        switch (currentType)
-        {
-            case BtnType.Start:
-                Debug.Log("StartTest");
-                break;
-            case BtnType.Option:
-                break;
-        }
-    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -35,4 +24,6 @@ public class BtnCtrl : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         btnScale.localScale = defaultScale;
     }
+
+ 
 }

@@ -21,6 +21,13 @@ public enum ObjectType
     Star,
 }
 
+public enum StageType
+{
+    Official,
+    Custom,
+    Editing
+}
+
 public class Defines : MonoBehaviour
 {
     public static Defines instance
