@@ -5,29 +5,49 @@ using Newtonsoft.Json;
 using System.IO;
 using static QuaternionConverter;
 using static UnityEditor.PlayerSettings;
+using System.Xml.Linq;
+using static StageSaveLoader;
 
-public class WallInfo
+//public class WallInfo
+//{
+//    public Vector2 position;
+
+//    public WallInfo() { }
+//    public WallInfo(Vector2 position) { this.position = position; }
+//}
+
+//public class EnemyInfo
+//{
+//    public Vector2 position;
+//    public EnemyInfo() { }
+//    public EnemyInfo(Vector2 position) { this.position = position; }
+//}
+
+public class EditorObjInfo
 {
-    public Vector2 position;
+    public int code;
+    public int element;
+    public Vector2 pos;
+    public Quaternion rot;
+    public EditorObjInfo() { }
+    public EditorObjInfo (int code, int element, Vector2 pos, Quaternion rot) 
+    { 
+        this.code = code;
+        this.element = element;
+        this.pos = pos;
+        this.rot = rot;
+    }
 
-    public WallInfo() { }
-    public WallInfo(Vector2 position) { this.position = position; }
-}
-
-public class EnemyInfo
-{
-    public Vector2 position;
-    public EnemyInfo() { }
-    public EnemyInfo(Vector2 position) { this.position = position; }
 }
 
 public class StageSaveLoader : MonoBehaviour
 {
     public class SaveData
     {
-        public Vector2 playerStartPos;
-        public List<WallInfo> walls;
-        public List<EnemyInfo> enemys;
+        //public Vector2 playerStartPos;
+        public List<EditorObjInfo> objects;
+        //public List<WallInfo> walls;
+        //public List<EnemyInfo> enemys;
     }
 
     public static StageSaveLoader instance
@@ -44,9 +64,7 @@ public class StageSaveLoader : MonoBehaviour
 
     private static StageSaveLoader saveLoader;
 
-    public GameObject playerStartPosPrefab;
-    public GameObject wallPrefab;
-    public GameObject enemyPrefab;
+    public List<GameObject> EditorObjs;
 
     private void Update()
     {
@@ -70,70 +88,74 @@ public class StageSaveLoader : MonoBehaviour
     public void Save(string fileName)
     {
         var saveData = new SaveData();
-        saveData.walls = new List<WallInfo>();
-        saveData.enemys = new List<EnemyInfo>();
+        saveData.objects = new List<EditorObjInfo>();
 
-        saveData.playerStartPos = GameObject.FindGameObjectWithTag("PlayerStart").transform.position;
-
-        var walls = GameObject.FindGameObjectsWithTag("Wall");
-        foreach (var wall in walls)
+        var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
+        foreach (var obj in objs)
         {
-            var wallInfo = new WallInfo
-            {
-                position = wall.transform.position,
-            };
-            saveData.walls.Add(wallInfo);
+            RecordData(obj,saveData);
         }
 
-        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (var enemy in enemies)
+        var stars = GameObject.FindGameObjectsWithTag("Star");
+        foreach (var star in stars)
         {
-            var enemyInfo = new EnemyInfo
-            {
-                position = enemy.transform.position,
-            };
-            saveData.enemys.Add(enemyInfo);
+            RecordData(star, saveData);
         }
+
+        RecordData(GameObject.FindGameObjectWithTag("PlayerStart"),saveData);
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         Debug.Log(path);
 
-        var json = JsonConvert.SerializeObject(saveData, new Vector2Converter(), new WallInfoConverter(), new EnemyInfoConverter());
+        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter());
         Debug.Log(json);
 
         File.WriteAllText(path, json);
     }
 
+    private void RecordData(GameObject obj, SaveData saveData)
+    {
+        var objInfo = new EditorObjInfo
+        {
+            code = obj.GetComponent<MarkerInfo>().ObjectType,
+            element = 3,
+            pos = obj.transform.position,
+            rot = obj.transform.rotation
+        };
+        if (Defines.instance.isHaveElement(objInfo.code))
+        {
+            objInfo.element = (int)obj.GetComponent<DangerObject>().element;
+        }
+        saveData.objects.Add(objInfo);
+    }
+
     public void Clear()
     {
-        var walls = GameObject.FindGameObjectsWithTag("Wall");
-        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (var wall in walls)
+        var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
+        foreach (var obj in objs)
         {
-            Destroy(wall);
+            Destroy(obj);
         }
-        foreach (var enemy in enemies)
-        {
-            Destroy(enemy);
-        }
-        Destroy(GameObject.FindGameObjectWithTag("PlayerStart"));
     }
 
     public void Load(string fileName)
     {
+        Debug.Log(Application.persistentDataPath);
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
+        if (!File.Exists(path))
+        { return;}
+            
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new Vector2Converter(), new WallInfoConverter(), new EnemyInfoConverter());
-
-        GameObject playerStartPos = Instantiate(playerStartPosPrefab, saveData.playerStartPos, Quaternion.identity);
-
-        foreach (var wall in saveData.walls)
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
+        foreach (var loadedObj in saveData.objects)
         {
-            GameObject obj = Instantiate(wallPrefab, wall.position, Quaternion.identity);
-        }
-        foreach (var enemy in saveData.enemys)
-        {
-            GameObject obj = Instantiate(enemyPrefab, enemy.position, Quaternion.identity);
+            GameObject obj = Instantiate(EditorObjs[loadedObj.code], loadedObj.pos, loadedObj.rot);
+            if (Defines.instance.isHaveElement(loadedObj.code))
+            {
+                DangerObject dangerObj = obj.GetComponent<DangerObject>();
+                dangerObj.element = (Element)loadedObj.element;
+                dangerObj.SetColor();
+            }
         }
     }
 }

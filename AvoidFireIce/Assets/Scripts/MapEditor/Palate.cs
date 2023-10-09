@@ -34,7 +34,7 @@ public class Palate : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
         {
             if (!ToggleChecker())
             {
@@ -165,7 +165,7 @@ public class Palate : MonoBehaviour
     {
         if (currentObject != null)
         {
-            if (currentObject.CompareTag("Enemy"))
+            if (Defines.instance.isHaveElement(currentObject.GetComponent<MarkerInfo>().ObjectType))
             {
                 currentObject.GetComponent<DangerObject>().SetColor();
             }

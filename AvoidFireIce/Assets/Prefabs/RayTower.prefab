@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 16743604799951254}
   - component: {fileID: 3080429994845894375}
   - component: {fileID: 2388052696618428511}
+  - component: {fileID: -7393302039630145166}
   m_Layer: 6
   m_Name: RayTower
   m_TagString: Untagged
@@ -272,3 +273,18 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &-7393302039630145166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395748989603193111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8203f4c9c59444dad631b0dd5c7ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 0
+  isRay: 0
+  enemytype: 1

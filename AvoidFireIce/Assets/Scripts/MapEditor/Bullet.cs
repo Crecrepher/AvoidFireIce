@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private Rigidbody2D rigidbody2D;
+    private Rigidbody2D rb2d;
+
+    public bool willDestroyed = true;
     private void Awake()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        Destroy(gameObject, 30f);
+        rb2d = GetComponent<Rigidbody2D>();
+        if (willDestroyed) { Destroy(gameObject, 30f); }
     }
 
     public void Launch(Vector2 direction, float force)
     {
-        rigidbody2D.AddForce(direction * force, ForceMode2D.Impulse);
+        rb2d.AddForce(direction * force, ForceMode2D.Impulse);
     }
 }

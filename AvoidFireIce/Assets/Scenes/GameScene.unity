@@ -254,6 +254,7 @@ MonoBehaviour:
   tilemap: {fileID: 635094533}
   StageName: 
   isTestMode: 0
+  RestartDelay: 1
 --- !u!4 &296340325
 Transform:
   m_ObjectHideFlags: 0
@@ -281,9 +282,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c800035e7588474daf4d06de696a7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 8132463686520649109, guid: 6d35109a428c0e04d860bce0c568067b, type: 3}
-  wallPrefab: {fileID: 4334450896631550447, guid: 78623d8a0412b8c4886cfe714dd53343, type: 3}
-  enemyPrefab: {fileID: 8418221147820081248, guid: a5ed80e804700a24ab219bc2e0dba8df, type: 3}
+  ObjsPrefab:
+  - {fileID: 5644275076887108887, guid: d68cd1d94a3802b44bf876960bb07d52, type: 3}
+  - {fileID: 2395748989603193111, guid: 963dddcaa94ebc14b97f2a2dc69ccef7, type: 3}
+  - {fileID: 8418221147820081248, guid: 7d51c5d332441ef42a1502a8bd0a7c52, type: 3}
+  - {fileID: 6515525866420095902, guid: d5e2a070144ca3d40ab5d4adf6867618, type: 3}
+  - {fileID: 4334450896631550447, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
+  - {fileID: 4086986309957457127, guid: e43dfa8ad2377cf4bbe2d1ef57deea60, type: 3}
+  - {fileID: 8132463686520649109, guid: 6d35109a428c0e04d860bce0c568067b, type: 3}
+  - {fileID: 4027861018057918619, guid: 565ea09e43769704da1ef2960276bd43, type: 3}
 --- !u!114 &296340327
 MonoBehaviour:
   m_ObjectHideFlags: 0

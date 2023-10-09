@@ -13,14 +13,15 @@ public class RayTower : MonoBehaviour
 
     private Rigidbody2D rb;
     private LineRenderer RayLineRenderer;
+    private DangerObject dangerObject;
 
     public bool Power = true;
-    public Element element = Element.Fire;
     
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         RayLineRenderer = GetComponent<LineRenderer>();
+        dangerObject = GetComponent<DangerObject>();
         RayLineRenderer.positionCount = 2;
         RayLineRenderer.enabled = true;
     }
@@ -39,9 +40,9 @@ public class RayTower : MonoBehaviour
             {
                 Player player = hit.collider.gameObject.GetComponent<Player>();
                 hitPosition = hit.point;
-                if (player.CurrentElemental != element)
+                if (player.CurrentElemental != dangerObject.element)
                 {
-                    hit.collider.gameObject.GetComponent<Player>().Ouch();
+                    player.Ouch();
                 }
             }
             if (hit.collider.CompareTag("Wall"))
@@ -57,5 +58,21 @@ public class RayTower : MonoBehaviour
         pos += (Vector2)direction.normalized * ShootGap;
         RayLineRenderer.SetPosition(0, pos);
         RayLineRenderer.SetPosition(1, hitPosition);
+    }
+
+    public void SetRayColor()
+    {
+        Color color = Color.red;
+        switch (dangerObject.element)
+        {
+            case Element.Fire:
+                color = Defines.instance.FireColor; 
+                break;
+            case Element.Ice:
+                color = Defines.instance.IceColor; 
+                break;
+        }
+        RayLineRenderer.startColor = color;
+        RayLineRenderer.endColor = color;
     }
 }

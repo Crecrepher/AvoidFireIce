@@ -70,6 +70,7 @@ public class Player : MonoBehaviour
 
     public void Ouch()
     {
+        GameManager.instance.AutoRestart();
         Destroy(gameObject);
     }
 }

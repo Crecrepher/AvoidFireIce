@@ -56,6 +56,12 @@ public class EditorManager : MonoBehaviour
             Debug.LogWarning("Need PlayerStartPos!");
             return;
         }
+
+        if (GameObject.FindGameObjectWithTag("Star") == null)
+        {
+            Debug.LogWarning("Need Star!");
+            return;
+        }
         StageSaveLoader.instance.Save("TeSt6212");
         PlayerPrefs.SetString("StageName", "TeSt6212");
         SceneManager.LoadScene("GameScene");

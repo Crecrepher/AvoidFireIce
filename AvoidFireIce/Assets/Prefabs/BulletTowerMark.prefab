@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 8319022764120519669}
   - component: {fileID: 7164563249873224466}
   - component: {fileID: 2036380031495696831}
+  - component: {fileID: 3365197923131949080}
+  - component: {fileID: 8914863821851760903}
   m_Layer: 6
   m_Name: BulletTowerMark
-  m_TagString: Untagged
+  m_TagString: EditorMarker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,3 +150,31 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &3365197923131949080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504366444729635322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8b24f75ea318f4a91c0ffb3c2ff649, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectType: 0
+--- !u!114 &8914863821851760903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7504366444729635322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8203f4c9c59444dad631b0dd5c7ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 0
+  isRay: 0
+  enemytype: 3

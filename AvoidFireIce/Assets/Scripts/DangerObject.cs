@@ -7,6 +7,7 @@ public class DangerObject : MonoBehaviour
 {
     public Element element = Element.Fire;
     public bool isRay = false;
+    public int enemytype = 3;
     protected SpriteRenderer spr;
 
     private void Awake()
@@ -26,6 +27,14 @@ public class DangerObject : MonoBehaviour
 
     virtual public void SetColor()
     {
+        switch(enemytype)
+        {
+            case 0:
+                return;
+            case 1:
+                GetComponent<RayTower>().SetRayColor();
+                return;
+        }
         switch (element)
         {
             case Element.Fire:

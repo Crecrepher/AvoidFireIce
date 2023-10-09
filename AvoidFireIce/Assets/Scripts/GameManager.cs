@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     public Tilemap tilemap;
     public string StageName;
     public bool isTestMode = false;
+    public float RestartDelay = 1f;
 
     private void Awake()
     {
@@ -43,5 +45,36 @@ public class GameManager : MonoBehaviour
         Camera.main.orthographicSize = targetOrthographicSize;
 
         Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
+    }
+
+    public void AutoRestart()
+    {
+        Invoke("ResetGame", RestartDelay);
+    }
+
+    public void ResetGame()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
+
+
+    public void CheckWin(GameObject star)
+    {
+        Destroy(star);
+        Invoke("StarFinder",0.1f);
+    }
+
+    public void StarFinder()
+    {
+        GameObject obj = GameObject.FindGameObjectWithTag("Star");
+        if (obj == null)
+        {
+            Win();
+        }
+    }
+
+    public void Win()
+    {
+        Debug.Log("Win!");
     }
 }

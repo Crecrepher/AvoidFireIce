@@ -23,26 +23,25 @@ public class StageManager : MonoBehaviour
 
     private static StageManager stageManager;
 
-    public GameObject playerPrefab;
-    public GameObject wallPrefab;
-    public GameObject enemyPrefab;
+    public List<GameObject> ObjsPrefab;
 
     public void Load(string fileName)
     {
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new Vector2Converter(), new WallInfoConverter(), new EnemyInfoConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
 
-        GameObject playerStartPos = Instantiate(playerPrefab, saveData.playerStartPos, Quaternion.identity);
+        foreach (var loadedObj in saveData.objects)
+        {
+            GameObject obj = Instantiate(ObjsPrefab[loadedObj.code], loadedObj.pos, loadedObj.rot);
+            if (Defines.instance.isHaveElement(loadedObj.code))
+            {
+                DangerObject dangerObj = obj.GetComponent<DangerObject>();
+                dangerObj.element = (Element)loadedObj.element;
+                dangerObj.SetColor();
+            }
+        }
 
-        foreach (var wall in saveData.walls)
-        {
-            GameObject obj = Instantiate(wallPrefab, wall.position, Quaternion.identity);
-        }
-        foreach (var enemy in saveData.enemys)
-        {
-            GameObject obj = Instantiate(enemyPrefab, enemy.position, Quaternion.identity);
-        }
     }
 
     private void Update()
