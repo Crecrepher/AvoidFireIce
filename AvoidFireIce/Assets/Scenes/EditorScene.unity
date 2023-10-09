@@ -2853,7 +2853,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5656,7 +5656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.084905684, g: 0.084905684, b: 0.084905684, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6028,7 +6028,7 @@ GameObject:
   - component: {fileID: 938439357}
   - component: {fileID: 938439358}
   m_Layer: 0
-  m_Name: Toggle (1)
+  m_Name: Ice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8626,7 +8626,7 @@ GameObject:
   - component: {fileID: 1378270211}
   - component: {fileID: 1378270212}
   m_Layer: 0
-  m_Name: Toggle (2)
+  m_Name: None
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10061,7 +10061,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10132,9 +10132,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0dec8b8028a6e4e9847ed330d56d57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStartPosPrefab: {fileID: 1345922225736372792, guid: 6da42a0ae8c77e942be61e7144d97965, type: 3}
-  wallPrefab: {fileID: 4334450896631550447, guid: 78623d8a0412b8c4886cfe714dd53343, type: 3}
-  enemyPrefab: {fileID: 8418221147820081248, guid: a5ed80e804700a24ab219bc2e0dba8df, type: 3}
+  EditorObjs:
+  - {fileID: 7504366444729635322, guid: 3a4f18e15cb4df746acf59695f9703da, type: 3}
+  - {fileID: 3740399369267257434, guid: e22bff69416e5f7479e57119f207c744, type: 3}
+  - {fileID: 8418221147820081248, guid: a5ed80e804700a24ab219bc2e0dba8df, type: 3}
+  - {fileID: 8508885141418169452, guid: 19b7a7d1fb079c94ab6181a953edd579, type: 3}
+  - {fileID: 4334450896631550447, guid: 78623d8a0412b8c4886cfe714dd53343, type: 3}
+  - {fileID: 4086986309957457127, guid: c5aede560fd1a3347be7fb0c053c6c39, type: 3}
+  - {fileID: 1345922225736372792, guid: 6da42a0ae8c77e942be61e7144d97965, type: 3}
+  - {fileID: 8154470816444159525, guid: d0e0d0171e276c246afc1a1d8b331d9d, type: 3}
 --- !u!114 &1605763243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10953,7 +10959,7 @@ GameObject:
   - component: {fileID: 1763640397}
   - component: {fileID: 1763640398}
   m_Layer: 0
-  m_Name: Toggle
+  m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

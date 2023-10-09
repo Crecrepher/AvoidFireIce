@@ -11,12 +11,13 @@ public class BulletTower : MonoBehaviour
 
     private float lastTime;
     private Rigidbody2D rb;
+    private DangerObject dangerObject;
     public float ShootGap = 1f;
 
-    public int Element = 0;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        dangerObject = GetComponent<DangerObject>();
         lastTime = Time.time;
     }
 
@@ -25,13 +26,12 @@ public class BulletTower : MonoBehaviour
     {
         if (fireRate < Time.time - lastTime)
         {
-            Shoot(Element);
-            Element = (Element + 1) % 2;
+            Shoot(dangerObject.element);
             lastTime = Time.time;
         }
     }
 
-    private void Shoot(int element)
+    private void Shoot(Element element)
     {
         Vector3 rotationEulerAngles = transform.rotation.eulerAngles;
         Vector3 direction = Quaternion.Euler(rotationEulerAngles) * Vector3.up;
@@ -41,6 +41,6 @@ public class BulletTower : MonoBehaviour
 
         var bullet = Instantiate(Bullet, pos, Quaternion.identity);
         bullet.Launch(direction.normalized, bulletSpeed);
-        bullet.gameObject.GetComponent<DangerObject>().SetElement((Element)element);
+        bullet.gameObject.GetComponent<DangerObject>().SetElement(element);
     }
 }

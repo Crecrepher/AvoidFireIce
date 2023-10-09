@@ -52,4 +52,9 @@ public class Defines : MonoBehaviour
         IceColor = new Color(0, 0.8062f, 1, 1);
         DangerColor = Color.red;
     }
+
+    public bool isHaveElement(int code)
+    {
+        return code == 0 || code == 1 || code == 2 || code == 3;
+    }
 }

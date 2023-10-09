@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - PlayerStart
   - Ray
+  - Star
+  - EditorMarker
+  - CustomFileList
   layers:
   - Default
   - TransparentFX

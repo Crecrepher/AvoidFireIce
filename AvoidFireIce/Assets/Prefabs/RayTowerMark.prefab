@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 4058296218660652616}
   - component: {fileID: 6467747499230603281}
   - component: {fileID: 855402310667357931}
+  - component: {fileID: -977858545280500438}
+  - component: {fileID: 5006875728642907383}
   m_Layer: 6
   m_Name: RayTowerMark
-  m_TagString: Untagged
+  m_TagString: EditorMarker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,3 +150,31 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &-977858545280500438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3740399369267257434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8b24f75ea318f4a91c0ffb3c2ff649, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectType: 1
+--- !u!114 &5006875728642907383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3740399369267257434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8203f4c9c59444dad631b0dd5c7ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 0
+  isRay: 0
+  enemytype: 3

@@ -83,49 +83,92 @@ public class QuaternionConverter : JsonConverter<Quaternion>
         }
     }
 
-    public class WallInfoConverter : JsonConverter<WallInfo>
+    public class EditorObjInfoConverter : JsonConverter<EditorObjInfo>
     {
-        public override WallInfo ReadJson(JsonReader reader, Type objectType, WallInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override EditorObjInfo ReadJson(JsonReader reader, Type objectType, EditorObjInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             var jobj = JObject.Load(reader);
-            var x = (float)jobj["positionX"];
-            var y = (float)jobj["positionY"];
-            return new WallInfo(new Vector2(x, y));
+            var code = (int)jobj["ObjCode"];
+            var element = (int)jobj["Element"];
+
+            var posX = (float)jobj["PositionX"];
+            var posY = (float)jobj["PositionY"];
+
+            var rotW = (float)jobj["RotationW"];
+            var rotX = (float)jobj["RotationX"];
+            var rotY = (float)jobj["RotationY"];
+            var rotZ = (float)jobj["RotationZ"];
+            return new EditorObjInfo(code,element,new Vector2(posX, posY),new Quaternion(rotX,rotY,rotZ,rotW));
         }
 
-        public override void WriteJson(JsonWriter writer, WallInfo value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, EditorObjInfo value, JsonSerializer serializer)
         {
             writer.WriteStartObject();
 
-            writer.WritePropertyName("positionX");
-            writer.WriteValue(value.position.x);
-            writer.WritePropertyName("positionY");
-            writer.WriteValue(value.position.y);
+            writer.WritePropertyName("ObjCode");
+            writer.WriteValue(value.code);
+            writer.WritePropertyName("Element");
+            writer.WriteValue(value.element);
+            writer.WritePropertyName("PositionX");
+            writer.WriteValue(value.pos.x);
+            writer.WritePropertyName("PositionY");
+            writer.WriteValue(value.pos.y);
+            writer.WritePropertyName("RotationW");
+            writer.WriteValue(value.rot.w);
+            writer.WritePropertyName("RotationX");
+            writer.WriteValue(value.rot.x);
+            writer.WritePropertyName("RotationY");
+            writer.WriteValue(value.rot.y);
+            writer.WritePropertyName("RotationZ");
+            writer.WriteValue(value.rot.z);
 
             writer.WriteEndObject();
         }
     }
 
-    public class EnemyInfoConverter : JsonConverter<EnemyInfo>
-    {
-        public override EnemyInfo ReadJson(JsonReader reader, Type objectType, EnemyInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
-        {
-            var jobj = JObject.Load(reader);
-            var x = (float)jobj["positionX"];
-            var y = (float)jobj["positionY"];
-            return new EnemyInfo(new Vector2(x, y));
-        }
+    //public class WallInfoConverter : JsonConverter<WallInfo>
+    //{
+    //    public override WallInfo ReadJson(JsonReader reader, Type objectType, WallInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
+    //    {
+    //        var jobj = JObject.Load(reader);
+    //        var x = (float)jobj["positionX"];
+    //        var y = (float)jobj["positionY"];
+    //        return new WallInfo(new Vector2(x, y));
+    //    }
 
-        public override void WriteJson(JsonWriter writer, EnemyInfo value, JsonSerializer serializer)
-        {
-            writer.WriteStartObject();
+    //    public override void WriteJson(JsonWriter writer, WallInfo value, JsonSerializer serializer)
+    //    {
+    //        writer.WriteStartObject();
 
-            writer.WritePropertyName("positionX");
-            writer.WriteValue(value.position.x);
-            writer.WritePropertyName("positionY");
-            writer.WriteValue(value.position.y);
+    //        writer.WritePropertyName("positionX");
+    //        writer.WriteValue(value.position.x);
+    //        writer.WritePropertyName("positionY");
+    //        writer.WriteValue(value.position.y);
 
-            writer.WriteEndObject();
-        }
-    }
+    //        writer.WriteEndObject();
+    //    }
+    //}
+
+    //public class EnemyInfoConverter : JsonConverter<EnemyInfo>
+    //{
+    //    public override EnemyInfo ReadJson(JsonReader reader, Type objectType, EnemyInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
+    //    {
+    //        var jobj = JObject.Load(reader);
+    //        var x = (float)jobj["positionX"];
+    //        var y = (float)jobj["positionY"];
+    //        return new EnemyInfo(new Vector2(x, y));
+    //    }
+
+    //    public override void WriteJson(JsonWriter writer, EnemyInfo value, JsonSerializer serializer)
+    //    {
+    //        writer.WriteStartObject();
+
+    //        writer.WritePropertyName("positionX");
+    //        writer.WriteValue(value.position.x);
+    //        writer.WritePropertyName("positionY");
+    //        writer.WriteValue(value.position.y);
+
+    //        writer.WriteEndObject();
+    //    }
+    //}
 }

@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 4240866306725761388}
   - component: {fileID: 4524226725411457798}
   - component: {fileID: 7918744229114249098}
+  - component: {fileID: -7844625554765163149}
+  - component: {fileID: -2342478023030916371}
   m_Layer: 6
   m_Name: RayMark
-  m_TagString: Enemy
+  m_TagString: EditorMarker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -158,3 +160,31 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-7844625554765163149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8508885141418169452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af8b24f75ea318f4a91c0ffb3c2ff649, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectType: 3
+--- !u!114 &-2342478023030916371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8508885141418169452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8203f4c9c59444dad631b0dd5c7ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  element: 0
+  isRay: 1
+  enemytype: 3

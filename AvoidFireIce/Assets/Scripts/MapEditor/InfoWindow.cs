@@ -30,10 +30,10 @@ public class InfoWindow : MonoBehaviour
         if (selected == null) { return; }
         selectedObject = selected;
         InfoWindowObject.SetActive(true);
-        if (selectedObject.CompareTag("Enemy"))
+        if (Defines.instance.isHaveElement(selectedObject.GetComponent<MarkerInfo>().ObjectType))
         {
             InfoWindowElement.SetActive(true);
-            ElementsToggle[(int)selectedObject.GetComponent<DangerObject>().element].enabled = true;
+            ElementsToggle[(int)selectedObject.GetComponent<DangerObject>().element].isOn = true;
         }
         else
         {

@@ -49,6 +49,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   element: 0
+  isRay: 0
+  enemytype: 2
 --- !u!212 &7874115840889369828
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -113,6 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a46dc21b4c6ce6846852f01ebaf3e41a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  willDestroyed: 1
 --- !u!50 &3461377026074830847
 Rigidbody2D:
   serializedVersion: 4
@@ -174,4 +177,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.4
