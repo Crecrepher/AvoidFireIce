@@ -9,6 +9,8 @@ TagManager:
   - PlayerStart
   - Ray
   - Star
+  - EditorMarker
+  - CustomFileList
   layers:
   - Default
   - TransparentFX

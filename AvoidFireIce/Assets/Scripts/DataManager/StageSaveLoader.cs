@@ -66,6 +66,16 @@ public class StageSaveLoader : MonoBehaviour
 
     public List<GameObject> EditorObjs;
 
+    private void Awake()
+    {
+        string directoryPath = Application.persistentDataPath + "\\sys";
+        DirectoryInfo directory = new DirectoryInfo(directoryPath);
+        if (!directory.Exists)
+        {
+            directory.Create();
+        }
+    }
+
     private void Update()
     {
         //if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -140,7 +150,6 @@ public class StageSaveLoader : MonoBehaviour
 
     public void Load(string fileName)
     {
-        Debug.Log(Application.persistentDataPath);
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         if (!File.Exists(path))
         { return;}
