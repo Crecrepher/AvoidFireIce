@@ -72,6 +72,7 @@ public class EditorManager : MonoBehaviour
             Debug.LogWarning("Need Star!");
             return;
         }
+        Debug.Log(Application.persistentDataPath);
         StageSaveLoader.instance.Save(PlayerPrefs.GetString("StageName"));
         StageSaveLoader.instance.Save("sys/TeSt6212");
         PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");

@@ -44,7 +44,7 @@ public class UiFunction : MonoBehaviour
         CustomLevelButtons.SetActive(!on);
     }
 
-    public void StartStage(int stageNum)
+    public void StartStage(string stageNum)
     {
         PlayerPrefs.SetString("StageName", $"Assets/Stages/{stageNum}");
         PlayerPrefs.SetInt("StageType", (int)StageType.Official);

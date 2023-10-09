@@ -63,6 +63,10 @@ public class RayTower : MonoBehaviour
     public void SetRayColor()
     {
         Color color = Color.red;
+        if (dangerObject = null)
+        {
+            dangerObject = GetComponent<DangerObject>();
+        }
         switch (dangerObject.element)
         {
             case Element.Fire:
