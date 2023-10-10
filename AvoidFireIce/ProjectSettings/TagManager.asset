@@ -11,16 +11,18 @@ TagManager:
   - Star
   - EditorMarker
   - CustomFileList
+  - Glass
+  - Bullet
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - UnBulletAble
   - Water
   - UI
   - SelectRay
   - RayBlocker
-  - 
+  - Bullet
   - 
   - 
   - 

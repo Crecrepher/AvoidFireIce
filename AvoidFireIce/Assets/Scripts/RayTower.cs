@@ -10,6 +10,8 @@ public class RayTower : MonoBehaviour
 {
     public LayerMask WallLayer;
     public float ShootGap = 0.4f;
+    public int MaxReflections = 10;
+    public Transform ShootPos;
 
     private Rigidbody2D rb;
     private LineRenderer RayLineRenderer;
@@ -22,43 +24,56 @@ public class RayTower : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         RayLineRenderer = gameObject.GetComponentInChildren<LineRenderer>();
         dangerObject = GetComponent<DangerObject>();
-        RayLineRenderer.positionCount = 2;
+        RayLineRenderer.positionCount = 10;
         RayLineRenderer.enabled = true;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 rotationEulerAngles = transform.rotation.eulerAngles;
         Vector3 direction = Quaternion.Euler(rotationEulerAngles) * Vector3.up;
+        Vector2 hitPosition = transform.position;
 
-        Vector2 hitPosition = new Vector2();
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized,100f, WallLayer);
-        if (hit.collider != null)
+        int reflectionCount = 0;
+        for (int i = 0; i < MaxReflections; i++)
         {
-            if (hit.collider.CompareTag("Player"))
+            RaycastHit2D hit = Physics2D.Raycast(hitPosition, direction.normalized, 100f, WallLayer);
+            Debug.Log(hit.collider.name);
+            if (hit.collider != null)
             {
-                Player player = hit.collider.gameObject.GetComponent<Player>();
-                hitPosition = hit.point;
-                if (player.CurrentElemental != dangerObject.element)
+                if (hit.collider.CompareTag("Player"))
                 {
-                    player.Ouch();
+                    Player player = hit.collider.gameObject.GetComponent<Player>();
+                    hitPosition = hit.point;
+
+                    if (player.CurrentElemental != dangerObject.element)
+                    {
+                        player.Ouch();
+                    }
+                }
+                else if (hit.collider.CompareTag("Wall"))
+                {
+                    hitPosition = hit.point;
+                }
+                else if (hit.collider.CompareTag("Glass"))
+                {
+                    direction = Vector2.Reflect(direction, hit.normal);
+                    hitPosition = hit.point;
                 }
             }
-            if (hit.collider.CompareTag("Wall"))
-            {
-                hitPosition = hit.point;
-            }
-            //else if (hit.collider.CompareTag("GlassWall"))
-            //{
-            //    // 유리 벽을 만났을 때 처리
-            //}
+
+            RayLineRenderer.positionCount = reflectionCount + 2;
+            RayLineRenderer.SetPosition(reflectionCount + 1, hitPosition);
+            reflectionCount++;
+            hitPosition = hitPosition + (Vector2)direction;
+
+            if (hit.collider == null || !hit.collider.CompareTag("Glass"))
+                break;
         }
-        var pos = rb.position;
-        pos += (Vector2)direction.normalized * ShootGap;
-        RayLineRenderer.SetPosition(0, pos);
-        RayLineRenderer.SetPosition(1, hitPosition);
+        RayLineRenderer.SetPosition(0, ShootPos.position);
     }
+
+
 
     public void SetRayColor()
     {

@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     public List<GameObject> SpecialObjsStage1;
 
     public TMP_Text DeathCounter;
+    public GameObject WallColiderBinder;
+    public GameObject GlassColiderBinder;
 
     private void Awake()
     {
@@ -50,6 +52,8 @@ public class GameManager : MonoBehaviour
             StageManager.instance.LoadStage(StageName);
             Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
         }
+        WallBind();
+        GlassBind();
         AdjustCameraOrthographicSize();
         DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
@@ -150,5 +154,36 @@ public class GameManager : MonoBehaviour
                 break;
 
         }
+    }
+
+    private void WallBind()
+    {
+        var walls = GameObject.FindGameObjectsWithTag("Wall");
+        foreach (var wall in walls)
+        {
+            if(wall.name == "Tilemap" || wall.name == "WallBinder" || wall.name == "GlassBinder")
+            {
+                continue;
+            }
+            wall.transform.parent = WallColiderBinder.transform;
+            Destroy(wall.GetComponent<Rigidbody2D>());
+        }
+        WallColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
+
+    }
+
+    private void GlassBind()
+    {
+        var glasses = GameObject.FindGameObjectsWithTag("Glass");
+        foreach (var glass in glasses)
+        {
+            if (glass.name == "Tilemap" || glass.name == "WallBinder" || glass.name == "GlassBinder")
+            {
+                continue;
+            }
+            glass.transform.parent = GlassColiderBinder.transform;
+            Destroy(glass.GetComponent<Rigidbody2D>());
+        }
+        GlassColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
     }
 }

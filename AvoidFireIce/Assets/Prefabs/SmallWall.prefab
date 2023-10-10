@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8099139157358713030}
   - component: {fileID: 1610798864823652850}
   - component: {fileID: 2391779518306973316}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: SmallWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8912463162556591649}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
