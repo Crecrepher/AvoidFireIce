@@ -38,7 +38,6 @@ public class RayTower : MonoBehaviour
         for (int i = 0; i < MaxReflections; i++)
         {
             RaycastHit2D hit = Physics2D.Raycast(hitPosition, direction.normalized, 100f, WallLayer);
-            Debug.Log(hit.collider.name);
             if (hit.collider != null)
             {
                 if (hit.collider.CompareTag("Player"))
@@ -65,7 +64,7 @@ public class RayTower : MonoBehaviour
             RayLineRenderer.positionCount = reflectionCount + 2;
             RayLineRenderer.SetPosition(reflectionCount + 1, hitPosition);
             reflectionCount++;
-            hitPosition = hitPosition + (Vector2)direction;
+            hitPosition = hitPosition + (Vector2)direction* 0.1f;
 
             if (hit.collider == null || !hit.collider.CompareTag("Glass"))
                 break;

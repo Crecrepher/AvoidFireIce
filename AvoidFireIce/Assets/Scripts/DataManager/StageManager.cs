@@ -29,7 +29,6 @@ public class StageManager : MonoBehaviour
     {
         var path = "Stages/" + fileName;
         var json = Resources.Load<TextAsset>(path).text;
-        //var json = File.ReadAllText(path);
         var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
 
         foreach (var loadedObj in saveData.objects)

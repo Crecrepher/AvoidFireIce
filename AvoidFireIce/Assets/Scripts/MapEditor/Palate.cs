@@ -15,6 +15,8 @@ public class Palate : MonoBehaviour
     public ToggleGroup ObjectPalateGroup;
     public GameObject InfoButton;
     public InfoWindow infoWindow;
+    public GameObject PlaceMod;
+    public GameObject SetLoopMod;
 
     public List<GameObject> PalateObjects;
 
@@ -240,5 +242,11 @@ public class Palate : MonoBehaviour
     public void OpenCurrentObjectInfo() 
     {
         infoWindow.OpenWindow(currentObject);
+    }
+
+    private void SetActivePlaceMod(bool on)
+    {
+        PlaceMod.SetActive(on);
+        SetLoopMod.SetActive(!on);
     }
 }
