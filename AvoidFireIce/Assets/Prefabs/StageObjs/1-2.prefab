@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bullet: {fileID: -4376109651202899687, guid: f530e7f95e7d4dc48b6ac3a092f5b867, type: 3}
-  fireRate: 0.15
+  fireRate: 0.25
   bulletSpeed: 8
   ShootGap: 1
 --- !u!1001 &1964467790899615820
@@ -504,7 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bullet: {fileID: -4376109651202899687, guid: f530e7f95e7d4dc48b6ac3a092f5b867, type: 3}
-  fireRate: 0.15
+  fireRate: 0.25
   bulletSpeed: 8
   ShootGap: 1
 --- !u!4 &5493442752208283909 stripped

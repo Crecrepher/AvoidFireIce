@@ -31,7 +31,7 @@ public class EditorManager : MonoBehaviour
         string a = PlayerPrefs.GetString("StageName");
         if (PlayerPrefs.GetString("StageName") != "")
         {
-            StageSaveLoader.instance.Load(PlayerPrefs.GetString("StageName"));
+            StageSaveLoader.instance.Load("CustomLevel/" + PlayerPrefs.GetString("StageName"));
         }
         Debug.Log(PlayerPrefs.GetString("StageName"));
     }
@@ -45,7 +45,7 @@ public class EditorManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            StageSaveLoader.instance.Save(PlayerPrefs.GetString("StageName"));
+            StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
             SceneManager.LoadScene("TitleScene");
         }
     }
@@ -73,8 +73,7 @@ public class EditorManager : MonoBehaviour
             Debug.LogWarning("Need Star!");
             return;
         }
-        Debug.Log(Application.persistentDataPath);
-        StageSaveLoader.instance.Save(PlayerPrefs.GetString("StageName"));
+        StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
         StageSaveLoader.instance.Save("sys/TeSt6212");
         PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");
         PlayerPrefs.SetInt("StageType", (int)StageType.Editing);

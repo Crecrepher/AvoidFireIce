@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static StageSaveLoader;
 
 public class CustomStage : MonoBehaviour
 {
@@ -17,6 +18,23 @@ public class CustomStage : MonoBehaviour
     public TMP_InputField NameBox;
 
     public int selectedNum;
+
+    private void Awake()
+    {
+        string directoryPath = Application.persistentDataPath + "\\sys";
+        DirectoryInfo directory = new DirectoryInfo(directoryPath);
+        if (!directory.Exists)
+        {
+            directory.Create();
+        }
+        string directoryPath2 = Application.persistentDataPath + "\\CustomLevel";
+        DirectoryInfo directory2 = new DirectoryInfo(directoryPath2);
+        if (!directory2.Exists)
+        {
+            directory2.Create();
+        }
+    }
+
     public void Showlists()
     {
         this.files = new List<string>();
@@ -25,7 +43,7 @@ public class CustomStage : MonoBehaviour
         {
             Destroy(list);
         }
-        DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath);
+        DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath+ "/CustomLevel");
         FileInfo[] files = directory.GetFiles();
         int count = 0;
         foreach (var file in files) 
@@ -59,7 +77,7 @@ public class CustomStage : MonoBehaviour
 
     public void StartNewEdit()
     {
-        PlayerPrefs.SetString("StageName", Application.persistentDataPath + "/" + NameBox.text);
+        PlayerPrefs.SetString("StageName", NameBox.text);
         SceneManager.LoadScene("EditorScene");
     }
 
@@ -67,8 +85,7 @@ public class CustomStage : MonoBehaviour
     {
         if (selectedNum == -1)
             return;
-        PlayerPrefs.SetString("StageName", (/*Application.persistentDataPath + "/" +*/ files[selectedNum]).Replace(".json", ""));
-        Debug.Log(PlayerPrefs.GetString("StageName"));
+        PlayerPrefs.SetString("StageName", (files[selectedNum]).Replace(".json", ""));
         SceneManager.LoadScene("EditorScene");
     }
 
@@ -77,7 +94,7 @@ public class CustomStage : MonoBehaviour
         Debug.Log(selectedNum);
         if(selectedNum == -1)
             return;
-        File.Delete(Application.persistentDataPath + "/" + files[selectedNum]);
+        File.Delete(Application.persistentDataPath + "/CustomLevel/" + files[selectedNum]);
         Showlists();
     }
 }

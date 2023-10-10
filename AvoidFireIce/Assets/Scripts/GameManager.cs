@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
             Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
         }
         AdjustCameraOrthographicSize();
-        Debug.Log(StageName);
         DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
 

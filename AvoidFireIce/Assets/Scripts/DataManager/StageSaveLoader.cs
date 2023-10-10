@@ -72,6 +72,12 @@ public class StageSaveLoader : MonoBehaviour
         {
             directory.Create();
         }
+        string directoryPath2 = Application.persistentDataPath + "\\CustomLevel";
+        DirectoryInfo directory2 = new DirectoryInfo(directoryPath2);
+        if (!directory2.Exists)
+        {
+            directory2.Create();
+        }
     }
 
     private void Update()
@@ -113,7 +119,6 @@ public class StageSaveLoader : MonoBehaviour
         RecordData(GameObject.FindGameObjectWithTag("PlayerStart"),saveData);
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
-        Debug.Log(path);
 
         var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter());
 

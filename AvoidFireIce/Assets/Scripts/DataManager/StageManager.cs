@@ -61,7 +61,6 @@ public class StageManager : MonoBehaviour
                 dangerObj.SetColor();
             }
         }
-
     }
 
 }

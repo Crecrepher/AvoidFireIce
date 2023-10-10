@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaMax: 7.5
-  speed: 10
+  speed: 8
   dir: {x: 1, y: 0}
 --- !u!1001 &3526550869599153446
 PrefabInstance:
@@ -138,7 +138,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 492657858659968962, guid: d5e2a070144ca3d40ab5d4adf6867618, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 492657858659968962, guid: d5e2a070144ca3d40ab5d4adf6867618, type: 3}
       propertyPath: m_LocalPosition.y
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaMax: 7.5
-  speed: 10
+  speed: 8
   dir: {x: -1, y: 0}
 --- !u!1001 &3543717853993072540
 PrefabInstance:
@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaMax: 7.5
-  speed: 10
+  speed: 8
   dir: {x: -1, y: 0}
 --- !u!1001 &7453966508756931888
 PrefabInstance:
@@ -324,7 +324,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 492657858659968962, guid: d5e2a070144ca3d40ab5d4adf6867618, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 492657858659968962, guid: d5e2a070144ca3d40ab5d4adf6867618, type: 3}
       propertyPath: m_LocalPosition.y
@@ -392,7 +392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaMax: 7.5
-  speed: 10
+  speed: 8
   dir: {x: 1, y: 0}
 --- !u!4 &7036745475720409842 stripped
 Transform:
