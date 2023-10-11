@@ -52,6 +52,7 @@ public class CustomStage : MonoBehaviour
             listB.transform.SetParent(ListArea.transform);
             listB.GetComponentInChildren<Text>().text = file.Name.Replace(".json","");
             listB.GetComponent<SaveDataListInfo>().num = count++;
+            listB.transform.localScale = Vector3.one;
             Toggle toggle = listB.GetComponent<Toggle>();
             toggle.group = group;
             toggle.onValueChanged.AddListener((value) =>
