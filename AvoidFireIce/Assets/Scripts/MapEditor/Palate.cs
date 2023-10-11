@@ -244,7 +244,7 @@ public class Palate : MonoBehaviour
         infoWindow.OpenWindow(currentObject);
     }
 
-    private void SetActivePlaceMod(bool on)
+    public void SetActivePlaceMod(bool on)
     {
         PlaceMod.SetActive(on);
         SetLoopMod.SetActive(!on);
