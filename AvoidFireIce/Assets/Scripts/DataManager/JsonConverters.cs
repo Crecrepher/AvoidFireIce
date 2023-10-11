@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using UnityEngine.UIElements;
+using Unity.VisualScripting;
 
 public class Vector2Converter : JsonConverter<Vector2>
 {
@@ -98,7 +99,7 @@ public class QuaternionConverter : JsonConverter<Quaternion>
             var rotX = (float)jobj["RotationX"];
             var rotY = (float)jobj["RotationY"];
             var rotZ = (float)jobj["RotationZ"];
-            return new EditorObjInfo(code,element,new Vector2(posX, posY),new Quaternion(rotX,rotY,rotZ,rotW));
+            return new EditorObjInfo(code, element, new Vector2(posX, posY), new Quaternion(rotX, rotY, rotZ, rotW));
         }
 
         public override void WriteJson(JsonWriter writer, EditorObjInfo value, JsonSerializer serializer)
@@ -126,49 +127,59 @@ public class QuaternionConverter : JsonConverter<Quaternion>
         }
     }
 
-    //public class WallInfoConverter : JsonConverter<WallInfo>
-    //{
-    //    public override WallInfo ReadJson(JsonReader reader, Type objectType, WallInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
-    //    {
-    //        var jobj = JObject.Load(reader);
-    //        var x = (float)jobj["positionX"];
-    //        var y = (float)jobj["positionY"];
-    //        return new WallInfo(new Vector2(x, y));
-    //    }
+    public class MoveLoopConverter : JsonConverter<MoveLoop>
+    {
+        //public float startTime;
+        //public float playTime;
 
-    //    public override void WriteJson(JsonWriter writer, WallInfo value, JsonSerializer serializer)
-    //    {
-    //        writer.WriteStartObject();
+        //public Vector2 startPos;
+        //public Vector2 endPos;
+        public override MoveLoop ReadJson(JsonReader reader, Type objectType, MoveLoop existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            var jobj = JObject.Load(reader);
+            var x = (int)jobj["InitCode"];
+            var y = (float)jobj["LoopTime"];
+            var z = new List<MoveLoopBlock>();
+            for (int i = 0; i < (int)jobj["LoopListCount"]; i++)
+            {
+                MoveLoopBlock loopBlock = new MoveLoopBlock();
+                loopBlock.startTime = (float)jobj[$"LLsT{i}"];
+                loopBlock.playTime = (float)jobj[$"LLpT{i}"];
+                loopBlock.startPos = new Vector2((float)jobj[$"LLsP{i}X"], (float)jobj[$"LLsP{i}Y"]);
+                loopBlock.endPos = new Vector2((float)jobj[$"LLeP{i}X"], (float)jobj[$"LLeP{i}Y"]);
+            }
+            return new MoveLoop(x, y, z);
 
-    //        writer.WritePropertyName("positionX");
-    //        writer.WriteValue(value.position.x);
-    //        writer.WritePropertyName("positionY");
-    //        writer.WriteValue(value.position.y);
+        }
 
-    //        writer.WriteEndObject();
-    //    }
-    //}
+        public override void WriteJson(JsonWriter writer, MoveLoop value, JsonSerializer serializer)
+        {
+            writer.WriteStartObject();
 
-    //public class EnemyInfoConverter : JsonConverter<EnemyInfo>
-    //{
-    //    public override EnemyInfo ReadJson(JsonReader reader, Type objectType, EnemyInfo existingValue, bool hasExistingValue, JsonSerializer serializer)
-    //    {
-    //        var jobj = JObject.Load(reader);
-    //        var x = (float)jobj["positionX"];
-    //        var y = (float)jobj["positionY"];
-    //        return new EnemyInfo(new Vector2(x, y));
-    //    }
-
-    //    public override void WriteJson(JsonWriter writer, EnemyInfo value, JsonSerializer serializer)
-    //    {
-    //        writer.WriteStartObject();
-
-    //        writer.WritePropertyName("positionX");
-    //        writer.WriteValue(value.position.x);
-    //        writer.WritePropertyName("positionY");
-    //        writer.WriteValue(value.position.y);
-
-    //        writer.WriteEndObject();
-    //    }
-    //}
+            writer.WritePropertyName("InitCode");
+            writer.WriteValue(value.initCode);
+            writer.WritePropertyName("LoopTime");
+            writer.WriteValue(value.loopTime);
+            writer.WritePropertyName("LoopListCount");
+            writer.WriteValue(value.loopList.Count);
+            for (int i = 0; i < value.loopList.Count; i++)
+            {
+                writer.WritePropertyName($"LLsT{i}");
+                writer.WriteValue(value.loopList[i].startTime);
+                writer.WritePropertyName($"LLpT{i}");
+                writer.WriteValue(value.loopList[i].playTime);
+                writer.WritePropertyName($"LLsP{i}X");
+                writer.WriteValue(value.loopList[i].startPos.x);
+                writer.WritePropertyName($"LLsP{i}Y");
+                writer.WriteValue(value.loopList[i].startPos.y);
+                writer.WritePropertyName($"LLeP{i}X");
+                writer.WriteValue(value.loopList[i].endPos.x);
+                writer.WritePropertyName($"LLeP{i}Y");
+                writer.WriteValue(value.loopList[i].endPos.y);
+            }
+            writer.WriteEndObject();
+        }
+    }
 }
+
+

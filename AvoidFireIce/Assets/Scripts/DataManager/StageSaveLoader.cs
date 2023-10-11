@@ -42,10 +42,8 @@ public class StageSaveLoader : MonoBehaviour
 {
     public class SaveData
     {
-        //public Vector2 playerStartPos;
         public List<EditorObjInfo> objects;
-        //public List<WallInfo> walls;
-        //public List<EnemyInfo> enemys;
+        public List<MoveLoop> moveLoops;
     }
 
     public static StageSaveLoader instance
@@ -80,29 +78,14 @@ public class StageSaveLoader : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.Alpha1))
-        //{
-        //    Save("Test");
-        //    Debug.Log("Saved");
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha2))
-        //{
-        //    Load("Test");
-        //    Debug.Log("Loaded");
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    Clear();
-        //    Debug.Log("Clear");
-        //}
-    }
+    private int saveCount = 0;
 
     public void Save(string fileName)
     {
+        saveCount = 0;
         var saveData = new SaveData();
         saveData.objects = new List<EditorObjInfo>();
+        saveData.moveLoops = new List<MoveLoop>();
 
         var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
         foreach (var obj in objs)
@@ -120,7 +103,7 @@ public class StageSaveLoader : MonoBehaviour
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
 
-        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter());
+        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter(), new MoveLoopConverter());
 
         File.WriteAllText(path, json);
     }
@@ -139,6 +122,15 @@ public class StageSaveLoader : MonoBehaviour
             objInfo.element = (int)obj.GetComponent<DangerObject>().element;
         }
         saveData.objects.Add(objInfo);
+
+        MoveLoop ml = obj.GetComponent<MoveLoop>();
+        if (ml != null) 
+        {
+            MoveLoop saveMl = ml;
+            saveMl.initCode = saveCount;
+            saveData.moveLoops.Add(saveMl);
+        }
+        saveCount++;
     }
 
     public void Clear()
@@ -155,9 +147,11 @@ public class StageSaveLoader : MonoBehaviour
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         if (!File.Exists(path))
         { return;}
-            
+
+        int LoadCount = 0;
+        int LoadMoveLoopCount = 0;
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter());
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(EditorObjs[loadedObj.code], loadedObj.pos, loadedObj.rot);
@@ -167,6 +161,18 @@ public class StageSaveLoader : MonoBehaviour
                 dangerObj.element = (Element)loadedObj.element;
                 dangerObj.SetColor();
             }
+            if (saveData.moveLoops != null && LoadMoveLoopCount < saveData.moveLoops.Count)
+            {
+                if (saveData.moveLoops[LoadMoveLoopCount].initCode == LoadCount)
+                {
+                    obj.AddComponent<MoveLoop>();
+                    obj.GetComponent<MoveLoop>().loopTime = saveData.moveLoops[LoadMoveLoopCount].loopTime;
+                    obj.GetComponent<MoveLoop>().loopList = saveData.moveLoops[LoadMoveLoopCount].loopList;
+                    LoadMoveLoopCount++;
+                }
+            }
+            
+            LoadCount++;
         }
     }
 }

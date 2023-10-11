@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
@@ -17,6 +18,11 @@ public class Palate : MonoBehaviour
     public InfoWindow infoWindow;
     public GameObject PlaceMod;
     public GameObject SetLoopMod;
+    public GameObject LoopTableViewContent;
+    public GameObject LoopTableGrid;
+    public GameObject LoopTableBars;
+    public List<GameObject> LoopLines;
+    public List<GameObject> LoopBlocks;
 
     public List<GameObject> PalateObjects;
 
@@ -25,99 +31,100 @@ public class Palate : MonoBehaviour
     public LayerMask usedLayer;
     private GameObject currentObject;
 
-
-    private Vector2 pressPosGap;
-
+    private EditMode editMode;
+    private LoopType currentLoopEdit;
 
     private void OnEnable()
     {
         SelectedObject = null;
+        editMode = EditMode.Place;
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
+        switch (editMode)
         {
-            if (!ToggleChecker())
-            {
-                
-                Vector3 mouseDownPos = Input.mousePosition;
-                Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
-                RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
-
-                if (hit.collider != null)
+            case EditMode.Place:
                 {
-                    GameObject selectedObject = hit.collider.gameObject;
-                    HandleSelection(selectedObject);
-                }
-                else
-                {
-                    if (!IsPointerOverUIObject())
+                    if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
                     {
-                        ReleaseSelection();
-                    }
-                }
-            }
-            else
-            {
-                if (SelectedObject != null && MouseAvailable())
-                {
-                    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
-
-                    if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
-                    {
-                        var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
-                        if (playerSpawnPoint != null)
+                        if (!ToggleChecker())
                         {
-                            Destroy(playerSpawnPoint);
-                        }
-                    }
-                    GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
-                    HandleSelection(madeObject);
-                }
-                else
-                {
-                    if (!IsPointerOverUIObject())
-                    {
-                        ReleaseSelection();
-                    }
-                }
-            }
+                            
+                            Vector3 mouseDownPos = Input.mousePosition;
+                            Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
+                            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
 
+                            if (hit.collider != null)
+                            {
+                                GameObject selectedObject = hit.collider.gameObject;
+                                HandleSelection(selectedObject);
+                            }
+                            else
+                            {
+                                if (!IsPointerOverUIObject())
+                                {
+                                    ReleaseSelection();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (SelectedObject != null && MouseAvailable())
+                            {
+                                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                                Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
+
+                                if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
+                                {
+                                    var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
+                                    if (playerSpawnPoint != null)
+                                    {
+                                        Destroy(playerSpawnPoint);
+                                    }
+                                }
+                                GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
+                                HandleSelection(madeObject);
+                            }
+                            else
+                            {
+                                if (!IsPointerOverUIObject())
+                                {
+                                    ReleaseSelection();
+                                }
+                            }
+                        }
+
+                    }
+                }
+                break;
+            case EditMode.Loop:
+                {
+                    if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
+                    {
+
+                        Vector3 mouseDownPos = Input.mousePosition;
+                        Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
+                        RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
+
+                        if (hit.collider != null)
+                        {
+                            GameObject selectedObject = hit.collider.gameObject;
+                            HandleSelection(selectedObject);
+                        }
+                        else
+                        {
+                            if (!IsPointerOverUIObject())
+                            {
+                                ReleaseSelection();
+                            }
+                        }
+
+                    }
+                }
+                break;
         }
 
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Vector3 mouseDownPos = Input.mousePosition;
-        //    Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
-        //    RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
-
-        //    if (hit.collider != null)
-        //    {
-        //        GameObject selectedObject = hit.collider.gameObject;
-        //        HandleSelection(selectedObject);
-        //    }
-        //}
-
-        //switch (currentFunction)
-        //{
-        //    case EditModFunc.Move:
-        //        Vector3 mouseDownPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        //        if (currentObject != null && Input.GetMouseButton(0))
-        //        {
-        //            if (currentObject != null && Input.GetMouseButtonDown(0))
-        //            {
-        //                pressPosGap = currentObject.transform.position - mouseDownPos;
-        //            }
-        //            currentObject.transform.position = (Vector2)mouseDownPos - pressPosGap;
-        //        }
-        //        break;
-        //    case EditModFunc.Rotate:
-        //        break;
-
-        //}
     }
 
     private bool ToggleChecker()
@@ -160,7 +167,14 @@ public class Palate : MonoBehaviour
         currentObject = selectedObject;
         selectedObject.GetComponent<SpriteRenderer>().color = Color.yellow;
         selectedObject.layer = 0;
-        InfoButton.SetActive(true);
+        if (editMode == EditMode.Place)
+        {
+            InfoButton.SetActive(true);
+        }
+        if (editMode == EditMode.Loop)
+        {
+            SetLoopMod.SetActive(true);
+        }
     }
 
     private void ReleaseSelection()
@@ -179,12 +193,11 @@ public class Palate : MonoBehaviour
         }
         InfoButton.SetActive(false);
         infoWindow.CloseWindow();
+        if (editMode == EditMode.Loop)
+        {
+            SetLoopMod.SetActive(false);
+        }
     }
-
-    //public void ChangeFunc(int funcCode)
-    //{
-    //    currentFunction = (EditModFunc)funcCode;
-    //}
 
     public void Zoom(float scale)
     {
@@ -248,5 +261,97 @@ public class Palate : MonoBehaviour
     {
         PlaceMod.SetActive(on);
         SetLoopMod.SetActive(!on);
+        if (on) { editMode = EditMode.Place; }
+        if (currentObject != null)
+        {
+            InfoButton.SetActive(true);
+        }
+
+    }
+
+    public void SetActiveLoopMod(bool on)
+    {
+        PlaceMod.SetActive(!on);
+        if (currentObject != null)
+        {
+            SetLoopMod.SetActive(on);
+            infoWindow.CloseWindow();
+        }
+        if (on) 
+        { 
+            editMode = EditMode.Loop;
+            currentLoopEdit = LoopType.Move;
+            DrawLoopTableLine();
+        }
+        InfoButton.SetActive(false);
+    }
+
+    public void SelectLoopType(int type)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == type)
+            {
+                var bar = LoopTableBars.transform.GetChild(i);
+                bar.GetComponent<LayoutElement>().preferredHeight = 50;
+                var rect = LoopLines[i].GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, 13f);
+            }
+            else
+            {
+                var bar = LoopTableBars.transform.GetChild(i);
+                bar.GetComponent<LayoutElement>().preferredHeight = 25;
+                var rect = LoopLines[i].GetComponent<RectTransform>();
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, 3f);
+            }
+        }
+        currentLoopEdit = (LoopType)type;
+    }
+
+    private void DrawLoopTableLine()
+    {
+        var oldLines = GameObject.FindGameObjectsWithTag("LoopTableGrid");
+        foreach (var line in oldLines)
+        {
+            Destroy(line.gameObject);
+        }
+
+        int count = (int)(LoopTableBars.GetComponent<RectTransform>().rect.width - 30) / 50;
+        for (int i = 0; i < count+1; i++)
+        {
+            var line = Instantiate(LoopTableGrid, new Vector3(30 + (i * 50), 0, 0), Quaternion.identity);
+            line.transform.SetParent(LoopTableViewContent.transform, false);
+        }
+    }
+
+    public void CreateMoveLoopB()
+    {
+        if (currentObject == null) { return; }
+        MoveLoop ml = currentObject.GetComponent<MoveLoop>();
+        if (ml == null)
+        {
+            currentObject.AddComponent<MoveLoop>();
+            ml = currentObject.GetComponent<MoveLoop>();
+            ml.loopList = new List<MoveLoopBlock>();
+        }
+        var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
+        MoveLoopBlock block = button.GetComponent<MoveLoopBlock>();
+        List<MoveLoopBlock> blocks = ml.loopList;
+        if (blocks.Count == 0)
+        {
+            block.startTime = 0;
+            block.startPos = currentObject.transform.position;
+        }
+        else
+        {
+            block.startTime = blocks[blocks.Count-1].startTime + blocks[blocks.Count-1].playTime;
+            block.startPos = blocks[blocks.Count - 1].endPos;
+        }
+        block.playTime = 1f;
+        block.endPos = new Vector2(block.startPos.x + 1f, block.startPos.y);
+        ml.loopList.Add(block);
+        RectTransform rect = button.GetComponent<RectTransform>();
+        rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime*50, LoopLines[0].transform.position.y);
+        rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
     }
 }

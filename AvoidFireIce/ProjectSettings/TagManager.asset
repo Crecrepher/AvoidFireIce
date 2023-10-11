@@ -13,6 +13,8 @@ TagManager:
   - CustomFileList
   - Glass
   - Bullet
+  - LoopEditBar
+  - LoopTableGrid
   layers:
   - Default
   - TransparentFX

@@ -1,7 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum EditMode
+{
+    Place,
+    Loop
+}
+public enum LoopType
+{
+    Move,
+    Rotate,
+    Fire
+}
 public enum Element
 {
     Fire,
@@ -27,6 +40,7 @@ public enum StageType
     Custom,
     Editing
 }
+
 
 public class Defines : MonoBehaviour
 {
