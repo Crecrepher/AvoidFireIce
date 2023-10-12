@@ -123,10 +123,10 @@ public class StageSaveLoader : MonoBehaviour
         }
         saveData.objects.Add(objInfo);
 
-        MoveLoop ml = obj.GetComponent<MoveLoop>();
-        if (ml != null) 
+        MoveLoopData mld = obj.GetComponent<MoveLoopData>();
+        if (mld != null) 
         {
-            MoveLoop saveMl = ml;
+            MoveLoop saveMl = mld.ml;
             saveMl.initCode = saveCount;
             saveData.moveLoops.Add(saveMl);
         }
@@ -146,7 +146,7 @@ public class StageSaveLoader : MonoBehaviour
     {
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         if (!File.Exists(path))
-        { return;}
+        { return; }
 
         int LoadCount = 0;
         int LoadMoveLoopCount = 0;
@@ -165,9 +165,12 @@ public class StageSaveLoader : MonoBehaviour
             {
                 if (saveData.moveLoops[LoadMoveLoopCount].initCode == LoadCount)
                 {
-                    obj.AddComponent<MoveLoop>();
-                    obj.GetComponent<MoveLoop>().loopTime = saveData.moveLoops[LoadMoveLoopCount].loopTime;
-                    obj.GetComponent<MoveLoop>().loopList = saveData.moveLoops[LoadMoveLoopCount].loopList;
+                    LoopBlocksList lbl = obj.AddComponent<LoopBlocksList>();
+                    lbl.moveLoopBlocks = new List<GameObject>();
+                    obj.AddComponent<MoveLoopData>().ml = new MoveLoop();
+                    MoveLoop newMl = obj.GetComponent<MoveLoopData>().ml;
+                    newMl.loopTime = saveData.moveLoops[LoadMoveLoopCount].loopTime;
+                    newMl.loopList = saveData.moveLoops[LoadMoveLoopCount].loopList;
                     LoadMoveLoopCount++;
                 }
             }

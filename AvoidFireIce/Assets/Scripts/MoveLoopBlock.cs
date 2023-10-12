@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveLoopBlock : MonoBehaviour, IComparable<MoveLoopBlock>
+public class MoveLoopBlock : IComparable<MoveLoopBlock>
 {
     public float startTime;
     public float playTime;
@@ -11,6 +11,7 @@ public class MoveLoopBlock : MonoBehaviour, IComparable<MoveLoopBlock>
     public Vector2 startPos;
     public Vector2 endPos;
 
+    
     public int CompareTo(MoveLoopBlock other)
     {
         if (other == null)

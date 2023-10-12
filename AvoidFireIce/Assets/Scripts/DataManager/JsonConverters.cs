@@ -147,6 +147,7 @@ public class QuaternionConverter : JsonConverter<Quaternion>
                 loopBlock.playTime = (float)jobj[$"LLpT{i}"];
                 loopBlock.startPos = new Vector2((float)jobj[$"LLsP{i}X"], (float)jobj[$"LLsP{i}Y"]);
                 loopBlock.endPos = new Vector2((float)jobj[$"LLeP{i}X"], (float)jobj[$"LLeP{i}Y"]);
+                z.Add(loopBlock);
             }
             return new MoveLoop(x, y, z);
 

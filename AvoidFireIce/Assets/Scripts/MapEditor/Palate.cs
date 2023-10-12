@@ -25,6 +25,7 @@ public class Palate : MonoBehaviour
     public List<GameObject> LoopBlocks;
 
     public List<GameObject> PalateObjects;
+    public InfoMoveLoopWindow infoMoveLoopWindow;
 
     private GameObject SelectedObject;
 
@@ -38,6 +39,7 @@ public class Palate : MonoBehaviour
     {
         SelectedObject = null;
         editMode = EditMode.Place;
+        infoMoveLoopWindow = GetComponent<InfoMoveLoopWindow>();
     }
 
     private void Update()
@@ -173,7 +175,7 @@ public class Palate : MonoBehaviour
         }
         if (editMode == EditMode.Loop)
         {
-            SetLoopMod.SetActive(true);
+            SelectOnLOoopMod();
         }
     }
 
@@ -281,7 +283,9 @@ public class Palate : MonoBehaviour
         { 
             editMode = EditMode.Loop;
             currentLoopEdit = LoopType.Move;
+            SelectLoopType(0);
             DrawLoopTableLine();
+            UpdateLoopTable();
         }
         InfoButton.SetActive(false);
     }
@@ -327,16 +331,25 @@ public class Palate : MonoBehaviour
     public void CreateMoveLoopB()
     {
         if (currentObject == null) { return; }
-        MoveLoop ml = currentObject.GetComponent<MoveLoop>();
+        MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
+        LoopBlocksList lbl = currentObject.GetComponent<LoopBlocksList>();
         if (ml == null)
         {
-            currentObject.AddComponent<MoveLoop>();
-            ml = currentObject.GetComponent<MoveLoop>();
-            ml.loopList = new List<MoveLoopBlock>();
+            currentObject.AddComponent<MoveLoopData>();
+            ml = currentObject.GetComponent<MoveLoopData>();
+            ml.ml = new MoveLoop();
+            ml.ml.loopList = new List<MoveLoopBlock>();
+            ml.ml.loopTime = 10f;
         }
+        if (lbl == null)
+        {
+            currentObject.AddComponent<LoopBlocksList>();
+            lbl = currentObject.GetComponent<LoopBlocksList>();        }
+
+        //맨끝 블럭 무한생성안되게 처리
         var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
-        MoveLoopBlock block = button.GetComponent<MoveLoopBlock>();
-        List<MoveLoopBlock> blocks = ml.loopList;
+        MoveLoopBlock block = new MoveLoopBlock();
+        List<MoveLoopBlock> blocks = ml.ml.loopList;
         if (blocks.Count == 0)
         {
             block.startTime = 0;
@@ -348,10 +361,99 @@ public class Palate : MonoBehaviour
             block.startPos = blocks[blocks.Count - 1].endPos;
         }
         block.playTime = 1f;
+        float maxTime = LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f;
+        if (maxTime < block.playTime) 
+        {
+            block.playTime = maxTime - block.startTime;
+            if (block.playTime - block.startTime <= 0)
+            {
+                Destroy(button);
+                Debug.Log("TooMuchButtons!");
+                return;
+            }
+        }
+
         block.endPos = new Vector2(block.startPos.x + 1f, block.startPos.y);
-        ml.loopList.Add(block);
+        ml.ml.loopList.Add(block);
+
+        
         RectTransform rect = button.GetComponent<RectTransform>();
         rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime*50, LoopLines[0].transform.position.y);
         rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
+        lbl.moveLoopBlocks.Add(button);
+            
+        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, block, block.startPos, block.startTime, maxTime));
+    }
+
+    private void SelectOnLOoopMod()
+    {
+        SetLoopMod.SetActive(true);
+        SelectLoopType(0);
+        UpdateLoopTable();
+    }
+    private void UpdateLoopTable()
+    {
+        var olds = GameObject.FindGameObjectsWithTag("MoveLoopButton");
+        foreach (var c in olds)
+        {
+            Destroy(c.gameObject);
+        }
+
+        if (currentObject == null)
+        {
+            return;
+        }
+
+        LoopBlocksList lb = currentObject.GetComponent<LoopBlocksList>();
+        MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
+
+        if (lb == null)
+            return;
+        lb.moveLoopBlocks = new List<GameObject>();
+
+        if (ml != null)
+        {
+            int count = 0;
+            foreach (var c in ml.ml.loopList)
+            {
+                var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
+                if (count == 0)
+                {
+                    if (ml.ml.loopList.Count > count + 1)
+                    {
+                        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
+                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                                        .OpenWindow(button, c, c.startPos, nextMl.startTime, 0));
+                    }
+                    else
+                    {
+                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                                        .OpenWindow(button, c, c.startPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f, 0));
+                    }
+                }
+                else
+                {
+                    MoveLoopBlock pastMl = ml.ml.loopList[count - 1];
+                    if (ml.ml.loopList.Count > count + 1)
+                    {
+                        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
+                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                                        .OpenWindow(button, c, pastMl.endPos, nextMl.startTime, pastMl.startTime + pastMl.playTime));
+                    }
+                    else
+                    {
+                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                                        .OpenWindow(button, c, pastMl.endPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x/50f, pastMl.startTime + pastMl.playTime));
+                    }
+                    
+                }
+
+                RectTransform rect = button.GetComponent<RectTransform>();
+                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50, LoopLines[0].transform.position.y);
+                rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
+                lb.moveLoopBlocks.Add(button);
+                count++;
+            }
+        }
     }
 }

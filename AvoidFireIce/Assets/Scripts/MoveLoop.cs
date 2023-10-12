@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveLoop : MonoBehaviour
+public class MoveLoop
 {
     public int initCode = 0;
     public float loopTime = 1f;
@@ -16,6 +16,10 @@ public class MoveLoop : MonoBehaviour
         this.initCode = initCode;
         this.loopTime = loopTime;
         this.loopList = loopList;
-        Debug.Log(loopList.Count);
+    }
+
+    private void Awake()
+    {
+        loopList = new List<MoveLoopBlock>();
     }
 }

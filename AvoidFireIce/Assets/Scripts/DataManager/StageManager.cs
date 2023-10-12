@@ -29,27 +29,23 @@ public class StageManager : MonoBehaviour
     {
         var path = "Stages/" + fileName;
         var json = Resources.Load<TextAsset>(path).text;
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
-
-        foreach (var loadedObj in saveData.objects)
-        {
-            GameObject obj = Instantiate(ObjsPrefab[loadedObj.code], loadedObj.pos, loadedObj.rot);
-            if (Defines.instance.isHaveElement(loadedObj.code))
-            {
-                DangerObject dangerObj = obj.GetComponent<DangerObject>();
-                dangerObj.element = (Element)loadedObj.element;
-                dangerObj.SetColor();
-            }
-        }
-
+        MakeObjs(json);
     }
 
     public void Load(string fileName)
     {
         var path = fileName + ".json";
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
+        MakeObjs(json);
+    }
 
+    private void MakeObjs(string json)
+    {
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter());
+
+        int loadCount = 0;
+        int moveLoopsCount = 0;
+        int initCode = saveData.moveLoops[moveLoopsCount].initCode;
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(ObjsPrefab[loadedObj.code], loadedObj.pos, loadedObj.rot);
@@ -59,7 +55,21 @@ public class StageManager : MonoBehaviour
                 dangerObj.element = (Element)loadedObj.element;
                 dangerObj.SetColor();
             }
+            if (initCode == loadCount)
+            {
+                MoveLoop ml = saveData.moveLoops[moveLoopsCount];
+                moveLoopsCount++;
+                if (saveData.moveLoops.Count > moveLoopsCount)
+                {
+                    initCode = saveData.moveLoops[moveLoopsCount].initCode;
+                }
+                MoveLoopPlayer mlp = obj.AddComponent<MoveLoopPlayer>();
+                mlp.loopTime = ml.loopTime;
+                mlp.startPos = obj.transform.position;
+                mlp.loopList = ml.loopList;
+                mlp.Init();
+            }
+            loadCount++;
         }
     }
-
 }

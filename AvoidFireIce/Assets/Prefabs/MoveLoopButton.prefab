@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 9169265886923010796}
   - component: {fileID: 4304976600066541286}
   - component: {fileID: 3773713867639494897}
-  - component: {fileID: 946437700936530343}
   m_Layer: 0
   m_Name: MoveLoopButton
-  m_TagString: Untagged
+  m_TagString: MoveLoopButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -36,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: -0.000015258789, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &9169265886923010796
@@ -121,19 +120,3 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &946437700936530343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8267942619196278256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b50559d6746c244ae43dbf03fe0ad5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startTime: 0
-  playTime: 0
-  startPos: {x: 0, y: 0}
-  endPos: {x: 0, y: 0}
