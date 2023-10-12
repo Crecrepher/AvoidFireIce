@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -16,11 +17,10 @@ public class InfoMoveLoopWindow : MonoBehaviour
     public GameObject MoveLoopLine;
     public GameObject MapLeftBottom;
 
-    private MoveLoopBlock mlb;
+    private GameObject currentObject;
+    private MoveLoopData ml;
     private GameObject button;
-    private Vector2 startPos;
-    private float maxTime;
-    private float minTime;
+    private int index;
 
     private void Start()
     {
@@ -32,25 +32,20 @@ public class InfoMoveLoopWindow : MonoBehaviour
         InputBoxes[5].onEndEdit.AddListener(VecYChanged);
     }
 
-    public void OpenWindow(GameObject button ,MoveLoopBlock mlb, Vector2 startPos,float maxTime,float minTime)
+    public void OpenWindow(GameObject button, GameObject currentObject, int index)
     {
-        this.mlb = mlb;
+        ml = currentObject.GetComponent<MoveLoopData>();
+        this.currentObject = currentObject;
         this.button = button;
-        this.startPos = startPos;
-        this.maxTime = maxTime;
-        this.minTime = minTime;
+        this.index = index;
         Window.SetActive(true);
         MoveMarker.SetActive(true);
-        InputBoxes[0].text = mlb.startTime.ToString();
-        InputBoxes[1].text = mlb.playTime.ToString();
-        //InputBoxes[2].text = mlb.endPos.x.ToString();
-        //InputBoxes[3].text = mlb.endPos.y.ToString();
-        //InputBoxes[4].text = (mlb.endPos.x - startPos.x).ToString();
-        //InputBoxes[5].text = (mlb.endPos.y - startPos.y).ToString();
-        InputBoxes[2].text = (mlb.endPos.x - MapLeftBottom.transform.position.x).ToString();
-        InputBoxes[3].text = (mlb.endPos.y - MapLeftBottom.transform.position.y).ToString();
-        InputBoxes[4].text = (mlb.endPos.x - startPos.x).ToString();
-        InputBoxes[5].text = (mlb.endPos.y - startPos.y).ToString();
+        InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString();
+        InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString();
+        InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
+        InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
+        InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - currentObject.transform.position.x).ToString();
+        InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - currentObject.transform.position.y).ToString();
     }
 
     public void CloseWindow()
@@ -61,18 +56,21 @@ public class InfoMoveLoopWindow : MonoBehaviour
 
     public void StartTimeChanged(string newValue)
     {
-        if (mlb != null)
+        if (ml.ml.loopList[index] != null)
         {
             float value;
             if (float.TryParse(newValue, out value))
             {
-                if(value < minTime)
+                float minTime = index == 0 ? 0f : ml.ml.loopList[index - 1].startTime + ml.ml.loopList[index - 1].playTime;
+                if (value < minTime)
                 {
                     value = minTime;
                 }
-                if (value + mlb.playTime > maxTime) 
+
+                float maxTime = index < ml.ml.loopList.Count - 1 ? ml.ml.loopList[index + 1].startTime : ml.ml.loopTime;
+                if (value + ml.ml.loopList[index].playTime > maxTime)
                 {
-                    value = maxTime - mlb.playTime;
+                    // value = maxTime - mlb.playTime;
                 }
                 mlb.startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();

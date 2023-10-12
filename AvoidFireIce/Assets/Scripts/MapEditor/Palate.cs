@@ -26,6 +26,7 @@ public class Palate : MonoBehaviour
 
     public List<GameObject> PalateObjects;
     public InfoMoveLoopWindow infoMoveLoopWindow;
+    public GameObject MainLoopInfo;
 
     private GameObject SelectedObject;
 
@@ -52,7 +53,7 @@ public class Palate : MonoBehaviour
                     {
                         if (!ToggleChecker())
                         {
-                            
+
                             Vector3 mouseDownPos = Input.mousePosition;
                             Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
                             RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
@@ -175,7 +176,7 @@ public class Palate : MonoBehaviour
         }
         if (editMode == EditMode.Loop)
         {
-            SelectOnLOoopMod();
+            SelectOnLoopMod();
         }
     }
 
@@ -254,7 +255,7 @@ public class Palate : MonoBehaviour
         HandleSelection(madeObject);
     }
 
-    public void OpenCurrentObjectInfo() 
+    public void OpenCurrentObjectInfo()
     {
         infoWindow.OpenWindow(currentObject);
     }
@@ -271,6 +272,9 @@ public class Palate : MonoBehaviour
 
     }
 
+
+    //Loop
+
     public void SetActiveLoopMod(bool on)
     {
         PlaceMod.SetActive(!on);
@@ -279,8 +283,8 @@ public class Palate : MonoBehaviour
             SetLoopMod.SetActive(on);
             infoWindow.CloseWindow();
         }
-        if (on) 
-        { 
+        if (on)
+        {
             editMode = EditMode.Loop;
             currentLoopEdit = LoopType.Move;
             SelectLoopType(0);
@@ -321,7 +325,7 @@ public class Palate : MonoBehaviour
         }
 
         int count = (int)(LoopTableBars.GetComponent<RectTransform>().rect.width - 30) / 50;
-        for (int i = 0; i < count+1; i++)
+        for (int i = 0; i < count + 1; i++)
         {
             var line = Instantiate(LoopTableGrid, new Vector3(30 + (i * 50), 0, 0), Quaternion.identity);
             line.transform.SetParent(LoopTableViewContent.transform, false);
@@ -344,7 +348,8 @@ public class Palate : MonoBehaviour
         if (lbl == null)
         {
             currentObject.AddComponent<LoopBlocksList>();
-            lbl = currentObject.GetComponent<LoopBlocksList>();        }
+            lbl = currentObject.GetComponent<LoopBlocksList>();
+        }
 
         //맨끝 블럭 무한생성안되게 처리
         var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
@@ -357,12 +362,12 @@ public class Palate : MonoBehaviour
         }
         else
         {
-            block.startTime = blocks[blocks.Count-1].startTime + blocks[blocks.Count-1].playTime;
+            block.startTime = blocks[blocks.Count - 1].startTime + blocks[blocks.Count - 1].playTime;
             block.startPos = blocks[blocks.Count - 1].endPos;
         }
         block.playTime = 1f;
         float maxTime = LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f;
-        if (maxTime < block.playTime) 
+        if (maxTime < block.playTime)
         {
             block.playTime = maxTime - block.startTime;
             if (block.playTime - block.startTime <= 0)
@@ -376,16 +381,16 @@ public class Palate : MonoBehaviour
         block.endPos = new Vector2(block.startPos.x + 1f, block.startPos.y);
         ml.ml.loopList.Add(block);
 
-        
+
         RectTransform rect = button.GetComponent<RectTransform>();
-        rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime*50, LoopLines[0].transform.position.y);
+        rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50, LoopLines[0].transform.position.y);
         rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
         lbl.moveLoopBlocks.Add(button);
-            
+
         button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, block, block.startPos, block.startTime, maxTime));
     }
 
-    private void SelectOnLOoopMod()
+    private void SelectOnLoopMod()
     {
         SetLoopMod.SetActive(true);
         SelectLoopType(0);
@@ -413,40 +418,42 @@ public class Palate : MonoBehaviour
 
         if (ml != null)
         {
+            RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
+            rt.sizeDelta.Set(ml.ml.loopTime * 50f, rt.rect.y);
             int count = 0;
             foreach (var c in ml.ml.loopList)
             {
                 var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
-                if (count == 0)
-                {
-                    if (ml.ml.loopList.Count > count + 1)
-                    {
-                        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
-                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                                        .OpenWindow(button, c, c.startPos, nextMl.startTime, 0));
-                    }
-                    else
-                    {
-                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                                        .OpenWindow(button, c, c.startPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f, 0));
-                    }
-                }
-                else
-                {
-                    MoveLoopBlock pastMl = ml.ml.loopList[count - 1];
-                    if (ml.ml.loopList.Count > count + 1)
-                    {
-                        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
-                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                                        .OpenWindow(button, c, pastMl.endPos, nextMl.startTime, pastMl.startTime + pastMl.playTime));
-                    }
-                    else
-                    {
-                        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                                        .OpenWindow(button, c, pastMl.endPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x/50f, pastMl.startTime + pastMl.playTime));
-                    }
-                    
-                }
+                //if (count == 0)
+                //{
+                //    if (ml.ml.loopList.Count > count + 1)
+                //    {
+                //        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
+                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                //                        .OpenWindow(button, c, c.startPos, nextMl.startTime, 0));
+                //    }
+                //    else
+                //    {
+                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                //                        .OpenWindow(button, c, c.startPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f, 0));
+                //    }
+                //}
+                //else
+                //{
+                //    MoveLoopBlock pastMl = ml.ml.loopList[count - 1];
+                //    if (ml.ml.loopList.Count > count + 1)
+                //    {
+                //        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
+                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                //                        .OpenWindow(button, c, pastMl.endPos, nextMl.startTime, pastMl.startTime + pastMl.playTime));
+                //    }
+                //    else
+                //    {
+                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
+                //                        .OpenWindow(button, c, pastMl.endPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f, pastMl.startTime + pastMl.playTime));
+                //    }
+
+                //}
 
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50, LoopLines[0].transform.position.y);
