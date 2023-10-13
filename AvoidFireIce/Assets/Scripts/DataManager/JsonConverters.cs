@@ -129,11 +129,6 @@ public class QuaternionConverter : JsonConverter<Quaternion>
 
     public class MoveLoopConverter : JsonConverter<MoveLoop>
     {
-        //public float startTime;
-        //public float playTime;
-
-        //public Vector2 startPos;
-        //public Vector2 endPos;
         public override MoveLoop ReadJson(JsonReader reader, Type objectType, MoveLoop existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             var jobj = JObject.Load(reader);
@@ -147,6 +142,8 @@ public class QuaternionConverter : JsonConverter<Quaternion>
                 loopBlock.playTime = (float)jobj[$"LLpT{i}"];
                 loopBlock.startPos = new Vector2((float)jobj[$"LLsP{i}X"], (float)jobj[$"LLsP{i}Y"]);
                 loopBlock.endPos = new Vector2((float)jobj[$"LLeP{i}X"], (float)jobj[$"LLeP{i}Y"]);
+                loopBlock.easeIn = (bool)jobj[$"EaseIn{i}"];
+                loopBlock.easeOut = (bool)jobj[$"EaseOut{i}"];
                 z.Add(loopBlock);
             }
             return new MoveLoop(x, y, z);
@@ -177,6 +174,58 @@ public class QuaternionConverter : JsonConverter<Quaternion>
                 writer.WriteValue(value.loopList[i].endPos.x);
                 writer.WritePropertyName($"LLeP{i}Y");
                 writer.WriteValue(value.loopList[i].endPos.y);
+                writer.WritePropertyName($"EaseIn{i}");
+                writer.WriteValue(value.loopList[i].easeIn);
+                writer.WritePropertyName($"EaseOut{i}");
+                writer.WriteValue(value.loopList[i].easeOut);
+            }
+            writer.WriteEndObject();
+        }
+    }
+
+    public class RotateLoopConverter : JsonConverter<RotateLoop>
+    {
+        public override RotateLoop ReadJson(JsonReader reader, Type objectType, RotateLoop existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            var jobj = JObject.Load(reader);
+            var x = (int)jobj["InitCode"];
+            var y = (float)jobj["LoopTime"];
+            var z = new List<RotateLoopBlock>();
+            for (int i = 0; i < (int)jobj["LoopListCount"]; i++)
+            {
+                RotateLoopBlock loopBlock = new RotateLoopBlock();
+                loopBlock.startTime = (float)jobj[$"LLsT{i}"];
+                loopBlock.playTime = (float)jobj[$"LLpT{i}"];
+                loopBlock.rot = (float)jobj[$"Rot{i}"];
+                loopBlock.easeIn = (bool)jobj[$"EaseIn{i}"];
+                loopBlock.easeOut = (bool)jobj[$"EaseOut{i}"];
+                z.Add(loopBlock);
+            }
+            return new RotateLoop(x, y, z);
+        }
+
+        public override void WriteJson(JsonWriter writer, RotateLoop value, JsonSerializer serializer)
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("InitCode");
+            writer.WriteValue(value.initCode);
+            writer.WritePropertyName("LoopTime");
+            writer.WriteValue(value.loopTime);
+            writer.WritePropertyName("LoopListCount");
+            writer.WriteValue(value.loopList.Count);
+            for (int i = 0; i < value.loopList.Count; i++)
+            {
+                writer.WritePropertyName($"LLsT{i}");
+                writer.WriteValue(value.loopList[i].startTime);
+                writer.WritePropertyName($"LLpT{i}");
+                writer.WriteValue(value.loopList[i].playTime);
+                writer.WritePropertyName($"Rot{i}");
+                writer.WriteValue(value.loopList[i].rot);
+                writer.WritePropertyName($"EaseIn{i}");
+                writer.WriteValue(value.loopList[i].easeIn);
+                writer.WritePropertyName($"EaseOut{i}");
+                writer.WriteValue(value.loopList[i].easeOut);
             }
             writer.WriteEndObject();
         }

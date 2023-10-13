@@ -1,21 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class MoveLoopBlock : IComparable<MoveLoopBlock>
+public class RotateLoopBlock : IComparable<RotateLoopBlock>
 {
     public float startTime;
     public float playTime;
 
-    public Vector2 startPos;
-    public Vector2 endPos;
+    public float rot = 90;
 
     public bool easeIn = false;
     public bool easeOut = false;
 
-    public int CompareTo(MoveLoopBlock other)
+    public int CompareTo(RotateLoopBlock other)
     {
         if (other == null)
             return 1;

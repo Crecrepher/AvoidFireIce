@@ -41,11 +41,23 @@ public class StageManager : MonoBehaviour
 
     private void MakeObjs(string json)
     {
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter());
 
         int loadCount = 0;
         int moveLoopsCount = 0;
-        int initCode = saveData.moveLoops[moveLoopsCount].initCode;
+        int rotateLoopsCount = 0;
+
+        int moveInitCode = 0;
+        int rotateInitCode = 0;
+        if (saveData.moveLoops != null && saveData.moveLoops.Count > 0)
+        {
+            moveInitCode = saveData.moveLoops[moveLoopsCount].initCode;
+        }
+        if (saveData.rotateLoops != null && saveData.rotateLoops.Count > 0)
+        {
+            rotateInitCode = saveData.rotateLoops[rotateLoopsCount].initCode;
+        }
+
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(ObjsPrefab[loadedObj.code], loadedObj.pos, loadedObj.rot);
@@ -55,19 +67,33 @@ public class StageManager : MonoBehaviour
                 dangerObj.element = (Element)loadedObj.element;
                 dangerObj.SetColor();
             }
-            if (initCode == loadCount)
+            if (moveInitCode == loadCount && saveData.moveLoops != null && saveData.moveLoops.Count > 0)
             {
                 MoveLoop ml = saveData.moveLoops[moveLoopsCount];
                 moveLoopsCount++;
                 if (saveData.moveLoops.Count > moveLoopsCount)
                 {
-                    initCode = saveData.moveLoops[moveLoopsCount].initCode;
+                    moveInitCode = saveData.moveLoops[moveLoopsCount].initCode;
                 }
                 MoveLoopPlayer mlp = obj.AddComponent<MoveLoopPlayer>();
                 mlp.loopTime = ml.loopTime;
                 mlp.startPos = obj.transform.position;
                 mlp.loopList = ml.loopList;
                 mlp.Init();
+            }
+            if (rotateInitCode == loadCount && saveData.rotateLoops != null && saveData.rotateLoops.Count > 0)
+            {
+                RotateLoop rl = saveData.rotateLoops[rotateLoopsCount];
+                rotateLoopsCount++;
+                if (saveData.rotateLoops.Count > rotateLoopsCount)
+                {
+                    rotateInitCode = saveData.rotateLoops[rotateLoopsCount].initCode;
+                }
+                RotateLoopPlayer rlp = obj.AddComponent<RotateLoopPlayer>();
+                rlp.loopTime = rl.loopTime;
+                rlp.startRot = obj.transform.rotation;
+                rlp.loopList = rl.loopList;
+                rlp.Init();
             }
             loadCount++;
         }

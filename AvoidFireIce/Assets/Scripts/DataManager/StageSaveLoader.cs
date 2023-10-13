@@ -5,22 +5,6 @@ using Newtonsoft.Json;
 using System.IO;
 using static QuaternionConverter;
 
-
-//public class WallInfo
-//{
-//    public Vector2 position;
-
-//    public WallInfo() { }
-//    public WallInfo(Vector2 position) { this.position = position; }
-//}
-
-//public class EnemyInfo
-//{
-//    public Vector2 position;
-//    public EnemyInfo() { }
-//    public EnemyInfo(Vector2 position) { this.position = position; }
-//}
-
 public class EditorObjInfo
 {
     public int code;
@@ -44,6 +28,7 @@ public class StageSaveLoader : MonoBehaviour
     {
         public List<EditorObjInfo> objects;
         public List<MoveLoop> moveLoops;
+        public List<RotateLoop> rotateLoops;
     }
 
     public static StageSaveLoader instance
@@ -86,6 +71,7 @@ public class StageSaveLoader : MonoBehaviour
         var saveData = new SaveData();
         saveData.objects = new List<EditorObjInfo>();
         saveData.moveLoops = new List<MoveLoop>();
+        saveData.rotateLoops = new List<RotateLoop>();
 
         var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
         foreach (var obj in objs)
@@ -103,7 +89,7 @@ public class StageSaveLoader : MonoBehaviour
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
 
-        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter(), new MoveLoopConverter());
+        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter());
 
         File.WriteAllText(path, json);
     }
@@ -130,6 +116,14 @@ public class StageSaveLoader : MonoBehaviour
             saveMl.initCode = saveCount;
             saveData.moveLoops.Add(saveMl);
         }
+
+        RotateLoopData rld = obj.GetComponent<RotateLoopData>();
+        if (rld != null)
+        {
+            RotateLoop saveRl = rld.rl;
+            saveRl.initCode = saveCount;
+            saveData.rotateLoops.Add(saveRl);
+        }
         saveCount++;
     }
 
@@ -150,8 +144,9 @@ public class StageSaveLoader : MonoBehaviour
 
         int LoadCount = 0;
         int LoadMoveLoopCount = 0;
+        int LoadRotateLoopCount = 0;
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter());
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(EditorObjs[loadedObj.code], loadedObj.pos, loadedObj.rot);
@@ -174,7 +169,23 @@ public class StageSaveLoader : MonoBehaviour
                     LoadMoveLoopCount++;
                 }
             }
-            
+            if (saveData.rotateLoops != null && LoadRotateLoopCount < saveData.rotateLoops.Count)
+            {
+                if (saveData.rotateLoops[LoadRotateLoopCount].initCode == LoadCount)
+                {
+                    LoopBlocksList lbl = obj.GetComponent<LoopBlocksList>();
+                    if (lbl == null)
+                    {
+                        lbl = obj.AddComponent<LoopBlocksList>();
+                    }
+                    lbl.rotateLoopBlocks = new List<GameObject>();
+                    obj.AddComponent<RotateLoopData>().rl = new RotateLoop();
+                    RotateLoop newRl = obj.GetComponent<RotateLoopData>().rl;
+                    newRl.loopTime = saveData.rotateLoops[LoadRotateLoopCount].loopTime;
+                    newRl.loopList = saveData.rotateLoops[LoadRotateLoopCount].loopList;
+                    LoadRotateLoopCount++;
+                }
+            }
             LoadCount++;
         }
     }

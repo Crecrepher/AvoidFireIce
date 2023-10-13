@@ -1,5 +1,8 @@
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -25,8 +28,11 @@ public class Palate : MonoBehaviour
     public List<GameObject> LoopBlocks;
 
     public List<GameObject> PalateObjects;
-    public InfoMoveLoopWindow infoMoveLoopWindow;
+    private InfoMoveLoopWindow infoMoveLoopWindow;
     public GameObject MainLoopInfo;
+    public List<TMP_InputField> MainLoopInfoInputs;
+    public Toggle MainLoopInfoBind;
+    private InfoRotateLoopWindow infoRotateLoopWindow;
 
     private GameObject SelectedObject;
 
@@ -36,11 +42,17 @@ public class Palate : MonoBehaviour
     private EditMode editMode;
     private LoopType currentLoopEdit;
 
+    private void Awake()
+    {
+        MainLoopInfoInputs[0].onEndEdit.AddListener(MoveLoopLengthChanged);
+        MainLoopInfoInputs[1].onEndEdit.AddListener(RotateLoopLengthChanged);
+    }
     private void OnEnable()
     {
         SelectedObject = null;
         editMode = EditMode.Place;
         infoMoveLoopWindow = GetComponent<InfoMoveLoopWindow>();
+        infoRotateLoopWindow = GetComponent<InfoRotateLoopWindow>();
     }
 
     private void Update()
@@ -199,6 +211,8 @@ public class Palate : MonoBehaviour
         if (editMode == EditMode.Loop)
         {
             SetLoopMod.SetActive(false);
+            OpenMainLoopInfo(false);
+            infoMoveLoopWindow.CloseWindow();
         }
     }
 
@@ -251,7 +265,21 @@ public class Palate : MonoBehaviour
 
     public void DuplicateCurrentObj()
     {
-        GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0.5f, 0), currentObject.transform.rotation);
+        GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0f, 0f), currentObject.transform.rotation);
+        MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
+        if (ml != null) 
+        {
+            madeObject.GetComponent<MoveLoopData>().ml = new MoveLoop();
+            madeObject.GetComponent<MoveLoopData>().ml.loopTime = ml.ml.loopTime;
+            madeObject.GetComponent<MoveLoopData>().ml.loopList = ml.ml.loopList.ToList();
+        }
+        RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
+        if (rl != null)
+        {
+            madeObject.GetComponent<RotateLoopData>().rl = new RotateLoop();
+            madeObject.GetComponent<RotateLoopData>().rl.loopTime = rl.rl.loopTime;
+            madeObject.GetComponent<RotateLoopData>().rl.loopList = rl.rl.loopList.ToList();
+        }
         HandleSelection(madeObject);
     }
 
@@ -296,6 +324,8 @@ public class Palate : MonoBehaviour
 
     public void SelectLoopType(int type)
     {
+        infoMoveLoopWindow.Release();
+        infoRotateLoopWindow.Release();
         for (int i = 0; i < 3; i++)
         {
             if (i == type)
@@ -304,6 +334,15 @@ public class Palate : MonoBehaviour
                 bar.GetComponent<LayoutElement>().preferredHeight = 50;
                 var rect = LoopLines[i].GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(rect.sizeDelta.x, 13f);
+                var buttons = LoopLines[i].GetComponentsInChildren<RectTransform>();
+                if (buttons != null && buttons.Length > 0)
+                {
+                    foreach (var button in buttons)
+                    {
+                        if (rect == button) continue;
+                        button.sizeDelta = new Vector2(button.sizeDelta.x, 30f);
+                    }
+                }
             }
             else
             {
@@ -311,6 +350,15 @@ public class Palate : MonoBehaviour
                 bar.GetComponent<LayoutElement>().preferredHeight = 25;
                 var rect = LoopLines[i].GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(rect.sizeDelta.x, 3f);
+                var buttons = LoopLines[i].GetComponentsInChildren<RectTransform>();
+                if (buttons != null && buttons.Length > 0)
+                {
+                    foreach (var button in buttons)
+                    {
+                        if (rect == button) continue;
+                        button.sizeDelta = new Vector2(button.sizeDelta.x, 10f);
+                    }
+                }
             }
         }
         currentLoopEdit = (LoopType)type;
@@ -335,59 +383,86 @@ public class Palate : MonoBehaviour
     public void CreateMoveLoopB()
     {
         if (currentObject == null) { return; }
-        MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
-        LoopBlocksList lbl = currentObject.GetComponent<LoopBlocksList>();
-        if (ml == null)
+        LoopBlocksList lbl = LoopBlocksListMaker();
+        switch (currentLoopEdit)
         {
-            currentObject.AddComponent<MoveLoopData>();
-            ml = currentObject.GetComponent<MoveLoopData>();
-            ml.ml = new MoveLoop();
-            ml.ml.loopList = new List<MoveLoopBlock>();
-            ml.ml.loopTime = 10f;
-        }
-        if (lbl == null)
-        {
-            currentObject.AddComponent<LoopBlocksList>();
-            lbl = currentObject.GetComponent<LoopBlocksList>();
-        }
+            case LoopType.Move:
+                {
+                    MoveLoopData ml = MoveLoopMaker();
+                    var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
+                    MoveLoopBlock block = new MoveLoopBlock();
+                    List<MoveLoopBlock> blocks = ml.ml.loopList;
+                    if (blocks.Count == 0)
+                    {
+                        block.startTime = 0;
+                        block.startPos = currentObject.transform.position;
+                    }
+                    else
+                    {
+                        block.startTime = blocks[blocks.Count - 1].startTime + blocks[blocks.Count - 1].playTime;
+                        block.startPos = blocks[blocks.Count - 1].endPos;
+                    }
+                    block.playTime = 1f;
+                    if (ml.ml.loopTime < block.startTime + block.playTime)
+                    {
+                        block.playTime = ml.ml.loopTime - block.startTime;
+                        if (block.playTime <= 0)
+                        {
+                            Destroy(button);
+                            Debug.Log("TooMuchButtons!");
+                            return;
+                        }
+                    }
+                    block.endPos = new Vector2(block.startPos.x + 1f, block.startPos.y);
+                    ml.ml.loopList.Add(block);
 
-        //맨끝 블럭 무한생성안되게 처리
-        var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
-        MoveLoopBlock block = new MoveLoopBlock();
-        List<MoveLoopBlock> blocks = ml.ml.loopList;
-        if (blocks.Count == 0)
-        {
-            block.startTime = 0;
-            block.startPos = currentObject.transform.position;
+                    RectTransform rect = button.GetComponent<RectTransform>();
+                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50, LoopLines[0].transform.position.y);
+                    rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
+                    lbl.moveLoopBlocks.Add(button);
+
+                    button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, currentObject, ml.ml.loopList.IndexOf(block)));
+                }
+                break;
+            case LoopType.Rotate:
+                {
+                    RotateLoopData rl = RotateLoopMaker();
+                    var button = Instantiate(LoopBlocks[1], LoopLines[1].transform);
+                    RotateLoopBlock block = new RotateLoopBlock();
+                    List<RotateLoopBlock> blocks = rl.rl.loopList;
+                    if (blocks.Count == 0)
+                    {
+                        block.startTime = 0;
+                    }
+                    else
+                    {
+                        block.startTime = blocks[blocks.Count - 1].startTime + blocks[blocks.Count - 1].playTime;
+                    }
+                    block.rot = 90;
+                    block.playTime = 1f;
+                    if (rl.rl.loopTime < block.startTime + block.playTime)
+                    {
+                        block.playTime = rl.rl.loopTime - block.startTime;
+                        if (block.playTime <= 0)
+                        {
+                            Destroy(button);
+                            Debug.Log("TooMuchButtons!");
+                            return;
+                        }
+                    }
+                    rl.rl.loopList.Add(block);
+
+                    RectTransform rect = button.GetComponent<RectTransform>();
+                    rect.position = new Vector2(LoopLines[1].transform.position.x + block.startTime * 50, LoopLines[1].transform.position.y);
+                    rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
+                    lbl.rotateLoopBlocks.Add(button);
+
+                    button.GetComponent<Button>().onClick.AddListener(() => infoRotateLoopWindow.OpenWindow(button, currentObject, rl.rl.loopList.IndexOf(block)));
+                }
+                break;
+            case LoopType.Fire:
+                break;
         }
-        else
-        {
-            block.startTime = blocks[blocks.Count - 1].startTime + blocks[blocks.Count - 1].playTime;
-            block.startPos = blocks[blocks.Count - 1].endPos;
-        }
-        block.playTime = 1f;
-        float maxTime = LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f;
-        if (maxTime < block.playTime)
-        {
-            block.playTime = maxTime - block.startTime;
-            if (block.playTime - block.startTime <= 0)
-            {
-                Destroy(button);
-                Debug.Log("TooMuchButtons!");
-                return;
-            }
-        }
-
-        block.endPos = new Vector2(block.startPos.x + 1f, block.startPos.y);
-        ml.ml.loopList.Add(block);
-
-
-        RectTransform rect = button.GetComponent<RectTransform>();
-        rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50, LoopLines[0].transform.position.y);
-        rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
-        lbl.moveLoopBlocks.Add(button);
-
-        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, block, block.startPos, block.startTime, maxTime));
     }
 
     private void SelectOnLoopMod()
@@ -395,11 +470,19 @@ public class Palate : MonoBehaviour
         SetLoopMod.SetActive(true);
         SelectLoopType(0);
         UpdateLoopTable();
+        OpenMainLoopInfo(false);
+        infoMoveLoopWindow.index = -1;
+        infoRotateLoopWindow.index = -1;
     }
-    private void UpdateLoopTable()
+    public void UpdateLoopTable()
     {
-        var olds = GameObject.FindGameObjectsWithTag("MoveLoopButton");
-        foreach (var c in olds)
+        var olds1 = GameObject.FindGameObjectsWithTag("MoveLoopButton");
+        var olds2 = GameObject.FindGameObjectsWithTag("RotateLoopButton");
+        foreach (var c in olds1)
+        {
+            Destroy(c.gameObject);
+        }
+        foreach (var c in olds2)
         {
             Destroy(c.gameObject);
         }
@@ -411,56 +494,229 @@ public class Palate : MonoBehaviour
 
         LoopBlocksList lb = currentObject.GetComponent<LoopBlocksList>();
         MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
+        RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
 
         if (lb == null)
+        {
+            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2(500, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
             return;
+        }
+            
         lb.moveLoopBlocks = new List<GameObject>();
+        lb.rotateLoopBlocks = new List<GameObject>();
 
         if (ml != null)
         {
-            RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
-            rt.sizeDelta.Set(ml.ml.loopTime * 50f, rt.rect.y);
+            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2 (ml.ml.loopTime * 50f, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
             int count = 0;
             foreach (var c in ml.ml.loopList)
             {
                 var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
-                //if (count == 0)
-                //{
-                //    if (ml.ml.loopList.Count > count + 1)
-                //    {
-                //        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
-                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                //                        .OpenWindow(button, c, c.startPos, nextMl.startTime, 0));
-                //    }
-                //    else
-                //    {
-                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                //                        .OpenWindow(button, c, c.startPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f, 0));
-                //    }
-                //}
-                //else
-                //{
-                //    MoveLoopBlock pastMl = ml.ml.loopList[count - 1];
-                //    if (ml.ml.loopList.Count > count + 1)
-                //    {
-                //        MoveLoopBlock nextMl = ml.ml.loopList[count + 1];
-                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                //                        .OpenWindow(button, c, pastMl.endPos, nextMl.startTime, pastMl.startTime + pastMl.playTime));
-                //    }
-                //    else
-                //    {
-                //        button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow
-                //                        .OpenWindow(button, c, pastMl.endPos, LoopLines[0].GetComponent<RectTransform>().sizeDelta.x / 50f, pastMl.startTime + pastMl.playTime));
-                //    }
-
-                //}
+                button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, currentObject, ml.ml.loopList.IndexOf(c)));
 
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50, LoopLines[0].transform.position.y);
+                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f, LoopLines[0].transform.position.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
                 lb.moveLoopBlocks.Add(button);
                 count++;
             }
+            
+        }
+        else
+        {
+            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2(500, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
+        }
+
+        if (rl != null)
+        {
+            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2(rl.rl.loopTime * 50f, LoopLines[1].GetComponent<RectTransform>().sizeDelta.y);
+            int count = 0;
+            foreach (var c in rl.rl.loopList)
+            {
+                var button = Instantiate(LoopBlocks[1], LoopLines[1].transform);
+                button.GetComponent<Button>().onClick.AddListener(() => infoRotateLoopWindow.OpenWindow(button, currentObject, rl.rl.loopList.IndexOf(c)));
+
+                RectTransform rect = button.GetComponent<RectTransform>();
+                rect.position = new Vector2(LoopLines[1].transform.position.x + c.startTime * 50f, LoopLines[1].transform.position.y);
+                rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
+                lb.rotateLoopBlocks.Add(button);
+                count++;
+            }
+
+        }
+        else
+        {
+            LoopLines[1].GetComponent<RectTransform>().sizeDelta = new Vector2(500, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
+        }
+
+        DrawLoopTableLine();
+    }
+
+    public void OpenMainLoopInfo(bool on)
+    {
+        MainLoopInfo.SetActive(on);
+        if (currentObject == null) { return; }
+        if (on)
+        {
+            LoopBlocksList lbl = LoopBlocksListMaker();
+            MainLoopInfoBind.isOn = lbl.isTmeBind;
+
+            MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
+            if (ml != null)
+            {
+                MainLoopInfoInputs[0].text = ml.ml.loopTime.ToString();
+                RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(ml.ml.loopTime * 50f, rt.sizeDelta.y);
+            }
+            else
+            {
+                RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
+            }
+
+            RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
+            if (rl != null)
+            {
+                MainLoopInfoInputs[1].text = rl.rl.loopTime.ToString();
+                RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(rl.rl.loopTime * 50f, rt.sizeDelta.y);
+            }
+            else
+            {
+                RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
+            }
         }
     }
+
+    public void TimeBindSet()
+    {
+        LoopBlocksList lbl = LoopBlocksListMaker();
+        MainLoopInfoBind.isOn = lbl.isTmeBind;
+    }
+
+    public void MoveLoopLengthChanged(string newValue)
+    {
+        LoopBlocksList lbl = LoopBlocksListMaker();
+        MoveLoopData ml = MoveLoopMaker();
+
+        float value;
+        if (float.TryParse(newValue, out value))
+        {
+            float minLength = ml.ml.loopList.Count > 0 ? ml.ml.loopList[ml.ml.loopList.Count - 1].startTime + ml.ml.loopList[ml.ml.loopList.Count - 1].playTime : 0f;
+            if (value < minLength) { value = minLength; }
+            ml.ml.loopTime = value;
+            RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(ml.ml.loopTime * 50f, rt.sizeDelta.y);
+            MainLoopInfoInputs[0].text = value.ToString();
+        }
+        DrawLoopTableLine();
+    }
+
+    public void RotateLoopLengthChanged(string newValue)
+    {
+        LoopBlocksList lbl = LoopBlocksListMaker();
+        RotateLoopData rl = RotateLoopMaker();
+
+        float value;
+        if (float.TryParse(newValue, out value))
+        {
+            float minLength = rl.rl.loopList.Count > 0 ? rl.rl.loopList[rl.rl.loopList.Count - 1].startTime + rl.rl.loopList[rl.rl.loopList.Count - 1].playTime : 0f;
+            if (value < minLength) { value = minLength; }
+            rl.rl.loopTime = value;
+            RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(rl.rl.loopTime * 50f, rt.sizeDelta.y);
+            MainLoopInfoInputs[1].text = value.ToString();
+        }
+        DrawLoopTableLine();
+    }
+
+    private MoveLoopData MoveLoopMaker()
+    {
+        MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
+        if (ml == null)
+        {
+            ml = currentObject.AddComponent<MoveLoopData>();
+            ml.ml = new MoveLoop();
+            ml.ml.loopList = new List<MoveLoopBlock>();
+            ml.ml.loopTime = 10f;
+        }
+
+        return ml;
+    }
+
+    private LoopBlocksList LoopBlocksListMaker()
+    {
+        LoopBlocksList lbl = currentObject.GetComponent<LoopBlocksList>();
+
+        if (lbl == null)
+        {
+            lbl = currentObject.AddComponent<LoopBlocksList>();
+            lbl.moveLoopBlocks = new List<GameObject>();
+            lbl.rotateLoopBlocks = new List<GameObject>();
+            lbl.isTmeBind = false;
+        }
+
+        return lbl;
+    }
+
+    private RotateLoopData RotateLoopMaker()
+    {
+        RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
+        if (rl == null)
+        {   
+            rl = currentObject.AddComponent<RotateLoopData>();
+            rl.rl = new RotateLoop();
+            rl.rl.loopList = new List<RotateLoopBlock>();
+            rl.rl.loopTime = 10f;
+        }
+
+        return rl;
+    }
+    public void DeleteBlock()
+    {
+        if(currentObject == null) return;
+        int index = -1;
+            switch (currentLoopEdit)
+        {
+            case LoopType.Move:
+                index = infoMoveLoopWindow.index;
+                break;
+                case LoopType.Rotate:
+                index = infoRotateLoopWindow.index;
+                break;
+            case LoopType.Fire:
+                break;
+        }
+        if (index < 0) return;
+        var lbl = currentObject.GetComponent<LoopBlocksList>();
+        if (lbl == null) return;
+        switch (currentLoopEdit)
+        {
+            case LoopType.Move:
+                {
+                    var button = lbl.moveLoopBlocks[infoMoveLoopWindow.index];
+                    currentObject.GetComponent<MoveLoopData>().ml.loopList.RemoveAt(index);
+                    lbl.moveLoopBlocks.Remove(button);
+                    Destroy(button);
+                    infoMoveLoopWindow.CloseWindow();
+                    infoMoveLoopWindow.index = -1;
+                }
+                break;
+            case LoopType.Rotate:
+                {
+                    var button = lbl.rotateLoopBlocks[infoRotateLoopWindow.index];
+                    currentObject.GetComponent<RotateLoopData>().rl.loopList.RemoveAt(index);
+                    lbl.rotateLoopBlocks.Remove(button);
+                    Destroy(button);
+                    infoRotateLoopWindow.CloseWindow();
+                    infoRotateLoopWindow.index = -1;
+                }
+                break;
+            case LoopType.Fire:
+                break;
+        }
+        OpenMainLoopInfo(false);
+    }
+
 }

@@ -16,11 +16,13 @@ public class InfoMoveLoopWindow : MonoBehaviour
     public GameObject MoveMarker;
     public GameObject MoveLoopLine;
     public GameObject MapLeftBottom;
+    public GameObject MainLoopInfo;
 
     private GameObject currentObject;
     private MoveLoopData ml;
     private GameObject button;
-    private int index;
+    private Color pastColor;
+    public int index;
 
     private void Start()
     {
@@ -34,9 +36,15 @@ public class InfoMoveLoopWindow : MonoBehaviour
 
     public void OpenWindow(GameObject button, GameObject currentObject, int index)
     {
+        if (this.button != null)
+        {
+            this.button.GetComponent<Image>().color = pastColor;
+        }
         ml = currentObject.GetComponent<MoveLoopData>();
         this.currentObject = currentObject;
         this.button = button;
+        pastColor = this.button.GetComponent<Image>().color;
+        this.button.GetComponent<Image>().color = Color.yellow;
         this.index = index;
         Window.SetActive(true);
         MoveMarker.SetActive(true);
@@ -44,8 +52,10 @@ public class InfoMoveLoopWindow : MonoBehaviour
         InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString();
         InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
         InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
-        InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - currentObject.transform.position.x).ToString();
-        InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - currentObject.transform.position.y).ToString();
+        Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
+        InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - startPos.x).ToString();
+        InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - startPos.y).ToString();
+        MainLoopInfo.SetActive(false);
     }
 
     public void CloseWindow()
@@ -53,7 +63,18 @@ public class InfoMoveLoopWindow : MonoBehaviour
         Window.SetActive(false);
         MoveMarker.SetActive(false);
     }
-
+    public void Release()
+    {
+        if (button != null)
+        {
+            button.GetComponent<Image>().color = pastColor;
+        }
+        button = null;
+        index = -1;
+        Window.SetActive(false);
+        MoveMarker.SetActive(false);
+        MainLoopInfo.SetActive(false);
+    }
     public void StartTimeChanged(string newValue)
     {
         if (ml.ml.loopList[index] != null)
@@ -70,18 +91,19 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 float maxTime = index < ml.ml.loopList.Count - 1 ? ml.ml.loopList[index + 1].startTime : ml.ml.loopTime;
                 if (value + ml.ml.loopList[index].playTime > maxTime)
                 {
-                    // value = maxTime - mlb.playTime;
+                    value = maxTime - ml.ml.loopList[index].playTime;
                 }
-                mlb.startTime = value;
+                ml.ml.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(MoveLoopLine.transform.position.x + mlb.startTime * 50, button.transform.position.y);
+                rect.position = new Vector2(MoveLoopLine.transform.position.x + ml.ml.loopList[index].startTime * 50f, button.transform.position.y);
+                InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString();
             }
         }
     }
 
     public void PlayTimeChanged(string newValue)
     {
-        if (mlb != null)
+        if (ml.ml.loopList[index] != null)
         {
             float value;
             if (float.TryParse(newValue, out value))
@@ -90,65 +112,77 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 {
                     value = 0;
                 }
-                if (value + mlb.startTime > maxTime)
+
+                float maxTime = index < ml.ml.loopList.Count - 1 ? ml.ml.loopList[index + 1].startTime : ml.ml.loopTime;
+                if (value + ml.ml.loopList[index].startTime > maxTime)
                 {
-                    value = maxTime - mlb.startTime;
+                    value = maxTime - ml.ml.loopList[index].startTime;
                 }
-                mlb.startTime = value;
+                ml.ml.loopList[index].playTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.sizeDelta = new Vector2(mlb.playTime * 50, rect.rect.height);
+                rect.sizeDelta = new Vector2(ml.ml.loopList[index].playTime * 50, rect.rect.height);
+                button.GetComponent<RectTransform>().sizeDelta = rect.sizeDelta;
+                InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString();
             }
         }
     }
 
     public void PosXChanged(string newValue)
     {
-        if (mlb != null)
+        if (ml.ml.loopList[index] != null)
         {
             float value;
+            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
             if (float.TryParse(newValue, out value))
             {
-                mlb.endPos.x = value + MapLeftBottom.transform.position.x;
-                InputBoxes[4].text = (mlb.endPos.x - startPos.x).ToString();
+                ml.ml.loopList[index].endPos.x = value + MapLeftBottom.transform.position.x;
+                InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - (value + MapLeftBottom.transform.position.x)).ToString();
+                InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
             }
         }
     }
 
     public void PosYChanged(string newValue)
     {
-        if (mlb != null)
+        if (ml.ml.loopList[index] != null)
         {
             float value;
+            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
             if (float.TryParse(newValue, out value))
             {
-                mlb.endPos.y = value + MapLeftBottom.transform.position.y;
-                InputBoxes[5].text = (mlb.endPos.y - startPos.y).ToString();
+                ml.ml.loopList[index].endPos.y = value + MapLeftBottom.transform.position.y;
+                InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - startPos.y).ToString();
+                InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
             }
         }
     }
 
     public void VecXChanged(string newValue)
     {
-        if (mlb != null)
+        if (ml.ml.loopList[index] != null)
         {
             float value;
+            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
             if (float.TryParse(newValue, out value))
             {
-                mlb.endPos.x = value + startPos.x;
-                InputBoxes[2].text = (mlb.endPos.x - mlb.startPos.x).ToString();
+                ml.ml.loopList[index].endPos.x = value + startPos.x;
+                InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
+                InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - startPos.x).ToString();
             }
         }
     }
 
     public void VecYChanged(string newValue)
     {
-        if (mlb != null)
+        if (ml.ml.loopList[index] != null)
         {
             float value;
+            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
             if (float.TryParse(newValue, out value))
             {
-                mlb.endPos.y = value + startPos.y;
-                InputBoxes[3].text = (mlb.endPos.y - mlb.startPos.y).ToString();
+                ml.ml.loopList[index].endPos.y = value + startPos.y;
+                InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
+                InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - startPos.y).ToString();
             }
         }
     }
