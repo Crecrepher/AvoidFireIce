@@ -30,49 +30,65 @@ public class RayTower : MonoBehaviour
 
     void Update()
     {
-        Vector3 rotationEulerAngles = transform.rotation.eulerAngles;
-        Vector3 direction = Quaternion.Euler(rotationEulerAngles) * Vector3.up;
-        Vector2 hitPosition = transform.position;
-
-        int reflectionCount = 0;
-        for (int i = 0; i < MaxReflections; i++)
+        if (Power)
         {
-            RaycastHit2D hit = Physics2D.Raycast(hitPosition, direction.normalized, 100f, WallLayer);
-            if (hit.collider != null)
-            {
-                if (hit.collider.CompareTag("Player"))
-                {
-                    Player player = hit.collider.gameObject.GetComponent<Player>();
-                    hitPosition = hit.point;
+            Vector3 rotationEulerAngles = transform.rotation.eulerAngles;
+            Vector3 direction = Quaternion.Euler(rotationEulerAngles) * Vector3.up;
+            Vector2 hitPosition = transform.position;
 
-                    if (player.CurrentElemental != dangerObject.element)
+            int reflectionCount = 0;
+            for (int i = 0; i < MaxReflections; i++)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(hitPosition, direction.normalized, 100f, WallLayer);
+                if (hit.collider != null)
+                {
+                    if (hit.collider.CompareTag("Player"))
                     {
-                        player.Ouch();
+                        Player player = hit.collider.gameObject.GetComponent<Player>();
+                        hitPosition = hit.point;
+
+                        if (player.CurrentElemental != dangerObject.element)
+                        {
+                            player.Ouch();
+                        }
+                    }
+                    else if (hit.collider.CompareTag("Wall"))
+                    {
+                        hitPosition = hit.point;
+                    }
+                    else if (hit.collider.CompareTag("Glass"))
+                    {
+                        direction = Vector2.Reflect(direction, hit.normal);
+                        hitPosition = hit.point;
                     }
                 }
-                else if (hit.collider.CompareTag("Wall"))
-                {
-                    hitPosition = hit.point;
-                }
-                else if (hit.collider.CompareTag("Glass"))
-                {
-                    direction = Vector2.Reflect(direction, hit.normal);
-                    hitPosition = hit.point;
-                }
+
+                RayLineRenderer.positionCount = reflectionCount + 2;
+                RayLineRenderer.SetPosition(reflectionCount + 1, hitPosition);
+                reflectionCount++;
+                hitPosition = hitPosition + (Vector2)direction * 0.1f;
+
+                if (hit.collider == null || !hit.collider.CompareTag("Glass"))
+                    break;
             }
-
-            RayLineRenderer.positionCount = reflectionCount + 2;
-            RayLineRenderer.SetPosition(reflectionCount + 1, hitPosition);
-            reflectionCount++;
-            hitPosition = hitPosition + (Vector2)direction* 0.1f;
-
-            if (hit.collider == null || !hit.collider.CompareTag("Glass"))
-                break;
+            RayLineRenderer.SetPosition(0, ShootPos.position);
         }
-        RayLineRenderer.SetPosition(0, ShootPos.position);
     }
 
-
+    public void SetActiveRay(bool on,int element)
+    {
+        RayLineRenderer.enabled = on;
+        Power = on;
+        if (on)
+        {
+            if (dangerObject == null)
+            {
+                dangerObject = GetComponent<DangerObject>();
+            }
+            dangerObject.element = (Element)element;
+            SetRayColor();
+        }
+    }
 
     public void SetRayColor()
     {

@@ -11,10 +11,8 @@ public class RotateLoopPlayer : MonoBehaviour
     public List<RotateLoopBlock> loopList;
     private int loopMaxCount = 0;
     private float timer;
-
-    private Quaternion LerpStart;
-    private Quaternion LerpEnd;
     private RotateLoopBlock currRot;
+    private float rotValue;
 
     public void Init()
     {
@@ -22,15 +20,15 @@ public class RotateLoopPlayer : MonoBehaviour
         currentCount = 0;
         loopMaxCount = loopList.Count;
         timer = 0f;
-        LerpStart = transform.rotation;
-        LerpEnd =  Quaternion.Euler(LerpStart.eulerAngles + new Vector3(0,0, currRot.rot));
+        rotValue = currRot.rot;
     }
+
     private void Update()
     {
         timer += Time.deltaTime;
         if (timer > currRot.startTime && timer < currRot.startTime + currRot.playTime)
         {
-            transform.rotation = Quaternion.Lerp(LerpStart, LerpEnd, (timer - currRot.startTime) / currRot.playTime);
+            transform.Rotate(new Vector3(0, 0, rotValue / currRot.playTime * Time.deltaTime));
         }
 
         if (timer > currRot.startTime + currRot.playTime)
@@ -39,16 +37,14 @@ public class RotateLoopPlayer : MonoBehaviour
             {
                 return;
             }
-            LerpStart = transform.rotation;
             currentCount = (currentCount + 1) % loopMaxCount;
             if (currentCount == 0)
             {
                 timer = 0f;
                 transform.rotation = startRot;
-                LerpStart = transform.rotation;
             }
             currRot = loopList[currentCount];
-            LerpEnd = Quaternion.Euler(LerpStart.eulerAngles + new Vector3(0, 0, currRot.rot));
+            rotValue = currRot.rot;
         }
 
     }

@@ -50,11 +50,17 @@ public class InfoMoveLoopWindow : MonoBehaviour
         MoveMarker.SetActive(true);
         InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString();
         InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString();
-        InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
-        InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
-        Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
-        InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - startPos.x).ToString();
-        InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - startPos.y).ToString();
+
+        Vector2 endPos = currentObject.transform.position;
+        for (int i = 0; i <= index; i++)
+        {
+            endPos += ml.ml.loopList[i].moveVector;
+        }
+        InputBoxes[2].text = (endPos.x - MapLeftBottom.transform.position.x).ToString();
+        InputBoxes[3].text = (endPos.y - MapLeftBottom.transform.position.y).ToString();
+
+        InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString();
+        InputBoxes[5].text = (ml.ml.loopList[index].moveVector.y).ToString();
         MainLoopInfo.SetActive(false);
     }
 
@@ -75,6 +81,7 @@ public class InfoMoveLoopWindow : MonoBehaviour
         MoveMarker.SetActive(false);
         MainLoopInfo.SetActive(false);
     }
+
     public void StartTimeChanged(string newValue)
     {
         if (ml.ml.loopList[index] != null)
@@ -132,12 +139,19 @@ public class InfoMoveLoopWindow : MonoBehaviour
         if (ml.ml.loopList[index] != null)
         {
             float value;
-            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
+            Vector2 startPos = currentObject.transform.position;
+            if (index != 0)
+            {
+                for (int i = 0; i < index; i++)
+                {
+                    startPos += ml.ml.loopList[i].moveVector;
+                }
+            }
             if (float.TryParse(newValue, out value))
             {
-                ml.ml.loopList[index].endPos.x = value + MapLeftBottom.transform.position.x;
-                InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - (value + MapLeftBottom.transform.position.x)).ToString();
-                InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
+                ml.ml.loopList[index].moveVector.x = (value - startPos.x) + MapLeftBottom.transform.position.x;
+                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString();
+                InputBoxes[2].text = (value - MapLeftBottom.transform.position.x).ToString();
             }
         }
     }
@@ -147,12 +161,19 @@ public class InfoMoveLoopWindow : MonoBehaviour
         if (ml.ml.loopList[index] != null)
         {
             float value;
-            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
+            Vector2 startPos = currentObject.transform.position;
+            if (index != 0)
+            {
+                for (int i = 0; i < index; i++)
+                {
+                    startPos += ml.ml.loopList[i].moveVector;
+                }
+            }
             if (float.TryParse(newValue, out value))
             {
-                ml.ml.loopList[index].endPos.y = value + MapLeftBottom.transform.position.y;
-                InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - startPos.y).ToString();
-                InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
+                ml.ml.loopList[index].moveVector.y = (value - startPos.y) + MapLeftBottom.transform.position.y;
+                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.y).ToString();
+                InputBoxes[2].text = (value - MapLeftBottom.transform.position.y).ToString();
             }
         }
     }
@@ -162,12 +183,16 @@ public class InfoMoveLoopWindow : MonoBehaviour
         if (ml.ml.loopList[index] != null)
         {
             float value;
-            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
             if (float.TryParse(newValue, out value))
             {
-                ml.ml.loopList[index].endPos.x = value + startPos.x;
-                InputBoxes[2].text = (ml.ml.loopList[index].endPos.x - MapLeftBottom.transform.position.x).ToString();
-                InputBoxes[4].text = (ml.ml.loopList[index].endPos.x - startPos.x).ToString();
+                ml.ml.loopList[index].moveVector.x = value;
+                Vector2 endPos = currentObject.transform.position;
+                for (int i = 0; i <= index; i++)
+                {
+                    endPos += ml.ml.loopList[i].moveVector;
+                }
+                InputBoxes[2].text = (endPos.x - MapLeftBottom.transform.position.x).ToString();
+                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString();
             }
         }
     }
@@ -177,12 +202,16 @@ public class InfoMoveLoopWindow : MonoBehaviour
         if (ml.ml.loopList[index] != null)
         {
             float value;
-            Vector2 startPos = index == 0 ? currentObject.transform.position : ml.ml.loopList[index - 1].endPos;
             if (float.TryParse(newValue, out value))
             {
-                ml.ml.loopList[index].endPos.y = value + startPos.y;
-                InputBoxes[3].text = (ml.ml.loopList[index].endPos.y - MapLeftBottom.transform.position.y).ToString();
-                InputBoxes[5].text = (ml.ml.loopList[index].endPos.y - startPos.y).ToString();
+                ml.ml.loopList[index].moveVector.y = value;
+                Vector2 endPos = currentObject.transform.position;
+                for (int i = 0; i <= index; i++)
+                {
+                    endPos += ml.ml.loopList[i].moveVector;
+                }
+                InputBoxes[3].text = (endPos.y - MapLeftBottom.transform.position.y).ToString();
+                InputBoxes[5].text = (ml.ml.loopList[index].moveVector.y).ToString();
             }
         }
     }

@@ -1,20 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class MoveLoopBlock : IComparable<MoveLoopBlock>
+public class FireLoopBlock : IComparable<RotateLoopBlock>
 {
     public float startTime;
     public float playTime;
 
-    public Vector2 moveVector;
+    public int rate;
+    public float speed;
+    public int element;
 
-    public bool easeIn = false;
-    public bool easeOut = false;
-
-    public int CompareTo(MoveLoopBlock other)
+    public int CompareTo(RotateLoopBlock other)
     {
         if (other == null)
             return 1;

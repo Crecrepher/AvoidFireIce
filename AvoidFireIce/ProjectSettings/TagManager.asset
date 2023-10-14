@@ -17,6 +17,7 @@ TagManager:
   - LoopTableGrid
   - MoveLoopButton
   - RotateLoopButton
+  - FireLoopButton
   layers:
   - Default
   - TransparentFX

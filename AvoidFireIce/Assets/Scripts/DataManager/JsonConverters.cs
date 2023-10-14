@@ -140,8 +140,7 @@ public class QuaternionConverter : JsonConverter<Quaternion>
                 MoveLoopBlock loopBlock = new MoveLoopBlock();
                 loopBlock.startTime = (float)jobj[$"LLsT{i}"];
                 loopBlock.playTime = (float)jobj[$"LLpT{i}"];
-                loopBlock.startPos = new Vector2((float)jobj[$"LLsP{i}X"], (float)jobj[$"LLsP{i}Y"]);
-                loopBlock.endPos = new Vector2((float)jobj[$"LLeP{i}X"], (float)jobj[$"LLeP{i}Y"]);
+                loopBlock.moveVector = new Vector2((float)jobj[$"LLsP{i}X"], (float)jobj[$"LLsP{i}Y"]);
                 loopBlock.easeIn = (bool)jobj[$"EaseIn{i}"];
                 loopBlock.easeOut = (bool)jobj[$"EaseOut{i}"];
                 z.Add(loopBlock);
@@ -167,13 +166,9 @@ public class QuaternionConverter : JsonConverter<Quaternion>
                 writer.WritePropertyName($"LLpT{i}");
                 writer.WriteValue(value.loopList[i].playTime);
                 writer.WritePropertyName($"LLsP{i}X");
-                writer.WriteValue(value.loopList[i].startPos.x);
+                writer.WriteValue(value.loopList[i].moveVector.x);
                 writer.WritePropertyName($"LLsP{i}Y");
-                writer.WriteValue(value.loopList[i].startPos.y);
-                writer.WritePropertyName($"LLeP{i}X");
-                writer.WriteValue(value.loopList[i].endPos.x);
-                writer.WritePropertyName($"LLeP{i}Y");
-                writer.WriteValue(value.loopList[i].endPos.y);
+                writer.WriteValue(value.loopList[i].moveVector.y);
                 writer.WritePropertyName($"EaseIn{i}");
                 writer.WriteValue(value.loopList[i].easeIn);
                 writer.WritePropertyName($"EaseOut{i}");
@@ -226,6 +221,54 @@ public class QuaternionConverter : JsonConverter<Quaternion>
                 writer.WriteValue(value.loopList[i].easeIn);
                 writer.WritePropertyName($"EaseOut{i}");
                 writer.WriteValue(value.loopList[i].easeOut);
+            }
+            writer.WriteEndObject();
+        }
+    }
+
+    public class FireLoopConverter : JsonConverter<FireLoop>
+    {
+        public override FireLoop ReadJson(JsonReader reader, Type objectType, FireLoop existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            var jobj = JObject.Load(reader);
+            var x = (int)jobj["InitCode"];
+            var y = (float)jobj["LoopTime"];
+            var z = new List<FireLoopBlock>();
+            for (int i = 0; i < (int)jobj["LoopListCount"]; i++)
+            {
+                FireLoopBlock loopBlock = new FireLoopBlock();
+                loopBlock.startTime = (float)jobj[$"LLsT{i}"];
+                loopBlock.playTime = (float)jobj[$"LLpT{i}"];
+                loopBlock.rate = (int)jobj[$"Rate{i}"];
+                loopBlock.speed = (float)jobj[$"Speed{i}"];
+                loopBlock.element = (int)jobj[$"Element{i}"];
+                z.Add(loopBlock);
+            }
+            return new FireLoop(x, y, z);
+        }
+
+        public override void WriteJson(JsonWriter writer, FireLoop value, JsonSerializer serializer)
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("InitCode");
+            writer.WriteValue(value.initCode);
+            writer.WritePropertyName("LoopTime");
+            writer.WriteValue(value.loopTime);
+            writer.WritePropertyName("LoopListCount");
+            writer.WriteValue(value.loopList.Count);
+            for (int i = 0; i < value.loopList.Count; i++)
+            {
+                writer.WritePropertyName($"LLsT{i}");
+                writer.WriteValue(value.loopList[i].startTime);
+                writer.WritePropertyName($"LLpT{i}");
+                writer.WriteValue(value.loopList[i].playTime);
+                writer.WritePropertyName($"Rate{i}");
+                writer.WriteValue(value.loopList[i].rate);
+                writer.WritePropertyName($"Speed{i}");
+                writer.WriteValue(value.loopList[i].speed);
+                writer.WritePropertyName($"Element{i}");
+                writer.WriteValue(value.loopList[i].element);
             }
             writer.WriteEndObject();
         }

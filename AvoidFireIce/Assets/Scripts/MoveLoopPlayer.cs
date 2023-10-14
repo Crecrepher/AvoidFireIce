@@ -12,8 +12,6 @@ public class MoveLoopPlayer : MonoBehaviour
     private int loopMaxCount = 0;
     private float timer;
 
-    private Vector2 LerpStart;
-    private Vector2 LerpEnd;
     private MoveLoopBlock currMove;
 
     public void Init()
@@ -22,15 +20,13 @@ public class MoveLoopPlayer : MonoBehaviour
         currentCount = 0;
         loopMaxCount = loopList.Count;
         timer = 0f;
-        LerpStart = currMove.startPos;
-        LerpEnd = currMove.endPos;
     }
     private void Update()
     {
         timer += Time.deltaTime;
         if (timer > currMove.startTime && timer < currMove.startTime + currMove.playTime)
         {
-            transform.position = Vector2.Lerp(LerpStart, LerpEnd, (timer - currMove.startTime) / currMove.playTime);
+            transform.position = (Vector2)transform.position + currMove.moveVector * Time.deltaTime;//Vector2.Lerp(LerpStart, LerpEnd, (timer - currMove.startTime) / currMove.playTime);
         }
 
         if (timer > currMove.startTime + currMove.playTime)
@@ -39,16 +35,13 @@ public class MoveLoopPlayer : MonoBehaviour
             {
                 return;
             }
-            LerpStart = transform.position;
             currentCount = (currentCount + 1) % loopMaxCount;
             if (currentCount == 0) 
             { 
                 timer = 0f; 
                 transform.position = startPos;
-                LerpStart = transform.position;
             }
             currMove = loopList[currentCount];
-            LerpEnd = currMove.endPos;
         }
 
     }

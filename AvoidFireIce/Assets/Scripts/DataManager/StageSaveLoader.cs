@@ -29,6 +29,7 @@ public class StageSaveLoader : MonoBehaviour
         public List<EditorObjInfo> objects;
         public List<MoveLoop> moveLoops;
         public List<RotateLoop> rotateLoops;
+        public List<FireLoop> fireLoops;
     }
 
     public static StageSaveLoader instance
@@ -72,6 +73,7 @@ public class StageSaveLoader : MonoBehaviour
         saveData.objects = new List<EditorObjInfo>();
         saveData.moveLoops = new List<MoveLoop>();
         saveData.rotateLoops = new List<RotateLoop>();
+        saveData.fireLoops = new List<FireLoop>();
 
         var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
         foreach (var obj in objs)
@@ -89,7 +91,7 @@ public class StageSaveLoader : MonoBehaviour
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
 
-        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter());
+        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter(),new FireLoopConverter());
 
         File.WriteAllText(path, json);
     }
@@ -124,6 +126,18 @@ public class StageSaveLoader : MonoBehaviour
             saveRl.initCode = saveCount;
             saveData.rotateLoops.Add(saveRl);
         }
+
+        int type = obj.GetComponent<MarkerInfo>().ObjectType;
+        if (type == 0 || type == 1)
+        {
+            FireLoopData fld = obj.GetComponent<FireLoopData>();
+            if (fld != null)
+            {
+                FireLoop saveFl = fld.fl;
+                saveFl.initCode = saveCount;
+                saveData.fireLoops.Add(saveFl);
+            }
+        }
         saveCount++;
     }
 
@@ -145,8 +159,9 @@ public class StageSaveLoader : MonoBehaviour
         int LoadCount = 0;
         int LoadMoveLoopCount = 0;
         int LoadRotateLoopCount = 0;
+        int LoadFireLoopCount = 0;
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter(),new FireLoopConverter());
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(EditorObjs[loadedObj.code], loadedObj.pos, loadedObj.rot);
@@ -184,6 +199,24 @@ public class StageSaveLoader : MonoBehaviour
                     newRl.loopTime = saveData.rotateLoops[LoadRotateLoopCount].loopTime;
                     newRl.loopList = saveData.rotateLoops[LoadRotateLoopCount].loopList;
                     LoadRotateLoopCount++;
+                }
+            }
+
+            if (saveData.fireLoops != null && LoadFireLoopCount < saveData.fireLoops.Count)
+            {
+                if (saveData.fireLoops[LoadFireLoopCount].initCode == LoadCount)
+                {
+                    LoopBlocksList lbl = obj.GetComponent<LoopBlocksList>();
+                    if (lbl == null)
+                    {
+                        lbl = obj.AddComponent<LoopBlocksList>();
+                    }
+                    lbl.fireLoopBlocks = new List<GameObject>();
+                    obj.AddComponent<FireLoopData>().fl = new FireLoop();
+                    FireLoop newFl = obj.GetComponent<FireLoopData>().fl;
+                    newFl.loopTime = saveData.fireLoops[LoadFireLoopCount].loopTime;
+                    newFl.loopList = saveData.fireLoops[LoadFireLoopCount].loopList;
+                    LoadFireLoopCount++;
                 }
             }
             LoadCount++;

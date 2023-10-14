@@ -26,13 +26,15 @@ public class Palate : MonoBehaviour
     public GameObject LoopTableBars;
     public List<GameObject> LoopLines;
     public List<GameObject> LoopBlocks;
-
     public List<GameObject> PalateObjects;
-    private InfoMoveLoopWindow infoMoveLoopWindow;
     public GameObject MainLoopInfo;
     public List<TMP_InputField> MainLoopInfoInputs;
     public Toggle MainLoopInfoBind;
+    public List<GameObject> FireLoopUi;
+
+    private InfoMoveLoopWindow infoMoveLoopWindow;
     private InfoRotateLoopWindow infoRotateLoopWindow;
+    private InfoFireLoopWindow infoFireLoopWindow;
 
     private GameObject SelectedObject;
 
@@ -46,6 +48,7 @@ public class Palate : MonoBehaviour
     {
         MainLoopInfoInputs[0].onEndEdit.AddListener(MoveLoopLengthChanged);
         MainLoopInfoInputs[1].onEndEdit.AddListener(RotateLoopLengthChanged);
+        MainLoopInfoInputs[2].onEndEdit.AddListener(FireLoopLengthChanged);
     }
     private void OnEnable()
     {
@@ -53,6 +56,7 @@ public class Palate : MonoBehaviour
         editMode = EditMode.Place;
         infoMoveLoopWindow = GetComponent<InfoMoveLoopWindow>();
         infoRotateLoopWindow = GetComponent<InfoRotateLoopWindow>();
+        infoFireLoopWindow = GetComponent<InfoFireLoopWindow>();    
     }
 
     private void Update()
@@ -318,6 +322,7 @@ public class Palate : MonoBehaviour
             SelectLoopType(0);
             DrawLoopTableLine();
             UpdateLoopTable();
+            ChekNeedFireLoop();
         }
         InfoButton.SetActive(false);
     }
@@ -395,13 +400,12 @@ public class Palate : MonoBehaviour
                     if (blocks.Count == 0)
                     {
                         block.startTime = 0;
-                        block.startPos = currentObject.transform.position;
                     }
                     else
                     {
                         block.startTime = blocks[blocks.Count - 1].startTime + blocks[blocks.Count - 1].playTime;
-                        block.startPos = blocks[blocks.Count - 1].endPos;
                     }
+                    block.moveVector = new Vector2(1f, 0f);
                     block.playTime = 1f;
                     if (ml.ml.loopTime < block.startTime + block.playTime)
                     {
@@ -413,7 +417,6 @@ public class Palate : MonoBehaviour
                             return;
                         }
                     }
-                    block.endPos = new Vector2(block.startPos.x + 1f, block.startPos.y);
                     ml.ml.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
@@ -461,6 +464,41 @@ public class Palate : MonoBehaviour
                 }
                 break;
             case LoopType.Fire:
+                {
+                    FireLoopData fl = FireLoopMaker();
+                    var button = Instantiate(LoopBlocks[2], LoopLines[2].transform);
+                    FireLoopBlock block = new FireLoopBlock();
+                    List<FireLoopBlock> blocks = fl.fl.loopList;
+                    if (blocks.Count == 0)
+                    {
+                        block.startTime = 0;
+                    }
+                    else
+                    {
+                        block.startTime = blocks[blocks.Count - 1].startTime + blocks[blocks.Count - 1].playTime;
+                    }
+                    block.rate = 1;
+                    block.speed = 10;
+                    block.playTime = 1f;
+                    if (fl.fl.loopTime < block.startTime + block.playTime)
+                    {
+                        block.playTime = fl.fl.loopTime - block.startTime;
+                        if (block.playTime <= 0)
+                        {
+                            Destroy(button);
+                            Debug.Log("TooMuchButtons!");
+                            return;
+                        }
+                    }
+                    fl.fl.loopList.Add(block);
+
+                    RectTransform rect = button.GetComponent<RectTransform>();
+                    rect.position = new Vector2(LoopLines[2].transform.position.x + block.startTime * 50, LoopLines[2].transform.position.y);
+                    rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
+                    lbl.fireLoopBlocks.Add(button);
+
+                    button.GetComponent<Button>().onClick.AddListener(() => infoFireLoopWindow.OpenWindow(button, currentObject, fl.fl.loopList.IndexOf(block)));
+                }
                 break;
         }
     }
@@ -473,16 +511,22 @@ public class Palate : MonoBehaviour
         OpenMainLoopInfo(false);
         infoMoveLoopWindow.index = -1;
         infoRotateLoopWindow.index = -1;
+        infoFireLoopWindow.index = -1;
     }
     public void UpdateLoopTable()
     {
         var olds1 = GameObject.FindGameObjectsWithTag("MoveLoopButton");
         var olds2 = GameObject.FindGameObjectsWithTag("RotateLoopButton");
+        var olds3 = GameObject.FindGameObjectsWithTag("FireLoopButton");
         foreach (var c in olds1)
         {
             Destroy(c.gameObject);
         }
         foreach (var c in olds2)
+        {
+            Destroy(c.gameObject);
+        }
+        foreach (var c in olds3)
         {
             Destroy(c.gameObject);
         }
@@ -492,9 +536,12 @@ public class Palate : MonoBehaviour
             return;
         }
 
+        ChekNeedFireLoop();
+
         LoopBlocksList lb = currentObject.GetComponent<LoopBlocksList>();
         MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
         RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
+        FireLoopData fl = currentObject.GetComponent<FireLoopData>();
 
         if (lb == null)
         {
@@ -549,6 +596,28 @@ public class Palate : MonoBehaviour
             LoopLines[1].GetComponent<RectTransform>().sizeDelta = new Vector2(500, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
         }
 
+        if (fl != null)
+        {
+            LoopLines[2].GetComponent<RectTransform>().sizeDelta = new Vector2(fl.fl.loopTime * 50f, LoopLines[2].GetComponent<RectTransform>().sizeDelta.y);
+            int count = 0;
+            foreach (var c in fl.fl.loopList)
+            {
+                var button = Instantiate(LoopBlocks[2], LoopLines[2].transform);
+                button.GetComponent<Button>().onClick.AddListener(() => infoFireLoopWindow.OpenWindow(button, currentObject, fl.fl.loopList.IndexOf(c)));
+
+                RectTransform rect = button.GetComponent<RectTransform>();
+                rect.position = new Vector2(LoopLines[2].transform.position.x + c.startTime * 50f, LoopLines[2].transform.position.y);
+                rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
+                lb.fireLoopBlocks.Add(button);
+                count++;
+            }
+
+        }
+        else
+        {
+            LoopLines[2].GetComponent<RectTransform>().sizeDelta = new Vector2(500, LoopLines[2].GetComponent<RectTransform>().sizeDelta.y);
+        }
+
         DrawLoopTableLine();
     }
 
@@ -570,6 +639,7 @@ public class Palate : MonoBehaviour
             }
             else
             {
+                MainLoopInfoInputs[0].text = 10f.ToString();
                 RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
                 rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
             }
@@ -583,9 +653,33 @@ public class Palate : MonoBehaviour
             }
             else
             {
+                MainLoopInfoInputs[1].text = 10f.ToString();
                 RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
                 rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
             }
+
+            if (isTowerChecker(currentObject))
+            {
+                MainLoopInfoInputs[2].gameObject.SetActive(true);
+                FireLoopData fl = currentObject.GetComponent<FireLoopData>();
+                if (fl != null)
+                {
+                    MainLoopInfoInputs[2].text = fl.fl.loopTime.ToString();
+                    RectTransform rt = LoopLines[2].GetComponent<RectTransform>();
+                    rt.sizeDelta = new Vector2(fl.fl.loopTime * 50f, rt.sizeDelta.y);
+                }
+                else
+                {
+                    MainLoopInfoInputs[2].text = 10f.ToString();
+                    RectTransform rt = LoopLines[2].GetComponent<RectTransform>();
+                    rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
+                }
+            }
+            else
+            {
+                MainLoopInfoInputs[2].gameObject.SetActive(false);
+            }
+            
         }
     }
 
@@ -631,6 +725,24 @@ public class Palate : MonoBehaviour
         DrawLoopTableLine();
     }
 
+    public void FireLoopLengthChanged(string newValue)
+    {
+        LoopBlocksList lbl = LoopBlocksListMaker();
+        FireLoopData fl = FireLoopMaker();
+
+        float value;
+        if (float.TryParse(newValue, out value))
+        {
+            float minLength = fl.fl.loopList.Count > 0 ? fl.fl.loopList[fl.fl.loopList.Count - 1].startTime + fl.fl.loopList[fl.fl.loopList.Count - 1].playTime : 0f;
+            if (value < minLength) { value = minLength; }
+            fl.fl.loopTime = value;
+            RectTransform rt = LoopLines[2].GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(fl.fl.loopTime * 50f, rt.sizeDelta.y);
+            MainLoopInfoInputs[2].text = value.ToString();
+        }
+        DrawLoopTableLine();
+    }
+
     private MoveLoopData MoveLoopMaker()
     {
         MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
@@ -654,6 +766,7 @@ public class Palate : MonoBehaviour
             lbl = currentObject.AddComponent<LoopBlocksList>();
             lbl.moveLoopBlocks = new List<GameObject>();
             lbl.rotateLoopBlocks = new List<GameObject>();
+            lbl.fireLoopBlocks = new List<GameObject>();
             lbl.isTmeBind = false;
         }
 
@@ -673,6 +786,20 @@ public class Palate : MonoBehaviour
 
         return rl;
     }
+
+    private FireLoopData FireLoopMaker()
+    {
+        FireLoopData fl = currentObject.GetComponent<FireLoopData>();
+        if (fl == null)
+        {
+            fl = currentObject.AddComponent<FireLoopData>();
+            fl.fl = new FireLoop();
+            fl.fl.loopList = new List<FireLoopBlock>();
+            fl.fl.loopTime = 10f;
+        }
+
+        return fl;
+    }
     public void DeleteBlock()
     {
         if(currentObject == null) return;
@@ -686,6 +813,7 @@ public class Palate : MonoBehaviour
                 index = infoRotateLoopWindow.index;
                 break;
             case LoopType.Fire:
+                index = infoFireLoopWindow.index;
                 break;
         }
         if (index < 0) return;
@@ -714,9 +842,46 @@ public class Palate : MonoBehaviour
                 }
                 break;
             case LoopType.Fire:
+                {
+                    var button = lbl.fireLoopBlocks[infoFireLoopWindow.index];
+                    currentObject.GetComponent<FireLoopData>().fl.loopList.RemoveAt(index);
+                    lbl.fireLoopBlocks.Remove(button);
+                    Destroy(button);
+                    infoFireLoopWindow.CloseWindow();
+                    infoFireLoopWindow.index = -1;
+                }
                 break;
         }
         OpenMainLoopInfo(false);
     }
 
+    public bool isTowerChecker(GameObject obj)
+    {
+        if (obj == null) return false;
+        MarkerInfo target = obj.GetComponent<MarkerInfo>();
+        if (target == null)
+        {
+            return false;
+        }
+        return ((ObjectType)target.ObjectType == ObjectType.BulletTower)
+            || ((ObjectType)target.ObjectType == ObjectType.RayTower);
+    }
+
+    public void ChekNeedFireLoop()
+    {
+        if (isTowerChecker(currentObject))
+        {
+            foreach (var item in FireLoopUi)
+            {
+                item.SetActive(true);
+            }
+        }
+        else
+        {
+            foreach (var item in FireLoopUi)
+            {
+                item.SetActive(false);
+            }
+        }
+    }
 }

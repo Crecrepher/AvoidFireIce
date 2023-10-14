@@ -41,14 +41,17 @@ public class StageManager : MonoBehaviour
 
     private void MakeObjs(string json)
     {
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter(),new FireLoopConverter());
 
         int loadCount = 0;
         int moveLoopsCount = 0;
         int rotateLoopsCount = 0;
+        int fireLoopsCount = 0;
 
         int moveInitCode = 0;
         int rotateInitCode = 0;
+        int fireInitCode = 0;
+
         if (saveData.moveLoops != null && saveData.moveLoops.Count > 0)
         {
             moveInitCode = saveData.moveLoops[moveLoopsCount].initCode;
@@ -56,6 +59,10 @@ public class StageManager : MonoBehaviour
         if (saveData.rotateLoops != null && saveData.rotateLoops.Count > 0)
         {
             rotateInitCode = saveData.rotateLoops[rotateLoopsCount].initCode;
+        }
+        if (saveData.rotateLoops != null && saveData.rotateLoops.Count > 0)
+        {
+            fireInitCode = saveData.fireLoops[fireLoopsCount].initCode;
         }
 
         foreach (var loadedObj in saveData.objects)
@@ -94,6 +101,34 @@ public class StageManager : MonoBehaviour
                 rlp.startRot = obj.transform.rotation;
                 rlp.loopList = rl.loopList;
                 rlp.Init();
+            }
+            if (fireInitCode == loadCount && saveData.fireLoops != null && saveData.fireLoops.Count > 0)
+            {
+                FireLoop fl = saveData.fireLoops[fireLoopsCount];
+                fireLoopsCount++;
+                if (saveData.fireLoops.Count > fireLoopsCount)
+                {
+                    fireInitCode = saveData.fireLoops[fireLoopsCount].initCode;
+                }
+                switch(loadedObj.code)
+                {
+                    case 0:
+                        {
+                            BulletFireLoopPlayer flp = obj.AddComponent<BulletFireLoopPlayer>();
+                            flp.loopTime = fl.loopTime;
+                            flp.loopList = fl.loopList;
+                            flp.Init();
+                        }
+                        break; 
+                    case 1:
+                        {
+                            RayFireLoopPlayer flp = obj.AddComponent<RayFireLoopPlayer>();
+                            flp.loopTime = fl.loopTime;
+                            flp.loopList = fl.loopList;
+                            flp.Init();
+                        }
+                        break;
+                }
             }
             loadCount++;
         }

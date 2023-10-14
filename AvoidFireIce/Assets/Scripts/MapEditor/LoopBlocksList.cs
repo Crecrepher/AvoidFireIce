@@ -7,7 +7,7 @@ public class LoopBlocksList : MonoBehaviour
     public bool isTmeBind = false;
     public List<GameObject> moveLoopBlocks;
     public List<GameObject> rotateLoopBlocks;
-    public List<GameObject> shootLoopBlocks;
+    public List<GameObject> fireLoopBlocks;
 
     private void Awake()
     {
