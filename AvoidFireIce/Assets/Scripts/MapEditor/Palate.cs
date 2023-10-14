@@ -44,11 +44,18 @@ public class Palate : MonoBehaviour
     private EditMode editMode;
     private LoopType currentLoopEdit;
 
+    //MultipleSelect
+    public Toggle MultiSelectToggle;
+    private bool isMultiSelect = false;
+    public List<GameObject> SelectedObjects;
+
     private void Awake()
     {
         MainLoopInfoInputs[0].onEndEdit.AddListener(MoveLoopLengthChanged);
         MainLoopInfoInputs[1].onEndEdit.AddListener(RotateLoopLengthChanged);
         MainLoopInfoInputs[2].onEndEdit.AddListener(FireLoopLengthChanged);
+        SelectedObjects = new List<GameObject>();
+        isMultiSelect = false;
     }
     private void OnEnable()
     {
@@ -56,7 +63,7 @@ public class Palate : MonoBehaviour
         editMode = EditMode.Place;
         infoMoveLoopWindow = GetComponent<InfoMoveLoopWindow>();
         infoRotateLoopWindow = GetComponent<InfoRotateLoopWindow>();
-        infoFireLoopWindow = GetComponent<InfoFireLoopWindow>();    
+        infoFireLoopWindow = GetComponent<InfoFireLoopWindow>();
     }
 
     private void Update()
@@ -69,7 +76,6 @@ public class Palate : MonoBehaviour
                     {
                         if (!ToggleChecker())
                         {
-
                             Vector3 mouseDownPos = Input.mousePosition;
                             Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
                             RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
@@ -182,7 +188,14 @@ public class Palate : MonoBehaviour
 
     private void HandleSelection(GameObject selectedObject)
     {
-        ReleaseSelection();
+        if (!isMultiSelect)
+        {
+            ReleaseSelection();
+        }
+        else
+        {
+            SelectedObjects.Add(currentObject);
+        }
         currentObject = selectedObject;
         selectedObject.GetComponent<SpriteRenderer>().color = Color.yellow;
         selectedObject.layer = 0;
@@ -194,6 +207,7 @@ public class Palate : MonoBehaviour
         {
             SelectOnLoopMod();
         }
+
     }
 
     private void ReleaseSelection()
@@ -217,6 +231,22 @@ public class Palate : MonoBehaviour
             SetLoopMod.SetActive(false);
             OpenMainLoopInfo(false);
             infoMoveLoopWindow.CloseWindow();
+        }
+
+        foreach (var multi in SelectedObjects)
+        {
+            if (multi != null)
+            {
+                if (Defines.instance.isHaveElement(multi.GetComponent<MarkerInfo>().ObjectType))
+                {
+                    multi.GetComponent<DangerObject>().SetColor();
+                }
+                else
+                {
+                    multi.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                multi.layer = 6;
+            }
         }
     }
 
@@ -271,7 +301,7 @@ public class Palate : MonoBehaviour
     {
         GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0f, 0f), currentObject.transform.rotation);
         MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
-        if (ml != null) 
+        if (ml != null)
         {
             madeObject.GetComponent<MoveLoopData>().ml = new MoveLoop();
             madeObject.GetComponent<MoveLoopData>().ml.loopTime = ml.ml.loopTime;
@@ -548,13 +578,13 @@ public class Palate : MonoBehaviour
             LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2(500, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
             return;
         }
-            
+
         lb.moveLoopBlocks = new List<GameObject>();
         lb.rotateLoopBlocks = new List<GameObject>();
 
         if (ml != null)
         {
-            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2 (ml.ml.loopTime * 50f, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
+            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2(ml.ml.loopTime * 50f, LoopLines[0].GetComponent<RectTransform>().sizeDelta.y);
             int count = 0;
             foreach (var c in ml.ml.loopList)
             {
@@ -567,7 +597,7 @@ public class Palate : MonoBehaviour
                 lb.moveLoopBlocks.Add(button);
                 count++;
             }
-            
+
         }
         else
         {
@@ -679,7 +709,7 @@ public class Palate : MonoBehaviour
             {
                 MainLoopInfoInputs[2].gameObject.SetActive(false);
             }
-            
+
         }
     }
 
@@ -777,7 +807,7 @@ public class Palate : MonoBehaviour
     {
         RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
         if (rl == null)
-        {   
+        {
             rl = currentObject.AddComponent<RotateLoopData>();
             rl.rl = new RotateLoop();
             rl.rl.loopList = new List<RotateLoopBlock>();
@@ -802,14 +832,14 @@ public class Palate : MonoBehaviour
     }
     public void DeleteBlock()
     {
-        if(currentObject == null) return;
+        if (currentObject == null) return;
         int index = -1;
-            switch (currentLoopEdit)
+        switch (currentLoopEdit)
         {
             case LoopType.Move:
                 index = infoMoveLoopWindow.index;
                 break;
-                case LoopType.Rotate:
+            case LoopType.Rotate:
                 index = infoRotateLoopWindow.index;
                 break;
             case LoopType.Fire:
@@ -883,5 +913,12 @@ public class Palate : MonoBehaviour
                 item.SetActive(false);
             }
         }
+    }
+
+
+    //MultipleSelect
+    public void SwitchMultifulSelect()
+    {
+        isMultiSelect = MultiSelectToggle.isOn;
     }
 }

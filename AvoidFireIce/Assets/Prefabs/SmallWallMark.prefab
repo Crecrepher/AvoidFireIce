@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1610798864823652850}
   - component: {fileID: 2391779518306973316}
   - component: {fileID: 8983776410814580470}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: SmallWallMark
   m_TagString: EditorMarker
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8912463162556591649}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
