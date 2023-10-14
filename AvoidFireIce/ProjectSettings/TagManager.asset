@@ -18,6 +18,8 @@ TagManager:
   - MoveLoopButton
   - RotateLoopButton
   - FireLoopButton
+  - Group
+  - GroupMember
   layers:
   - Default
   - TransparentFX

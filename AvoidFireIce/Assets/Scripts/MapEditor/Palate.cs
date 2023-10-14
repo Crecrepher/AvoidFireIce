@@ -47,14 +47,19 @@ public class Palate : MonoBehaviour
     //MultipleSelect
     public Toggle MultiSelectToggle;
     private bool isMultiSelect = false;
-    public List<GameObject> SelectedObjects;
+    public List<GameObject> currentObjects;
+
+    //Group
+    public GameObject GroupButton;
+    public GameObject DeGroupButton;
+    public GameObject GroupPreefab;
 
     private void Awake()
     {
         MainLoopInfoInputs[0].onEndEdit.AddListener(MoveLoopLengthChanged);
         MainLoopInfoInputs[1].onEndEdit.AddListener(RotateLoopLengthChanged);
         MainLoopInfoInputs[2].onEndEdit.AddListener(FireLoopLengthChanged);
-        SelectedObjects = new List<GameObject>();
+        currentObjects = new List<GameObject>();
         isMultiSelect = false;
     }
     private void OnEnable()
@@ -188,13 +193,24 @@ public class Palate : MonoBehaviour
 
     private void HandleSelection(GameObject selectedObject)
     {
+        if (selectedObject.CompareTag("GroupMember"))
+        {
+            GroupHandleSelection(selectedObject.transform.parent.gameObject);
+            return;
+        }
         if (!isMultiSelect)
         {
             ReleaseSelection();
         }
         else
         {
-            SelectedObjects.Add(currentObject);
+            if (currentObject != null)
+            {
+                currentObjects.Add(currentObject);
+                GroupButton.SetActive(true);
+                GroupButton.GetComponent<Button>().interactable = true;
+                DeGroupButton.SetActive(false);
+            }
         }
         currentObject = selectedObject;
         selectedObject.GetComponent<SpriteRenderer>().color = Color.yellow;
@@ -210,10 +226,65 @@ public class Palate : MonoBehaviour
 
     }
 
+    private void GroupHandleSelection(GameObject obj)
+    {
+        if (currentObject != null && isMultiSelect)
+        {
+            currentObjects.Add(currentObject);
+            GroupButton.SetActive(true);
+            GroupButton.GetComponent<Button>().interactable = true;
+            DeGroupButton.SetActive(false);
+            currentObject = obj;
+            var child = obj.GetComponentsInChildren<SpriteRenderer>();
+            foreach (var item in child)
+            {
+                item.color = Color.magenta;
+            }
+            obj.layer = 0;
+            if (editMode == EditMode.Place)
+            {
+                InfoButton.SetActive(true);
+            }
+            if (editMode == EditMode.Loop)
+            {
+                SelectOnLoopMod();
+            }
+        }
+        else
+        {
+            ReleaseSelection();
+            GroupButton.SetActive(false);
+            GroupButton.GetComponent<Button>().interactable = true;
+            DeGroupButton.SetActive(true);
+            currentObject = obj;
+            var child = obj.GetComponentsInChildren<SpriteRenderer>();
+            foreach (var item in child)
+            {
+                item.color = Color.magenta;
+            }
+            obj.layer = 0;
+            if (editMode == EditMode.Place)
+            {
+                InfoButton.SetActive(true);
+            }
+            if (editMode == EditMode.Loop)
+            {
+                SelectOnLoopMod();
+            }
+        }
+    }
+
     private void ReleaseSelection()
     {
         if (currentObject != null)
         {
+            if (currentObject.CompareTag("Group"))
+            {
+                GroupReleaseSelection();
+                currentObject = null;
+                currentObjects.Clear();
+                return;
+            }
             if (Defines.instance.isHaveElement(currentObject.GetComponent<MarkerInfo>().ObjectType))
             {
                 currentObject.GetComponent<DangerObject>().SetColor();
@@ -233,19 +304,114 @@ public class Palate : MonoBehaviour
             infoMoveLoopWindow.CloseWindow();
         }
 
-        foreach (var multi in SelectedObjects)
+        if (currentObjects != null && currentObjects.Count > 0)
         {
-            if (multi != null)
+            foreach (var multi in currentObjects)
             {
-                if (Defines.instance.isHaveElement(multi.GetComponent<MarkerInfo>().ObjectType))
+                if (multi != null)
                 {
-                    multi.GetComponent<DangerObject>().SetColor();
+                    if (multi.CompareTag("Group"))
+                    {
+                        GroupReleaseSelection(multi);
+                        continue;
+                    }
+                    else if (Defines.instance.isHaveElement(multi.GetComponent<MarkerInfo>().ObjectType))
+                    {
+                        multi.GetComponent<DangerObject>().SetColor();
+                    }
+                    else
+                    {
+                        multi.GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                    multi.layer = 6;
+                }
+            }
+        }
+        GroupButton.SetActive(true);
+        GroupButton.GetComponent<Button>().interactable = false;
+        DeGroupButton.SetActive(false);
+        currentObject = null;
+        currentObjects.Clear();
+    }
+
+    private void GroupReleaseSelection()
+    {
+        if (currentObject != null)
+        {
+            var childs = currentObject.GetComponentsInChildren<Transform>();
+            foreach (var child in childs)
+            {
+                if (!child.CompareTag("GroupMember")) continue;
+                if (Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
+                {
+                    child.GetComponent<DangerObject>().SetColor();
                 }
                 else
                 {
-                    multi.GetComponent<SpriteRenderer>().color = Color.white;
+                    child.GetComponent<SpriteRenderer>().color = Color.white;
                 }
-                multi.layer = 6;
+                child.gameObject.layer = 6;
+            }
+
+        }
+        InfoButton.SetActive(false);
+        infoWindow.CloseWindow();
+        if (editMode == EditMode.Loop)
+        {
+            SetLoopMod.SetActive(false);
+            OpenMainLoopInfo(false);
+            infoMoveLoopWindow.CloseWindow();
+        }
+        if(currentObjects != null && currentObjects.Count > 0)
+        {
+            foreach (var multi in currentObjects)
+            {
+                if (multi != null)
+                {
+                    if (multi.CompareTag("Group"))
+                    {
+                        GroupReleaseSelection(multi);
+                        continue;
+                    }
+                    if (Defines.instance.isHaveElement(multi.GetComponent<MarkerInfo>().ObjectType))
+                    {
+                        multi.GetComponent<DangerObject>().SetColor();
+                    }
+                    else
+                    {
+                        multi.GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                    multi.layer = 6;
+                }
+            }
+        }
+        
+
+        GroupButton.SetActive(true);
+        GroupButton.GetComponent<Button>().interactable = false;
+        DeGroupButton.SetActive(false);
+
+        currentObject = null;
+        currentObjects.Clear();
+    }
+
+    private void GroupReleaseSelection(GameObject obj)
+    {
+        if (obj != null)
+        {
+            var childs = obj.GetComponentsInChildren<Transform>();
+            foreach (var child in childs)
+            {
+                if (!child.CompareTag("GroupMember")) continue;
+                if (Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
+                {
+                    child.GetComponent<DangerObject>().SetColor();
+                }
+                else
+                {
+                    child.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                child.gameObject.layer = 6;
             }
         }
     }
@@ -920,5 +1086,76 @@ public class Palate : MonoBehaviour
     public void SwitchMultifulSelect()
     {
         isMultiSelect = MultiSelectToggle.isOn;
+    }
+
+    public void MakeGroup()
+    {
+        var group = Instantiate(GroupPreefab);
+        if (currentObject.CompareTag("Group"))
+        {
+            var child = currentObject.GetComponentsInChildren<Transform>();
+            if (child != null)
+            {
+                foreach (var tr in child)
+                {
+                    if (currentObject == tr)
+                    {
+                        continue;
+                    }
+                    tr.tag = "GroupMember";
+                    tr.SetParent(group.transform);
+                }
+                Destroy(currentObject);
+            }
+        }
+        else
+        {
+            currentObject.tag = "GroupMember";
+            currentObject.transform.SetParent(group.transform);
+        }
+
+        foreach (var item in currentObjects)
+        {
+            if (item.CompareTag("Group"))
+            {
+                var child = item.GetComponentsInChildren<Transform>();
+                if (child != null)
+                {
+                    foreach (var tr in child)
+                    {
+                        if (item.CompareTag("Group"))
+                        {
+                            continue;
+                        }
+                        tr.tag = "GroupMember";
+                        tr.SetParent(group.transform);
+                    }
+                    Destroy(item);
+                }
+            }
+            else
+            {
+                item.tag = "GroupMember";
+                item.transform.SetParent(group.transform);
+            }
+        }
+        currentObject = null;
+        GroupHandleSelection(group);
+    }
+
+    public void DestroyGroup()
+    {
+        GroupReleaseSelection();
+        var childs = currentObject.GetComponentsInChildren<Transform>();
+        foreach (var child in childs)
+        {
+            if (child.CompareTag("Group"))
+            {
+                continue;
+            }
+            child.tag = "EditorMarker";
+            child.SetParent(null);
+        }
+        Destroy(currentObject);
     }
 }
