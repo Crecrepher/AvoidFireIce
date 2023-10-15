@@ -13,6 +13,7 @@ public class Swing : MonoBehaviour
     private void Awake()
     {
         lasttime = Time.time;
+        transform.rotation = Quaternion.Euler(0, 0, 150);
     }
     private void Update()
     {

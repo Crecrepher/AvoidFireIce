@@ -102,7 +102,7 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 }
                 ml.ml.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(MoveLoopLine.transform.position.x + ml.ml.loopList[index].startTime * 50f, button.transform.position.y);
+                rect.position = new Vector2(MoveLoopLine.transform.position.x + ml.ml.loopList[index].startTime * 50f * Screen.width / 800f, button.transform.position.y);
                 InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString();
             }
         }

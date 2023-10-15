@@ -95,7 +95,7 @@ public class InfoFireLoopWindow : MonoBehaviour
                 }
                 fl.fl.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(FireLoopLine.transform.position.x + fl.fl.loopList[index].startTime * 50f, button.transform.position.y);
+                rect.position = new Vector2(FireLoopLine.transform.position.x + fl.fl.loopList[index].startTime * 50f * Screen.width / 800f, button.transform.position.y);
                 InputBoxes[0].text = fl.fl.loopList[index].startTime.ToString();
             }
         }

@@ -89,7 +89,7 @@ public class InfoRotateLoopWindow : MonoBehaviour
                 }
                 rl.rl.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(RotateLoopLine.transform.position.x + rl.rl.loopList[index].startTime * 50f, button.transform.position.y);
+                rect.position = new Vector2(RotateLoopLine.transform.position.x + rl.rl.loopList[index].startTime * 50f * Screen.width / 800f, button.transform.position.y);
                 InputBoxes[0].text = rl.rl.loopList[index].startTime.ToString();
             }
         }

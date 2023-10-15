@@ -31,6 +31,7 @@ public class Palate : MonoBehaviour
     public List<TMP_InputField> MainLoopInfoInputs;
     public Toggle MainLoopInfoBind;
     public List<GameObject> FireLoopUi;
+    public Toggle ElementToggle;
 
     private InfoMoveLoopWindow infoMoveLoopWindow;
     private InfoRotateLoopWindow infoRotateLoopWindow;
@@ -118,6 +119,11 @@ public class Palate : MonoBehaviour
                                     }
                                 }
                                 GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
+                                var mi = madeObject.GetComponent<MarkerInfo>();
+                                if (Defines.instance.isHaveElement(mi.ObjectType))
+                                {
+                                    madeObject.GetComponent<DangerObject>().element = ElementToggle.isOn ? Element.Fire : Element.Ice;
+                                }
                                 HandleSelection(madeObject);
                             }
                             else
@@ -634,7 +640,7 @@ public class Palate : MonoBehaviour
                     ml.ml.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50, LoopLines[0].transform.position.y);
+                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[0].transform.position.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.moveLoopBlocks.Add(button);
 
@@ -670,7 +676,7 @@ public class Palate : MonoBehaviour
                     rl.rl.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[1].transform.position.x + block.startTime * 50, LoopLines[1].transform.position.y);
+                    rect.position = new Vector2(LoopLines[1].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[1].transform.position.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.rotateLoopBlocks.Add(button);
 
@@ -707,7 +713,7 @@ public class Palate : MonoBehaviour
                     fl.fl.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[2].transform.position.x + block.startTime * 50, LoopLines[2].transform.position.y);
+                    rect.position = new Vector2(LoopLines[2].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[2].transform.position.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.fireLoopBlocks.Add(button);
 
@@ -774,12 +780,12 @@ public class Palate : MonoBehaviour
             {
                 var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
                 button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, currentObject, ml.ml.loopList.IndexOf(c)));
-
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f, LoopLines[0].transform.position.y);
-                rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
+                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[0].transform.position.y);
+                rect.sizeDelta = new Vector2(c.playTime * 50f, rect.rect.height);
                 lb.moveLoopBlocks.Add(button);
                 count++;
+                
             }
 
         }
@@ -798,7 +804,8 @@ public class Palate : MonoBehaviour
                 button.GetComponent<Button>().onClick.AddListener(() => infoRotateLoopWindow.OpenWindow(button, currentObject, rl.rl.loopList.IndexOf(c)));
 
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[1].transform.position.x + c.startTime * 50f, LoopLines[1].transform.position.y);
+                
+                rect.position = new Vector2(LoopLines[1].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[1].transform.position.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
                 lb.rotateLoopBlocks.Add(button);
                 count++;
@@ -820,8 +827,8 @@ public class Palate : MonoBehaviour
                 button.GetComponent<Button>().onClick.AddListener(() => infoFireLoopWindow.OpenWindow(button, currentObject, fl.fl.loopList.IndexOf(c)));
 
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[2].transform.position.x + c.startTime * 50f, LoopLines[2].transform.position.y);
-                rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
+                rect.position = new Vector2(LoopLines[2].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[2].transform.position.y);
+                rect.sizeDelta = new Vector2(c.playTime * 50f, rect.rect.height);
                 lb.fireLoopBlocks.Add(button);
                 count++;
             }

@@ -20,6 +20,7 @@ TagManager:
   - FireLoopButton
   - Group
   - GroupMember
+  - SmallWall
   layers:
   - Default
   - TransparentFX
