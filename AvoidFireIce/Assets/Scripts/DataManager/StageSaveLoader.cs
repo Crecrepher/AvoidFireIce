@@ -5,22 +5,6 @@ using Newtonsoft.Json;
 using System.IO;
 using static QuaternionConverter;
 
-
-//public class WallInfo
-//{
-//    public Vector2 position;
-
-//    public WallInfo() { }
-//    public WallInfo(Vector2 position) { this.position = position; }
-//}
-
-//public class EnemyInfo
-//{
-//    public Vector2 position;
-//    public EnemyInfo() { }
-//    public EnemyInfo(Vector2 position) { this.position = position; }
-//}
-
 public class EditorObjInfo
 {
     public int code;
@@ -42,10 +26,11 @@ public class StageSaveLoader : MonoBehaviour
 {
     public class SaveData
     {
-        //public Vector2 playerStartPos;
         public List<EditorObjInfo> objects;
-        //public List<WallInfo> walls;
-        //public List<EnemyInfo> enemys;
+        public List<MoveLoop> moveLoops;
+        public List<RotateLoop> rotateLoops;
+        public List<FireLoop> fireLoops;
+        public List<List<int>> groupList;
     }
 
     public static StageSaveLoader instance
@@ -80,29 +65,17 @@ public class StageSaveLoader : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.Alpha1))
-        //{
-        //    Save("Test");
-        //    Debug.Log("Saved");
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha2))
-        //{
-        //    Load("Test");
-        //    Debug.Log("Loaded");
-        //}
-        //if (Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    Clear();
-        //    Debug.Log("Clear");
-        //}
-    }
+    private int saveCount = 0;
 
     public void Save(string fileName)
     {
+        saveCount = 0;
         var saveData = new SaveData();
         saveData.objects = new List<EditorObjInfo>();
+        saveData.moveLoops = new List<MoveLoop>();
+        saveData.rotateLoops = new List<RotateLoop>();
+        saveData.fireLoops = new List<FireLoop>();
+        saveData.groupList = new List<List<int>>();
 
         var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
         foreach (var obj in objs)
@@ -116,11 +89,17 @@ public class StageSaveLoader : MonoBehaviour
             RecordData(star, saveData);
         }
 
-        RecordData(GameObject.FindGameObjectWithTag("PlayerStart"),saveData);
+        RecordData(GameObject.FindGameObjectWithTag("PlayerStart"), saveData);
+
+        var groups = GameObject.FindGameObjectsWithTag("Group");
+        foreach (var group in groups)
+        {
+            RecordGroupData(group, saveData);
+        }
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
 
-        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter());
+        var json = JsonConvert.SerializeObject(saveData,new EditorObjInfoConverter(), new MoveLoopConverter(),new RotateLoopConverter(),new FireLoopConverter());
 
         File.WriteAllText(path, json);
     }
@@ -139,6 +118,79 @@ public class StageSaveLoader : MonoBehaviour
             objInfo.element = (int)obj.GetComponent<DangerObject>().element;
         }
         saveData.objects.Add(objInfo);
+
+        MoveLoopData mld = obj.GetComponent<MoveLoopData>();
+        if (mld != null) 
+        {
+            MoveLoop saveMl = mld.ml;
+            saveMl.initCode = saveCount;
+            saveData.moveLoops.Add(saveMl);
+        }
+
+        RotateLoopData rld = obj.GetComponent<RotateLoopData>();
+        if (rld != null)
+        {
+            RotateLoop saveRl = rld.rl;
+            saveRl.initCode = saveCount;
+            saveData.rotateLoops.Add(saveRl);
+        }
+
+        int type = obj.GetComponent<MarkerInfo>().ObjectType;
+        if (type == 0 || type == 1)
+        {
+            FireLoopData fld = obj.GetComponent<FireLoopData>();
+            if (fld != null)
+            {
+                FireLoop saveFl = fld.fl;
+                saveFl.initCode = saveCount;
+                saveData.fireLoops.Add(saveFl);
+            }
+        }
+        saveCount++;
+    }
+
+    private void RecordGroupData(GameObject obj, SaveData saveData)
+    {
+        List<int> currGroup=  new List<int>();
+        var objInfo = new EditorObjInfo
+        {
+            code = obj.GetComponent<MarkerInfo>().ObjectType,
+            element = 3,
+            pos = obj.transform.position,
+            rot = obj.transform.rotation
+        };
+        saveData.objects.Add(objInfo);
+
+        MoveLoopData mld = obj.GetComponent<MoveLoopData>();
+        if (mld != null)
+        {
+            MoveLoop saveMl = mld.ml;
+            saveMl.initCode = saveCount;
+            saveData.moveLoops.Add(saveMl);
+        }
+
+        RotateLoopData rld = obj.GetComponent<RotateLoopData>();
+        if (rld != null)
+        {
+            RotateLoop saveRl = rld.rl;
+            saveRl.initCode = saveCount;
+            saveData.rotateLoops.Add(saveRl);
+        }
+        saveCount++;
+
+        var children = obj.GetComponentsInChildren<Transform>();
+        foreach (var child in children)
+        {
+            if (child.CompareTag("Group"))
+            {
+                continue;
+            }
+            child.SetParent(null);
+            RecordData(child.gameObject, saveData);
+            currGroup.Add(saveCount-1);
+            child.SetParent(obj.transform);
+        }
+        saveData.groupList.Add(currGroup);
     }
 
     public void Clear()
@@ -154,19 +206,87 @@ public class StageSaveLoader : MonoBehaviour
     {
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         if (!File.Exists(path))
-        { return;}
-            
+        { return; }
+
+        Debug.Log(Application.persistentDataPath);
+        int LoadCount = 0;
+        int LoadMoveLoopCount = 0;
+        int LoadRotateLoopCount = 0;
+        int LoadFireLoopCount = 0;
+        GameObject currentGroup = null;
+        int groupIndex = -1;
+
         var json = File.ReadAllText(path);
-        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter());
+        var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter(),new FireLoopConverter());
+
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(EditorObjs[loadedObj.code], loadedObj.pos, loadedObj.rot);
+            if (loadedObj.code == 10)
+            {
+                currentGroup = obj;
+                groupIndex++;
+            }
             if (Defines.instance.isHaveElement(loadedObj.code))
             {
                 DangerObject dangerObj = obj.GetComponent<DangerObject>();
                 dangerObj.element = (Element)loadedObj.element;
                 dangerObj.SetColor();
             }
+            if (saveData.moveLoops != null && LoadMoveLoopCount < saveData.moveLoops.Count)
+            {
+                if (saveData.moveLoops[LoadMoveLoopCount].initCode == LoadCount)
+                {
+                    LoopBlocksList lbl = obj.AddComponent<LoopBlocksList>();
+                    lbl.moveLoopBlocks = new List<GameObject>();
+                    obj.AddComponent<MoveLoopData>().ml = new MoveLoop();
+                    MoveLoop newMl = obj.GetComponent<MoveLoopData>().ml;
+                    newMl.loopTime = saveData.moveLoops[LoadMoveLoopCount].loopTime;
+                    newMl.loopList = saveData.moveLoops[LoadMoveLoopCount].loopList;
+                    LoadMoveLoopCount++;
+                }
+            }
+            if (saveData.rotateLoops != null && LoadRotateLoopCount < saveData.rotateLoops.Count)
+            {
+                if (saveData.rotateLoops[LoadRotateLoopCount].initCode == LoadCount)
+                {
+                    LoopBlocksList lbl = obj.GetComponent<LoopBlocksList>();
+                    if (lbl == null)
+                    {
+                        lbl = obj.AddComponent<LoopBlocksList>();
+                    }
+                    lbl.rotateLoopBlocks = new List<GameObject>();
+                    obj.AddComponent<RotateLoopData>().rl = new RotateLoop();
+                    RotateLoop newRl = obj.GetComponent<RotateLoopData>().rl;
+                    newRl.loopTime = saveData.rotateLoops[LoadRotateLoopCount].loopTime;
+                    newRl.loopList = saveData.rotateLoops[LoadRotateLoopCount].loopList;
+                    LoadRotateLoopCount++;
+                }
+            }
+
+            if (saveData.fireLoops != null && LoadFireLoopCount < saveData.fireLoops.Count)
+            {
+                if (saveData.fireLoops[LoadFireLoopCount].initCode == LoadCount)
+                {
+                    LoopBlocksList lbl = obj.GetComponent<LoopBlocksList>();
+                    if (lbl == null)
+                    {
+                        lbl = obj.AddComponent<LoopBlocksList>();
+                    }
+                    lbl.fireLoopBlocks = new List<GameObject>();
+                    obj.AddComponent<FireLoopData>().fl = new FireLoop();
+                    FireLoop newFl = obj.GetComponent<FireLoopData>().fl;
+                    newFl.loopTime = saveData.fireLoops[LoadFireLoopCount].loopTime;
+                    newFl.loopList = saveData.fireLoops[LoadFireLoopCount].loopList;
+                    LoadFireLoopCount++;
+                }
+            }
+            if (groupIndex >= 0 && saveData.groupList != null && saveData.groupList[groupIndex].Contains(LoadCount))
+            {
+                obj.transform.SetParent(currentGroup.transform);
+                obj.tag = "GroupMember";
+            }
+            LoadCount++;
         }
     }
 }

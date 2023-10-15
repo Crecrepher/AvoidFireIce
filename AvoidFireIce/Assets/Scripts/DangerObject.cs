@@ -16,6 +16,14 @@ public class DangerObject : MonoBehaviour
         SetColor();
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Player player = collision.gameObject.GetComponent<Player>();
+        if (collision.gameObject.CompareTag("Player") && player.CurrentElemental != element)
+        {
+            player.Ouch();
+        }
+    }
     private void OnTriggerStay2D(Collider2D collision)
     {
          Player player = collision.gameObject.GetComponent<Player>();
@@ -27,7 +35,7 @@ public class DangerObject : MonoBehaviour
 
     virtual public void SetColor()
     {
-        switch(enemytype)
+        switch (enemytype)
         {
             case 0:
                 return;

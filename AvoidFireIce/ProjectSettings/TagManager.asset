@@ -11,16 +11,26 @@ TagManager:
   - Star
   - EditorMarker
   - CustomFileList
+  - Glass
+  - Bullet
+  - LoopEditBar
+  - LoopTableGrid
+  - MoveLoopButton
+  - RotateLoopButton
+  - FireLoopButton
+  - Group
+  - GroupMember
+  - SmallWall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - UnBulletAble
   - Water
   - UI
   - SelectRay
   - RayBlocker
-  - 
+  - Bullet
   - 
   - 
   - 

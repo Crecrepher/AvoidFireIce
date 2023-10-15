@@ -8,10 +8,22 @@ public class UiFunction : MonoBehaviour
     public GameObject MainMenu;
     public GameObject StartMenu;
     public GameObject EditMenu;
+    public CustomStage CustomStageManager;
 
     public GameObject StageLevelButtons;
     public GameObject CustomLevelButtons;
 
+    public void Awake()
+    {
+        PlayerPrefs.SetInt("DeathCount", 0);
+        if ((StageType)PlayerPrefs.GetInt("StageType") == StageType.Editing)
+        {
+            EditMenu.SetActive(true);
+            MainMenu.SetActive(false);
+            CustomStageManager.Showlists();
+            PlayerPrefs.SetInt("StageType",(int)StageType.Official);
+        }
+    }
     public void ActiveMainUi(bool on)
     {
         MainMenu.SetActive(on);

@@ -32,8 +32,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject WinWindow;
     public List<GameObject> SpecialObjsStage1;
+    public List<GameObject> SpecialObjsStage2;
 
     public TMP_Text DeathCounter;
+    public GameObject WallColiderBinder;
+    public GameObject GlassColiderBinder;
+    public GameObject SmallWallColiderBinder;
 
     private void Awake()
     {
@@ -48,8 +52,20 @@ public class GameManager : MonoBehaviour
         {
             StageName = PlayerPrefs.GetString("StageName");
             StageManager.instance.LoadStage(StageName);
-            Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
+            switch(StageName[0])
+            {
+                case '1':
+                    Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
+                    break;
+                case '2':
+                    Instantiate(SpecialObjsStage2[int.Parse(StageName[StageName.Length - 1].ToString())]);
+                    break;
+            }
+           
         }
+        WallBind();
+        GlassBind();
+        SmallWallBind();
         AdjustCameraOrthographicSize();
         DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
@@ -130,7 +146,7 @@ public class GameManager : MonoBehaviour
         {
             case StageType.Official:
                 {
-                    if (StageName[StageName.Length - 1] == '6')
+                    if (StageName == "1-6" || StageName == "2-7")
                     {
                         SceneManager.LoadScene("TitleScene");
                     }
@@ -150,5 +166,51 @@ public class GameManager : MonoBehaviour
                 break;
 
         }
+    }
+
+    private void WallBind()
+    {
+        var walls = GameObject.FindGameObjectsWithTag("Wall");
+        foreach (var wall in walls)
+        {
+            if(wall.name == "Tilemap" || wall.name == "WallBinder" || wall.name == "GlassBinder")
+            {
+                continue;
+            }
+            wall.transform.parent = WallColiderBinder.transform;
+            Destroy(wall.GetComponent<Rigidbody2D>());
+        }
+        WallColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
+
+    }
+
+    private void GlassBind()
+    {
+        var glasses = GameObject.FindGameObjectsWithTag("Glass");
+        foreach (var glass in glasses)
+        {
+            if (glass.name == "Tilemap" || glass.name == "WallBinder" || glass.name == "GlassBinder")
+            {
+                continue;
+            }
+            glass.transform.parent = GlassColiderBinder.transform;
+            Destroy(glass.GetComponent<Rigidbody2D>());
+        }
+        GlassColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
+    }
+
+    private void SmallWallBind()
+    {
+        var smallWalls = GameObject.FindGameObjectsWithTag("SmallWall");
+        foreach (var smallWall in smallWalls)
+        {
+            if (smallWall.name == "Tilemap" || smallWall.name == "WallBinder" || smallWall.name == "GlassBinder" || smallWall.name == "SmallWallBinder")
+            {
+                continue;
+            }
+            smallWall.transform.parent = SmallWallColiderBinder.transform;
+            Destroy(smallWall.GetComponent<Rigidbody2D>());
+        }
+        SmallWallColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
     }
 }

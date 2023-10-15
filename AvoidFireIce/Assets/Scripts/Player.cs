@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rb;
     private SpriteRenderer spr;
-
+    private bool isWall = false;
 
 
     private void OnEnable()
@@ -37,16 +37,21 @@ public class Player : MonoBehaviour
         var v = Input.GetAxisRaw("Vertical");
 
         direction = new Vector3(h, v);
-        var directionMag = direction.magnitude;
-        if (directionMag > 1)
+        if (!isWall)
         {
-            direction.Normalize();
+            direction = new Vector3(h, v);
+            float directionMag = direction.magnitude;
+            if (directionMag > 1)
+            {
+                direction.Normalize();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangePlayerElement();
         }
+
     }
 
     public void ChangePlayerElement()
@@ -72,5 +77,22 @@ public class Player : MonoBehaviour
     {
         GameManager.instance.AutoRestart();
         Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            isWall = true;
+        }
+        
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            isWall = false;
+        }
     }
 }
