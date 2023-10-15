@@ -26,7 +26,7 @@ public class MoveLoopPlayer : MonoBehaviour
         timer += Time.deltaTime;
         if (timer > currMove.startTime && timer < currMove.startTime + currMove.playTime)
         {
-            transform.position = (Vector2)transform.position + currMove.moveVector * Time.deltaTime;//Vector2.Lerp(LerpStart, LerpEnd, (timer - currMove.startTime) / currMove.playTime);
+            transform.position = (Vector2)transform.position + currMove.moveVector / currMove .playTime * Time.deltaTime;//Vector2.Lerp(LerpStart, LerpEnd, (timer - currMove.startTime) / currMove.playTime);
         }
 
         if (timer > currMove.startTime + currMove.playTime)

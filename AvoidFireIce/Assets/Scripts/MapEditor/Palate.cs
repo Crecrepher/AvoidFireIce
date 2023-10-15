@@ -480,6 +480,13 @@ public class Palate : MonoBehaviour
             madeObject.GetComponent<RotateLoopData>().rl.loopTime = rl.rl.loopTime;
             madeObject.GetComponent<RotateLoopData>().rl.loopList = rl.rl.loopList.ToList();
         }
+        FireLoopData fl = currentObject.GetComponent<FireLoopData>();
+        if (rl != null)
+        {
+            madeObject.GetComponent<FireLoopData>().fl = new FireLoop();
+            madeObject.GetComponent<FireLoopData>().fl.loopTime = fl.fl.loopTime;
+            madeObject.GetComponent<FireLoopData>().fl.loopList = fl.fl.loopList.ToList();
+        }
         HandleSelection(madeObject);
     }
 
