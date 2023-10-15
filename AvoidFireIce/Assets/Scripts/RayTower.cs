@@ -25,6 +25,8 @@ public class RayTower : MonoBehaviour
         RayLineRenderer = gameObject.GetComponentInChildren<LineRenderer>();
         dangerObject = GetComponent<DangerObject>();
         RayLineRenderer.positionCount = 10;
+        RayLineRenderer.enabled = true;
+        Power = true;
     }
 
     void Update()

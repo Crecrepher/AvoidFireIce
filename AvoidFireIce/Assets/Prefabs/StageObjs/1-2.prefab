@@ -123,7 +123,7 @@ MonoBehaviour:
   Bullet: {fileID: -4376109651202899687, guid: f530e7f95e7d4dc48b6ac3a092f5b867, type: 3}
   fireRate: 0.25
   bulletSpeed: 8
-  ShootGap: 1
+  ShootGap: 0.6
 --- !u!1001 &1964467790899615820
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -506,7 +506,7 @@ MonoBehaviour:
   Bullet: {fileID: -4376109651202899687, guid: f530e7f95e7d4dc48b6ac3a092f5b867, type: 3}
   fireRate: 0.25
   bulletSpeed: 8
-  ShootGap: 1
+  ShootGap: 0.6
 --- !u!4 &5493442752208283909 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 751629023632941814, guid: d68cd1d94a3802b44bf876960bb07d52, type: 3}

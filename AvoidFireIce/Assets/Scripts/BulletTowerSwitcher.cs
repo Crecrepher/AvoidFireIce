@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BulletTowerSwitcher : MonoBehaviour
 {
@@ -45,7 +46,10 @@ public class BulletTowerSwitcher : MonoBehaviour
         var pos = rb.position;
         pos += (Vector2)direction.normalized * ShootGap;
 
-        var bullet = Instantiate(Bullet, pos, Quaternion.identity);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+        var bullet = Instantiate(Bullet, pos, targetRotation);
         bullet.Launch(direction.normalized, bulletSpeed);
         bullet.gameObject.GetComponent<DangerObject>().SetElement(element);
     }

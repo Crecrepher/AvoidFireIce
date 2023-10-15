@@ -16,7 +16,6 @@ public class BulletFireLoopPlayer : MonoBehaviour
 
     public void Init()
     {
-
         currFire = loopList[0];
         currentCount = 0;
         loopMaxCount = loopList.Count;
@@ -24,6 +23,10 @@ public class BulletFireLoopPlayer : MonoBehaviour
         bt = GetComponent<BulletTower>();
         subTimer = 0f;
         shootDuration = currFire.playTime / currFire.rate;
+        if (currFire.startTime == 0f)
+        {
+            bt.Shoot((Element)currFire.element, currFire.speed);
+        }
     }
 
     private void Update()

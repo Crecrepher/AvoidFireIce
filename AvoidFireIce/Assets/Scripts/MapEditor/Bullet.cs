@@ -18,6 +18,7 @@ public class Bullet : MonoBehaviour
     {
         speed = force;
         rb2d.AddForce(direction * force, ForceMode2D.Impulse);
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
