@@ -1088,9 +1088,12 @@ public class Palate : MonoBehaviour
         isMultiSelect = MultiSelectToggle.isOn;
     }
 
+
+    //Group
     public void MakeGroup()
     {
         var group = Instantiate(GroupPreefab);
+        group.transform.position = currentObjects[0].transform.position;
         if (currentObject.CompareTag("Group"))
         {
             var child = currentObject.GetComponentsInChildren<Transform>();
@@ -1123,7 +1126,7 @@ public class Palate : MonoBehaviour
                 {
                     foreach (var tr in child)
                     {
-                        if (item.CompareTag("Group"))
+                        if (tr.CompareTag("Group"))
                         {
                             continue;
                         }
@@ -1145,7 +1148,6 @@ public class Palate : MonoBehaviour
 
     public void DestroyGroup()
     {
-        GroupReleaseSelection();
         var childs = currentObject.GetComponentsInChildren<Transform>();
         foreach (var child in childs)
         {
@@ -1155,7 +1157,17 @@ public class Palate : MonoBehaviour
             }
             child.tag = "EditorMarker";
             child.SetParent(null);
+            if (Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
+            {
+                child.GetComponent<DangerObject>().SetColor();
+            }
+            else
+            {
+                child.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            child.gameObject.layer = 6;
         }
         Destroy(currentObject);
+        GroupReleaseSelection();
     }
 }

@@ -30,7 +30,8 @@ public class InfoWindow : MonoBehaviour
         if (selected == null) { return; }
         selectedObject = selected;
         InfoWindowObject.SetActive(true);
-        if (Defines.instance.isHaveElement(selectedObject.GetComponent<MarkerInfo>().ObjectType))
+        MarkerInfo mi = selectedObject.GetComponent<MarkerInfo>();
+        if (mi != null && Defines.instance.isHaveElement(mi.ObjectType))
         {
             InfoWindowElement.SetActive(true);
             ElementsToggle[(int)selectedObject.GetComponent<DangerObject>().element].isOn = true;
@@ -40,8 +41,11 @@ public class InfoWindow : MonoBehaviour
             InfoWindowElement.SetActive(false);
         }
         SpriteRenderer spriteInfo = selected.GetComponent<SpriteRenderer>();
-        sprite.sprite = spriteInfo.sprite;
-        sprite.color = Color.white;
+        if (spriteInfo != null)
+        {
+            sprite.sprite = spriteInfo.sprite;
+            sprite.color = Color.white;
+        }
         PosX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString();
         PosY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString();
         Rotate.text = (selectedObject.transform.rotation.eulerAngles.z).ToString();
