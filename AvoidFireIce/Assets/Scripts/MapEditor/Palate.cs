@@ -73,6 +73,10 @@ public class Palate : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Delete))
+        {
+            DeleteCurrentObj();
+        }
         switch (editMode)
         {
             case EditMode.Place:
@@ -341,7 +345,11 @@ public class Palate : MonoBehaviour
             var childs = currentObject.GetComponentsInChildren<Transform>();
             foreach (var child in childs)
             {
-                if (!child.CompareTag("GroupMember")) continue;
+                if (!child.CompareTag("GroupMember"))
+                {
+                    child.GetComponent<SpriteRenderer>().color = Color.clear;
+                    continue;
+                }
                 if (Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
                 {
                     child.GetComponent<DangerObject>().SetColor();
@@ -458,9 +466,12 @@ public class Palate : MonoBehaviour
 
     public void DeleteCurrentObj()
     {
-        Destroy(currentObject);
-        currentObject = null;
-        InfoButton.SetActive(false);
+        if (currentObject !=null)
+        {
+            Destroy(currentObject);
+            currentObject = null;
+            InfoButton.SetActive(false);
+        }
     }
 
     public void DuplicateCurrentObj()
@@ -481,7 +492,7 @@ public class Palate : MonoBehaviour
             madeObject.GetComponent<RotateLoopData>().rl.loopList = rl.rl.loopList.ToList();
         }
         FireLoopData fl = currentObject.GetComponent<FireLoopData>();
-        if (rl != null)
+        if (fl != null)
         {
             madeObject.GetComponent<FireLoopData>().fl = new FireLoop();
             madeObject.GetComponent<FireLoopData>().fl.loopTime = fl.fl.loopTime;
@@ -779,7 +790,7 @@ public class Palate : MonoBehaviour
 
         if (rl != null)
         {
-            LoopLines[0].GetComponent<RectTransform>().sizeDelta = new Vector2(rl.rl.loopTime * 50f, LoopLines[1].GetComponent<RectTransform>().sizeDelta.y);
+            LoopLines[1].GetComponent<RectTransform>().sizeDelta = new Vector2(rl.rl.loopTime * 50f, LoopLines[1].GetComponent<RectTransform>().sizeDelta.y);
             int count = 0;
             foreach (var c in rl.rl.loopList)
             {
@@ -1046,6 +1057,7 @@ public class Palate : MonoBehaviour
                 break;
             case LoopType.Fire:
                 {
+                    if (lbl.fireLoopBlocks.Count <= 0) break;
                     var button = lbl.fireLoopBlocks[infoFireLoopWindow.index];
                     currentObject.GetComponent<FireLoopData>().fl.loopList.RemoveAt(index);
                     lbl.fireLoopBlocks.Remove(button);
@@ -1164,11 +1176,11 @@ public class Palate : MonoBehaviour
             }
             child.tag = "EditorMarker";
             child.SetParent(null);
-            if (Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
+            if (child.GetComponent<MarkerInfo>() != null && Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
             {
                 child.GetComponent<DangerObject>().SetColor();
             }
-            else
+            else if(child.GetComponent<SpriteRenderer>() != null)
             {
                 child.GetComponent<SpriteRenderer>().color = Color.white;
             }

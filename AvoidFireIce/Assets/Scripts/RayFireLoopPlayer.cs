@@ -21,10 +21,15 @@ public class RayFireLoopPlayer : MonoBehaviour
         loopMaxCount = loopList.Count;
         timer = 0f;
         isOn = false;
+        rayTower.SetActiveRay(false, currFire.element);
     }
 
     private void Update()
     {
+        if (currFire == null || loopList.Count <= 0)
+        {
+            return;
+        }
         timer += Time.deltaTime;
         if (isOn && timer > currFire.startTime + currFire.playTime)
         {

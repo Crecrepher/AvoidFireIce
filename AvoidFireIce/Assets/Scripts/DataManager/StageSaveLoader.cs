@@ -30,6 +30,7 @@ public class StageSaveLoader : MonoBehaviour
         public List<MoveLoop> moveLoops;
         public List<RotateLoop> rotateLoops;
         public List<FireLoop> fireLoops;
+        public List<List<int>> groupList;
     }
 
     public static StageSaveLoader instance
@@ -74,6 +75,7 @@ public class StageSaveLoader : MonoBehaviour
         saveData.moveLoops = new List<MoveLoop>();
         saveData.rotateLoops = new List<RotateLoop>();
         saveData.fireLoops = new List<FireLoop>();
+        saveData.groupList = new List<List<int>>();
 
         var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
         foreach (var obj in objs)
@@ -87,7 +89,13 @@ public class StageSaveLoader : MonoBehaviour
             RecordData(star, saveData);
         }
 
-        RecordData(GameObject.FindGameObjectWithTag("PlayerStart"),saveData);
+        RecordData(GameObject.FindGameObjectWithTag("PlayerStart"), saveData);
+
+        var groups = GameObject.FindGameObjectsWithTag("Group");
+        foreach (var group in groups)
+        {
+            RecordGroupData(group, saveData);
+        }
 
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
 
@@ -141,6 +149,50 @@ public class StageSaveLoader : MonoBehaviour
         saveCount++;
     }
 
+    private void RecordGroupData(GameObject obj, SaveData saveData)
+    {
+        List<int> currGroup=  new List<int>();
+        var objInfo = new EditorObjInfo
+        {
+            code = obj.GetComponent<MarkerInfo>().ObjectType,
+            element = 3,
+            pos = obj.transform.position,
+            rot = obj.transform.rotation
+        };
+        saveData.objects.Add(objInfo);
+
+        MoveLoopData mld = obj.GetComponent<MoveLoopData>();
+        if (mld != null)
+        {
+            MoveLoop saveMl = mld.ml;
+            saveMl.initCode = saveCount;
+            saveData.moveLoops.Add(saveMl);
+        }
+
+        RotateLoopData rld = obj.GetComponent<RotateLoopData>();
+        if (rld != null)
+        {
+            RotateLoop saveRl = rld.rl;
+            saveRl.initCode = saveCount;
+            saveData.rotateLoops.Add(saveRl);
+        }
+        saveCount++;
+
+        var children = obj.GetComponentsInChildren<Transform>();
+        foreach (var child in children)
+        {
+            if (child.CompareTag("Group"))
+            {
+                continue;
+            }
+            child.SetParent(null);
+            RecordData(child.gameObject, saveData);
+            currGroup.Add(saveCount-1);
+            child.SetParent(obj.transform);
+        }
+        saveData.groupList.Add(currGroup);
+    }
+
     public void Clear()
     {
         var objs = GameObject.FindGameObjectsWithTag("EditorMarker");
@@ -156,15 +208,25 @@ public class StageSaveLoader : MonoBehaviour
         if (!File.Exists(path))
         { return; }
 
+        Debug.Log(Application.persistentDataPath);
         int LoadCount = 0;
         int LoadMoveLoopCount = 0;
         int LoadRotateLoopCount = 0;
         int LoadFireLoopCount = 0;
+        GameObject currentGroup = null;
+        int groupIndex = -1;
+
         var json = File.ReadAllText(path);
         var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter(),new FireLoopConverter());
+
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(EditorObjs[loadedObj.code], loadedObj.pos, loadedObj.rot);
+            if (loadedObj.code == 10)
+            {
+                currentGroup = obj;
+                groupIndex++;
+            }
             if (Defines.instance.isHaveElement(loadedObj.code))
             {
                 DangerObject dangerObj = obj.GetComponent<DangerObject>();
@@ -218,6 +280,11 @@ public class StageSaveLoader : MonoBehaviour
                     newFl.loopList = saveData.fireLoops[LoadFireLoopCount].loopList;
                     LoadFireLoopCount++;
                 }
+            }
+            if (groupIndex >= 0 && saveData.groupList != null && saveData.groupList[groupIndex].Contains(LoadCount))
+            {
+                obj.transform.SetParent(currentGroup.transform);
+                obj.tag = "GroupMember";
             }
             LoadCount++;
         }

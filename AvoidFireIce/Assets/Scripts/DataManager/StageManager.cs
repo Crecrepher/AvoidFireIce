@@ -60,20 +60,29 @@ public class StageManager : MonoBehaviour
         {
             rotateInitCode = saveData.rotateLoops[rotateLoopsCount].initCode;
         }
-        if (saveData.rotateLoops != null && saveData.rotateLoops.Count > 0)
+        if (saveData.fireLoops != null && saveData.fireLoops.Count > 0)
         {
             fireInitCode = saveData.fireLoops[fireLoopsCount].initCode;
         }
 
+        GameObject currentGroup = null;
+        int groupIndex = -1;
+
         foreach (var loadedObj in saveData.objects)
         {
             GameObject obj = Instantiate(ObjsPrefab[loadedObj.code], loadedObj.pos, loadedObj.rot);
+            if (loadedObj.code == 10)
+            {
+                currentGroup = obj;
+                groupIndex++;
+            }
             if (Defines.instance.isHaveElement(loadedObj.code))
             {
                 DangerObject dangerObj = obj.GetComponent<DangerObject>();
                 dangerObj.element = (Element)loadedObj.element;
                 dangerObj.SetColor();
             }
+
             if (moveInitCode == loadCount && saveData.moveLoops != null && saveData.moveLoops.Count > 0)
             {
                 MoveLoop ml = saveData.moveLoops[moveLoopsCount];
@@ -111,33 +120,41 @@ public class StageManager : MonoBehaviour
             if (fireInitCode == loadCount && saveData.fireLoops != null && saveData.fireLoops.Count > 0)
             {
                 FireLoop fl = saveData.fireLoops[fireLoopsCount];
-                fireLoopsCount++;
-                if (saveData.fireLoops.Count > fireLoopsCount)
+                if (fl.loopList.Count > 0 )
                 {
-                    fireInitCode = saveData.fireLoops[fireLoopsCount].initCode;
-                }
-                if (fl.loopList.Count > 0)
-                {
-                    switch (loadedObj.code)
+                    fireLoopsCount++;
+                    if (saveData.fireLoops.Count > fireLoopsCount)
                     {
-                        case 0:
-                            {
-                                BulletFireLoopPlayer flp = obj.AddComponent<BulletFireLoopPlayer>();
-                                flp.loopTime = fl.loopTime;
-                                flp.loopList = fl.loopList;
-                                flp.Init();
-                            }
-                            break;
-                        case 1:
-                            {
-                                RayFireLoopPlayer flp = obj.AddComponent<RayFireLoopPlayer>();
-                                flp.loopTime = fl.loopTime;
-                                flp.loopList = fl.loopList;
-                                flp.Init();
-                            }
-                            break;
+                        fireInitCode = saveData.fireLoops[fireLoopsCount].initCode;
+                    }
+                    if (fl.loopList.Count > 0)
+                    {
+                        switch (loadedObj.code)
+                        {
+                            case 0:
+                                {
+                                    BulletFireLoopPlayer flp = obj.AddComponent<BulletFireLoopPlayer>();
+                                    flp.loopTime = fl.loopTime;
+                                    flp.loopList = fl.loopList;
+                                    flp.Init();
+                                }
+                                break;
+                            case 1:
+                                {
+                                    RayFireLoopPlayer flp = obj.AddComponent<RayFireLoopPlayer>();
+                                    flp.loopTime = fl.loopTime;
+                                    flp.loopList = fl.loopList;
+                                    flp.Init();
+                                }
+                                break;
+                        }
                     }
                 }
+                
+            }
+            if (groupIndex >= 0 && saveData.groupList != null && saveData.groupList[groupIndex].Contains(loadCount))
+            {
+                obj.transform.SetParent(currentGroup.transform);
             }
             loadCount++;
         }

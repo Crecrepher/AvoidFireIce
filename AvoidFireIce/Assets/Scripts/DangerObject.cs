@@ -35,7 +35,7 @@ public class DangerObject : MonoBehaviour
 
     virtual public void SetColor()
     {
-        switch(enemytype)
+        switch (enemytype)
         {
             case 0:
                 return;
