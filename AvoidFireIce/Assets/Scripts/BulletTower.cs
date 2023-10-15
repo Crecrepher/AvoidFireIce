@@ -21,25 +21,29 @@ public class BulletTower : MonoBehaviour
         lastTime = Time.time;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (fireRate < Time.time - lastTime)
-        {
-            Shoot(dangerObject.element);
-            lastTime = Time.time;
-        }
+        //if (fireRate < Time.time - lastTime)
+        //{
+        //    Shoot(dangerObject.element);
+        //    lastTime = Time.time;
+        //}
     }
 
-    private void Shoot(Element element)
+    public void Shoot(Element element,float speed)
     {
+        bulletSpeed = speed;
         Vector3 rotationEulerAngles = transform.rotation.eulerAngles;
         Vector3 direction = Quaternion.Euler(rotationEulerAngles) * Vector3.up;
 
         var pos = rb.position;
         pos += (Vector2)direction.normalized * ShootGap;
 
-        var bullet = Instantiate(Bullet, pos, Quaternion.identity);
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(new Vector3(0, 0, angle));
+
+        var bullet = Instantiate(Bullet, pos, targetRotation);
         bullet.Launch(direction.normalized, bulletSpeed);
         bullet.gameObject.GetComponent<DangerObject>().SetElement(element);
     }
