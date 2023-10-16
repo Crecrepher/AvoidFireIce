@@ -194,7 +194,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4334450896631550447, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: SmallWall
       objectReference: {fileID: 0}
     - target: {fileID: 5037806032485533470, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_Color.b
@@ -212,6 +212,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 7720524023428371452, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 7f4ebbab331359f4182feda24767c766, type: 2}
     m_RemovedComponents:
     - {fileID: 1285654393952236951, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
     m_RemovedGameObjects: []
@@ -293,7 +297,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4334450896631550447, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: SmallWall
       objectReference: {fileID: 0}
     - target: {fileID: 5037806032485533470, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_Color.b
@@ -311,6 +315,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 7720524023428371452, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 7f4ebbab331359f4182feda24767c766, type: 2}
     m_RemovedComponents:
     - {fileID: 1285654393952236951, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
     m_RemovedGameObjects: []
@@ -392,7 +400,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4334450896631550447, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: SmallWall
       objectReference: {fileID: 0}
     - target: {fileID: 5037806032485533470, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_Color.b
@@ -410,6 +418,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 7720524023428371452, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 7f4ebbab331359f4182feda24767c766, type: 2}
     m_RemovedComponents:
     - {fileID: 1285654393952236951, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
     m_RemovedGameObjects: []
@@ -582,7 +594,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4334450896631550447, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: SmallWall
       objectReference: {fileID: 0}
     - target: {fileID: 5037806032485533470, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
       propertyPath: m_Color.b
@@ -600,6 +612,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 7720524023428371452, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 7f4ebbab331359f4182feda24767c766, type: 2}
     m_RemovedComponents:
     - {fileID: 1285654393952236951, guid: 343d698bfa7e74f49a06e279384d2102, type: 3}
     m_RemovedGameObjects: []

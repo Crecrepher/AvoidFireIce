@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Glass") || collision.gameObject.CompareTag("SmallWall"))
         {
             isWall = true;
         }
@@ -90,7 +90,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Glass") || collision.gameObject.CompareTag("SmallWall"))
         {
             isWall = false;
         }
