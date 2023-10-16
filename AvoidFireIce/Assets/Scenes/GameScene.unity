@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 185219211}
   - component: {fileID: 185219210}
   - component: {fileID: 185219209}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: SmallWallBinder
   m_TagString: SmallWall
   m_Icon: {fileID: 0}
@@ -375,14 +375,14 @@ MonoBehaviour:
   WinWindow: {fileID: 2109143513}
   SpecialObjsStage1:
   - {fileID: 658767721680542866, guid: 73568d665b8a8ae40a8fc0857d53bbd1, type: 3}
-  - {fileID: 5315781745951509204, guid: c76a5196829f200499b903b961e28458, type: 3}
+  - {fileID: 5315781745951509204, guid: fb89d7da067be9b4da7f47d5830243bb, type: 3}
   - {fileID: 5515718519224211635, guid: f3032642bd8fe18408780ea65d7cc2b0, type: 3}
   - {fileID: 5515718519224211635, guid: f3032642bd8fe18408780ea65d7cc2b0, type: 3}
   - {fileID: 5515718519224211635, guid: f3032642bd8fe18408780ea65d7cc2b0, type: 3}
   - {fileID: 5515718519224211635, guid: f3032642bd8fe18408780ea65d7cc2b0, type: 3}
   - {fileID: 5515718519224211635, guid: f3032642bd8fe18408780ea65d7cc2b0, type: 3}
   SpecialObjsStage2:
-  - {fileID: 3223305810730982724, guid: fb89d7da067be9b4da7f47d5830243bb, type: 3}
+  - {fileID: 3223305810730982724, guid: 50bfe6c8d9edf224d966a5cbe525c0f1, type: 3}
   - {fileID: 5315781745951509204, guid: 8a860273eb13be84d9670247adc08923, type: 3}
   - {fileID: 5315781745951509204, guid: 2151558281aff96428c96e52bb43fdab, type: 3}
   - {fileID: 5315781745951509204, guid: d58006fd3fdafe540bf8c57aaaa8de90, type: 3}
