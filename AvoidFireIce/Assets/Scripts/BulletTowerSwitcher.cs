@@ -29,7 +29,7 @@ public class BulletTowerSwitcher : MonoBehaviour
         if (fireRate < Time.time - lastTime)
         {
             Shoot(dangerObject.element);
-            counter = (counter + 1) % 3;
+            counter = (counter + 1) % 6;
             if (counter == 2)
             {
                 dangerObject.element = (Element)(((int)dangerObject.element + 1) % 2);

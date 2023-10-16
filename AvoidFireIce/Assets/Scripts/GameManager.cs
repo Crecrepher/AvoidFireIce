@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -35,9 +36,11 @@ public class GameManager : MonoBehaviour
     public List<GameObject> SpecialObjsStage2;
 
     public TMP_Text DeathCounter;
+    public TMP_Text MapName;
     public GameObject WallColiderBinder;
     public GameObject GlassColiderBinder;
     public GameObject SmallWallColiderBinder;
+
 
     private void Awake()
     {
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
         {
             StageName = PlayerPrefs.GetString("TestStageName");
             StageManager.instance.Load(StageName);
+            MapName.text = "";
         }
         else if (PlayerPrefs.GetString("StageName") != null)
         {
@@ -61,7 +65,7 @@ public class GameManager : MonoBehaviour
                     Instantiate(SpecialObjsStage2[int.Parse(StageName[StageName.Length - 1].ToString())]);
                     break;
             }
-           
+            MapName.text = PlayerPrefs.GetString("StageName");
         }
         WallBind();
         GlassBind();
