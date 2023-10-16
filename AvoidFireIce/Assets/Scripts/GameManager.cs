@@ -150,9 +150,14 @@ public class GameManager : MonoBehaviour
         {
             case StageType.Official:
                 {
-                    if (StageName == "1-6" || StageName == "2-7")
+                    if (StageName == "2-7")
                     {
                         SceneManager.LoadScene("TitleScene");
+                    }
+                    else if (StageName == "1-6")
+                    {
+                        PlayerPrefs.SetString("StageName", "2-0");
+                        SceneManager.LoadScene("GameScene");
                     }
                     else
                     {
