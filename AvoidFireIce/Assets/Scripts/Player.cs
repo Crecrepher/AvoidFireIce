@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public Element CurrentElemental = Element.Fire;
+    public GameObject FireOrb;
+    public GameObject IceOrb;
 
 
     public float speed = 1f;
@@ -57,6 +59,8 @@ public class Player : MonoBehaviour
     public void ChangePlayerElement()
     {
         CurrentElemental = (Element)(((int)CurrentElemental + 1) % 2);
+        FireOrb.SetActive((CurrentElemental == Element.Fire));
+        IceOrb.SetActive((CurrentElemental == Element.Ice));
         SetPlayerElementColor();
     }
 
