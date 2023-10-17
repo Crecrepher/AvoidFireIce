@@ -72,8 +72,8 @@ public class GameManager : MonoBehaviour
         SmallWallBind();
         AdjustCameraOrthographicSize();
         DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
+        
     }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape)) 
@@ -190,7 +190,6 @@ public class GameManager : MonoBehaviour
             Destroy(wall.GetComponent<Rigidbody2D>());
         }
         WallColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
-
     }
 
     private void GlassBind()
