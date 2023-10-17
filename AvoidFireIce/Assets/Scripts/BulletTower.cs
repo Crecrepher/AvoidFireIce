@@ -46,5 +46,6 @@ public class BulletTower : MonoBehaviour
         var bullet = Instantiate(Bullet, pos, targetRotation);
         bullet.Launch(direction.normalized, bulletSpeed);
         bullet.gameObject.GetComponent<DangerObject>().SetElement(element);
+        bullet.gameObject.GetComponent<Bullet>().SetEffect(element);
     }
 }

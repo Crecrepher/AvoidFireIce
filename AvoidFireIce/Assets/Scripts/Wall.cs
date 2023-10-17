@@ -8,7 +8,8 @@ public class Wall : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Bullet"))
         {
-            Destroy(collision.gameObject);
+            Bullet b = collision.gameObject.GetComponent<Bullet>();
+            if (b != null) { b.Poof(); }
         }
     }
 }

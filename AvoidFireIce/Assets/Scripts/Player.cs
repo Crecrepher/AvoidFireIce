@@ -5,8 +5,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public Element CurrentElemental = Element.Fire;
-    public GameObject FireOrb;
-    public GameObject IceOrb;
+    public List<GameObject> FireOrb;
+    public List<GameObject> IceOrb;
+    public GameObject DeathPrefab;
 
 
     public float speed = 1f;
@@ -59,8 +60,14 @@ public class Player : MonoBehaviour
     public void ChangePlayerElement()
     {
         CurrentElemental = (Element)(((int)CurrentElemental + 1) % 2);
-        FireOrb.SetActive((CurrentElemental == Element.Fire));
-        IceOrb.SetActive((CurrentElemental == Element.Ice));
+        foreach (var fo in FireOrb) 
+        {
+            fo.SetActive((CurrentElemental == Element.Fire));
+        }
+        foreach (var fo in IceOrb)
+        {
+            fo.SetActive((CurrentElemental == Element.Ice));
+        }
         SetPlayerElementColor();
     }
 
@@ -69,10 +76,10 @@ public class Player : MonoBehaviour
         switch (CurrentElemental)
         {
             case Element.Fire:
-                spr.color = Defines.instance.FireColor;
+                //spr.color = Defines.instance.FireColor;
                 break;
             case Element.Ice:
-                spr.color = Defines.instance.IceColor;
+                //spr.color = Defines.instance.IceColor;
                 break;
         }
     }
@@ -80,6 +87,7 @@ public class Player : MonoBehaviour
     public void Ouch()
     {
         GameManager.instance.AutoRestart();
+        Instantiate(DeathPrefab,transform.position,Quaternion.identity);
         Destroy(gameObject);
     }
 
