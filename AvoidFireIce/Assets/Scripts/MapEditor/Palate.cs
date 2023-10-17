@@ -353,7 +353,12 @@ public class Palate : MonoBehaviour
             {
                 if (!child.CompareTag("GroupMember"))
                 {
-                    child.GetComponent<SpriteRenderer>().color = Color.clear;
+                    var sr = child.GetComponent<SpriteRenderer>();
+                    if (sr != null)
+                    {
+                        child.GetComponent<SpriteRenderer>().color = Color.clear;
+                    }
+                    
                     continue;
                 }
                 if (Defines.instance.isHaveElement(child.GetComponent<MarkerInfo>().ObjectType))
