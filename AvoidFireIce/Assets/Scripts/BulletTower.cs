@@ -9,6 +9,9 @@ public class BulletTower : MonoBehaviour
     public float fireRate;
     public float bulletSpeed;
 
+    public ParticleSystem ShootFlareFire;
+    public ParticleSystem ShootFlareIce;
+
     private float lastTime;
     private Rigidbody2D rb;
     private DangerObject dangerObject;
@@ -47,5 +50,14 @@ public class BulletTower : MonoBehaviour
         bullet.Launch(direction.normalized, bulletSpeed);
         bullet.gameObject.GetComponent<DangerObject>().SetElement(element);
         bullet.gameObject.GetComponent<Bullet>().SetEffect(element);
+
+        if (element == Element.Ice)
+        {
+            ShootFlareIce.Play();
+        }
+        else
+        {
+            ShootFlareFire.Play();
+        }
     }
 }
