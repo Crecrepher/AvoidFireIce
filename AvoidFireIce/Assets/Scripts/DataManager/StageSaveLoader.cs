@@ -88,8 +88,11 @@ public class StageSaveLoader : MonoBehaviour
         {
             RecordData(star, saveData);
         }
-
-        RecordData(GameObject.FindGameObjectWithTag("PlayerStart"), saveData);
+        GameObject player = GameObject.FindGameObjectWithTag("PlayerStart");
+        if (player != null)
+        {
+            RecordData(GameObject.FindGameObjectWithTag("PlayerStart"), saveData);
+        }
 
         var groups = GameObject.FindGameObjectsWithTag("Group");
         foreach (var group in groups)

@@ -198,6 +198,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BulletShootRed
       objectReference: {fileID: 0}
+    - target: {fileID: 1478237388807894, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4089945042170902, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -242,6 +246,18 @@ PrefabInstance:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 198354672196077466, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198539221733246402, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198576217697991068, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 199243642450472174, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
       propertyPath: m_Materials.Array.size
       value: 1
@@ -254,7 +270,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114020965620572722, guid: 65fd19473810b4e4892cb30a42cd822a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -280,6 +297,10 @@ PrefabInstance:
     - target: {fileID: 1232804221357758, guid: e5d487354950213499c50543517c8863, type: 3}
       propertyPath: m_Name
       value: BulletShootBlue
+      objectReference: {fileID: 0}
+    - target: {fileID: 1232804221357758, guid: e5d487354950213499c50543517c8863, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4602080443070552, guid: e5d487354950213499c50543517c8863, type: 3}
       propertyPath: m_LocalPosition.x
@@ -321,7 +342,19 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 198029968900272782, guid: e5d487354950213499c50543517c8863, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 198297418966626338, guid: e5d487354950213499c50543517c8863, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198338937294712770, guid: e5d487354950213499c50543517c8863, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198936394169017178, guid: e5d487354950213499c50543517c8863, type: 3}
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
@@ -337,7 +370,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114840116677904900, guid: e5d487354950213499c50543517c8863, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

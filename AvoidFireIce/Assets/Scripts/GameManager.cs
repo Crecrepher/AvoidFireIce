@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     public GameObject SmallWallColiderBinder;
 
     public GameObject Bg;
+    public GameObject Star1;
+    public GameObject Star2;
     public List<SpriteRenderer> BgFire;
     public List<SpriteRenderer> BgIce;
     int bgSwipe = 1;
@@ -116,6 +118,14 @@ public class GameManager : MonoBehaviour
                 item.color = new Color(1, 1, 1, Mathf.Max(-(fadeTimer / fadeMaxTimer),0));
             }
         }
+
+        if (playerInfo != null)
+        {
+            Bg.transform.position = -playerInfo.transform.position / 10f;
+            Star1.transform.position = -playerInfo.transform.position / 5f;
+            Star2.transform.position = -playerInfo.transform.position / 2f;
+        }
+        
     }
 
     private void AdjustCameraOrthographicSize()
