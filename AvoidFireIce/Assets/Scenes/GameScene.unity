@@ -557,6 +557,8 @@ MonoBehaviour:
   fadeMaxTimer: 1
   fadeTimer: 1
   playerInfo: {fileID: 0}
+  playerPrefab: {fileID: 8132463686520649109, guid: 6d35109a428c0e04d860bce0c568067b, type: 3}
+  starPrefab: {fileID: 4027861018057918619, guid: 565ea09e43769704da1ef2960276bd43, type: 3}
 --- !u!4 &296340325
 Transform:
   m_ObjectHideFlags: 0
@@ -596,6 +598,7 @@ MonoBehaviour:
   - {fileID: 5103091641271538012, guid: 2bad445d7ca6c04469daed4ac1335bca, type: 3}
   - {fileID: 2395748989603193111, guid: e72f9ea4b772d2b42be94859f03dde76, type: 3}
   - {fileID: 793443757183384745, guid: efb7c7e87c6439d44a09b8c7a23fb284, type: 3}
+  Stars: []
 --- !u!114 &296340327
 MonoBehaviour:
   m_ObjectHideFlags: 0

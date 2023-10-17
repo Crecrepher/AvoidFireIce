@@ -278,15 +278,23 @@ public class GameManager : MonoBehaviour
     public void SwipeBG()
     {
         var element = playerInfo.GetComponent<Player>().CurrentElemental;
-        bgSwipe *= -1;
-        if (fadeTimer >= fadeMaxTimer)
+        if (element == Element.Fire)
         {
-            fadeTimer = fadeMaxTimer - 0.1f;
+            bgSwipe = 1;
+            if (fadeTimer <= -fadeMaxTimer)
+            {
+                fadeTimer = -fadeMaxTimer + 0.1f;
+            }
         }
-        else if (fadeTimer <= -fadeMaxTimer)
+        else
         {
-            fadeTimer = -fadeMaxTimer + 0.1f;
+            bgSwipe = -1;
+            if (fadeTimer >= fadeMaxTimer)
+            {
+                fadeTimer = fadeMaxTimer - 0.1f;
+            }
         }
+
     }
 
 
