@@ -81,6 +81,10 @@ public class StageManager : MonoBehaviour
                 DangerObject dangerObj = obj.GetComponent<DangerObject>();
                 dangerObj.element = (Element)loadedObj.element;
                 dangerObj.SetColor();
+                if(loadedObj.code == (int)ObjectType.Bullet)
+                {
+                    obj.GetComponent<Bullet>().SetEffect(dangerObj.element);
+                }
             }
 
             if (moveInitCode == loadCount && saveData.moveLoops != null && saveData.moveLoops.Count > 0)

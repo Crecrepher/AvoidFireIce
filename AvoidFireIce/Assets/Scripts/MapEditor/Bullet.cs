@@ -18,7 +18,6 @@ public class Bullet : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         element= GetComponent<DangerObject>();
         if (willDestroyed) { Destroy(gameObject, 30f); }
-
     }
 
     public void Launch(Vector2 direction, float force)

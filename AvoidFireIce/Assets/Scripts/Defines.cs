@@ -32,6 +32,8 @@ public enum ObjectType
     Glass,
     PlayerMark,
     Star,
+    SmallWall,
+    Thumpher,
 }
 
 public enum StageType

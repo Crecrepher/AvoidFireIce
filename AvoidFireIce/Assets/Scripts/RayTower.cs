@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,9 +10,14 @@ using UnityEngine;
 public class RayTower : MonoBehaviour
 {
     public LayerMask WallLayer;
-    public float ShootGap = 0.4f;
     public int MaxReflections = 10;
     public Transform ShootPos;
+
+    public List<GameObject> FireElements;
+    public List<GameObject> IceElements;
+    public Material FireRay;
+    public Material IceRay;
+    public Material DeathRay;
 
     private Rigidbody2D rb;
     private LineRenderer RayLineRenderer;
@@ -62,6 +68,10 @@ public class RayTower : MonoBehaviour
                         direction = Vector2.Reflect(direction, hit.normal);
                         hitPosition = hit.point;
                     }
+                    else if (hit.collider.CompareTag("Bullet"))
+                    {
+                        hitPosition = hit.point;
+                    }
                 }
 
                 RayLineRenderer.positionCount = reflectionCount + 2;
@@ -73,6 +83,9 @@ public class RayTower : MonoBehaviour
                     break;
             }
             RayLineRenderer.SetPosition(0, ShootPos.position);
+            Vector2 pos = RayLineRenderer.GetPosition(RayLineRenderer.positionCount - 1);
+            FireElements[1].transform.position = pos;
+            IceElements[1].transform.position = pos;
         }
     }
 
@@ -89,6 +102,17 @@ public class RayTower : MonoBehaviour
             dangerObject.element = (Element)element;
             SetRayColor();
         }
+        else
+        {
+            foreach (var item in FireElements)
+            {
+                item.SetActive(false);
+            }
+            foreach (var item in IceElements)
+            {
+                item.SetActive(false);
+            }
+        }
     }
 
     public void SetRayColor()
@@ -101,13 +125,38 @@ public class RayTower : MonoBehaviour
         switch (dangerObject.element)
         {
             case Element.Fire:
-                color = Defines.instance.FireColor; 
+                RayLineRenderer.material = FireRay;
+                foreach (var item in FireElements)
+                {
+                    item.SetActive(true);
+                }
+                foreach (var item in IceElements)
+                {
+                    item.SetActive(false);
+                }
                 break;
             case Element.Ice:
-                color = Defines.instance.IceColor; 
+                RayLineRenderer.material = IceRay;
+                foreach (var item in FireElements)
+                {
+                    item.SetActive(false);
+                }
+                foreach (var item in IceElements)
+                {
+                    item.SetActive(true);
+                }
+                break;
+            default:
+                RayLineRenderer.material = DeathRay;
+                foreach (var item in FireElements)
+                {
+                    item.SetActive(true);
+                }
+                foreach (var item in IceElements)
+                {
+                    item.SetActive(true);
+                }
                 break;
         }
-        RayLineRenderer.startColor = color;
-        RayLineRenderer.endColor = color;
     }
 }
