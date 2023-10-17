@@ -9,22 +9,18 @@ public class Player : MonoBehaviour
     public List<GameObject> IceOrb;
     public GameObject DeathPrefab;
 
-
     public float speed = 1f;
 
     private Vector2 direction = Vector2.zero;
 
 
     private Rigidbody2D rb;
-    private SpriteRenderer spr;
     private bool isWall = false;
 
 
     private void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
-        spr = GetComponent<SpriteRenderer>();
-        SetPlayerElementColor();
     }
     private void FixedUpdate()
     {
@@ -68,20 +64,7 @@ public class Player : MonoBehaviour
         {
             fo.SetActive((CurrentElemental == Element.Ice));
         }
-        SetPlayerElementColor();
-    }
-
-    public void SetPlayerElementColor()
-    {
-        switch (CurrentElemental)
-        {
-            case Element.Fire:
-                //spr.color = Defines.instance.FireColor;
-                break;
-            case Element.Ice:
-                //spr.color = Defines.instance.IceColor;
-                break;
-        }
+        GameManager.instance.SwipeBG();
     }
 
     public void Ouch()

@@ -30,6 +30,11 @@ public class StageManager : MonoBehaviour
         var path = "Stages/" + fileName;
         var json = Resources.Load<TextAsset>(path).text;
         MakeObjs(json);
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            GameManager.instance.playerInfo = player;
+        }
     }
 
     public void Load(string fileName)

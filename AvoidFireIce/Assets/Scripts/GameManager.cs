@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -41,7 +40,17 @@ public class GameManager : MonoBehaviour
     public GameObject GlassColiderBinder;
     public GameObject SmallWallColiderBinder;
 
+    public GameObject Bg;
+    public List<SpriteRenderer> BgFire;
+    public List<SpriteRenderer> BgIce;
+    int bgSwipe = 1;
 
+    public float FadeSpd = 1.5f;
+
+    public float fadeMaxTimer = 1f;
+    public float fadeTimer = 0f;
+
+    public GameObject playerInfo;
     private void Awake()
     {
         isWin = false;
@@ -72,7 +81,8 @@ public class GameManager : MonoBehaviour
         SmallWallBind();
         AdjustCameraOrthographicSize();
         DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
-        
+        fadeTimer = fadeMaxTimer;
+        bgSwipe = 1;
     }
     private void Update()
     {
@@ -92,6 +102,19 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             NextLevel();
+        }
+
+        if (fadeTimer < fadeMaxTimer && fadeTimer > -fadeMaxTimer)
+        { 
+            fadeTimer += Time.deltaTime * bgSwipe * FadeSpd;
+            foreach (var item in BgFire)
+            {
+                item.color = new Color(1, 1, 1, Mathf.Min(fadeTimer / fadeMaxTimer,1f));
+            }
+            foreach (var item in BgIce)
+            {
+                item.color = new Color(1, 1, 1, Mathf.Max(-(fadeTimer / fadeMaxTimer),0));
+            }
         }
     }
 
@@ -221,4 +244,20 @@ public class GameManager : MonoBehaviour
         }
         SmallWallColiderBinder.GetComponent<CompositeCollider2D>().GenerateGeometry();
     }
+
+    public void SwipeBG()
+    {
+        var element = playerInfo.GetComponent<Player>().CurrentElemental;
+        bgSwipe *= -1;
+        if (fadeTimer >= fadeMaxTimer)
+        {
+            fadeTimer = fadeMaxTimer - 0.1f;
+        }
+        else if (fadeTimer <= -fadeMaxTimer)
+        {
+            fadeTimer = -fadeMaxTimer + 0.1f;
+        }
+    }
+
+
 }
