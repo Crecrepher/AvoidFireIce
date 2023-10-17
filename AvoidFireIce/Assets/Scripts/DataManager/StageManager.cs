@@ -42,6 +42,11 @@ public class StageManager : MonoBehaviour
         var path = fileName + ".json";
         var json = File.ReadAllText(path);
         MakeObjs(json);
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            GameManager.instance.playerInfo = player;
+        }
     }
 
     private void MakeObjs(string json)

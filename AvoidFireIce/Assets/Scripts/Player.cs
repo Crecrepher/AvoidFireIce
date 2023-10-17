@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public List<GameObject> FireOrb;
     public List<GameObject> IceOrb;
     public GameObject DeathPrefab;
+    public GameObject Background;
 
     public float speed = 1f;
 
