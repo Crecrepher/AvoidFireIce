@@ -24,6 +24,7 @@ public class StageManager : MonoBehaviour
     private static StageManager stageManager;
 
     public List<GameObject> ObjsPrefab;
+    public List<Vector2> Stars;
 
     public void LoadStage(string fileName)
     {
@@ -51,6 +52,7 @@ public class StageManager : MonoBehaviour
 
     private void MakeObjs(string json)
     {
+        Stars = new List<Vector2>();
         var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter(), new FireLoopConverter());
 
         int loadCount = 0;
@@ -85,6 +87,10 @@ public class StageManager : MonoBehaviour
             {
                 currentGroup = obj;
                 groupIndex++;
+            }
+            else if (loadedObj.code == (int)ObjectType.Star)
+            {
+                Stars.Add(loadedObj.pos);
             }
             if (Defines.instance.isHaveElement(loadedObj.code))
             {

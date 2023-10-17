@@ -53,6 +53,9 @@ public class GameManager : MonoBehaviour
     public float fadeTimer = 0f;
 
     public GameObject playerInfo;
+    public GameObject playerPrefab;
+    public GameObject starPrefab;
+    private Vector2 startPos;
     private void Awake()
     {
         isWin = false;
@@ -85,6 +88,7 @@ public class GameManager : MonoBehaviour
         DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
         fadeTimer = fadeMaxTimer;
         bgSwipe = 1;
+        startPos = GameObject.FindGameObjectWithTag("Player").transform.position;
     }
     private void Update()
     {
@@ -146,7 +150,23 @@ public class GameManager : MonoBehaviour
         }
         int death = PlayerPrefs.GetInt("DeathCount");
         PlayerPrefs.SetInt("DeathCount", ++death);
-        Invoke("ResetGame", RestartDelay);
+        GameObject player = Instantiate(playerPrefab, startPos, Quaternion.identity);
+        playerInfo = player;
+        if (bgSwipe < 0)
+        {
+            SwipeBG();
+        }
+        var stars = GameObject.FindGameObjectsWithTag("Star");
+        foreach (var item in stars)
+        {
+            Destroy(item);
+        }
+        var starPos = StageManager.instance.Stars;
+        foreach (var item in starPos)
+        {
+            Instantiate(starPrefab, item, Quaternion.identity);
+        }
+        DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
 
     public void ResetGame()
