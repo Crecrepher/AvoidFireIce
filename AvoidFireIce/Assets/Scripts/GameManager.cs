@@ -120,6 +120,13 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        if (isWin)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                NextLevel();
+            }
+        }
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             NextLevel();
