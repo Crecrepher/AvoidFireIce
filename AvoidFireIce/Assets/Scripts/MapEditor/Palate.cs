@@ -7,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
@@ -55,6 +56,14 @@ public class Palate : MonoBehaviour
     public GameObject DeGroupButton;
     public GameObject GroupPreefab;
 
+    //Menu
+    public GameObject Menu;
+    public GameObject TestCaution;
+    public GameObject Save;
+    public GameObject SaveAs;
+    public TMP_InputField SaveName;
+    public GameObject Exit;
+    private bool isSaved = false;
     private void Awake()
     {
         MainLoopInfoInputs[0].onEndEdit.AddListener(MoveLoopLengthChanged);
@@ -62,6 +71,7 @@ public class Palate : MonoBehaviour
         MainLoopInfoInputs[2].onEndEdit.AddListener(FireLoopLengthChanged);
         currentObjects = new List<GameObject>();
         isMultiSelect = false;
+        isSaved = false;
     }
     private void OnEnable()
     {
@@ -77,6 +87,10 @@ public class Palate : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Delete))
         {
             DeleteCurrentObj();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SetActiveMenu(true);
         }
         switch (editMode)
         {
@@ -311,7 +325,9 @@ public class Palate : MonoBehaviour
         {
             SetLoopMod.SetActive(false);
             OpenMainLoopInfo(false);
-            infoMoveLoopWindow.CloseWindow();
+            infoMoveLoopWindow.Release();
+            infoRotateLoopWindow.Release();
+            infoFireLoopWindow.Release();
         }
 
         if (currentObjects != null && currentObjects.Count > 0)
@@ -380,6 +396,10 @@ public class Palate : MonoBehaviour
             SetLoopMod.SetActive(false);
             OpenMainLoopInfo(false);
             infoMoveLoopWindow.CloseWindow();
+
+            infoMoveLoopWindow.Release();
+            infoRotateLoopWindow.Release();
+            infoFireLoopWindow.Release();
         }
         if(currentObjects != null && currentObjects.Count > 0)
         {
@@ -437,7 +457,7 @@ public class Palate : MonoBehaviour
 
     public void Zoom(float scale)
     {
-        Camera.main.orthographicSize += scale;
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + scale, 1f, 10f); 
     }
 
     public void MoveVerticalCurrentObj(float distance)
@@ -487,6 +507,7 @@ public class Palate : MonoBehaviour
 
     public void DuplicateCurrentObj()
     {
+        if (currentObject !=null || currentObject.CompareTag("PlayerStart")) { return; }
         GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0f, 0f), currentObject.transform.rotation);
         MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
         if (ml != null)
@@ -544,9 +565,9 @@ public class Palate : MonoBehaviour
         {
             editMode = EditMode.Loop;
             currentLoopEdit = LoopType.Move;
+            UpdateLoopTable();
             SelectLoopType(0);
             DrawLoopTableLine();
-            UpdateLoopTable();
             ChekNeedFireLoop();
         }
         InfoButton.SetActive(false);
@@ -556,6 +577,7 @@ public class Palate : MonoBehaviour
     {
         infoMoveLoopWindow.Release();
         infoRotateLoopWindow.Release();
+        infoFireLoopWindow.Release();
         for (int i = 0; i < 3; i++)
         {
             if (i == type)
@@ -571,6 +593,7 @@ public class Palate : MonoBehaviour
                     {
                         if (rect == button) continue;
                         button.sizeDelta = new Vector2(button.sizeDelta.x, 30f);
+                        button.GetComponent<Button>().interactable = true;
                     }
                 }
             }
@@ -587,6 +610,7 @@ public class Palate : MonoBehaviour
                     {
                         if (rect == button) continue;
                         button.sizeDelta = new Vector2(button.sizeDelta.x, 10f);
+                        button.GetComponent<Button>().interactable = false;
                     }
                 }
             }
@@ -681,7 +705,7 @@ public class Palate : MonoBehaviour
                     rl.rl.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[1].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[1].transform.position.y);
+                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50 *Screen.width/800f, LoopLines[1].transform.position.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.rotateLoopBlocks.Add(button);
 
@@ -718,7 +742,7 @@ public class Palate : MonoBehaviour
                     fl.fl.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[2].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[2].transform.position.y);
+                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[2].transform.position.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.fireLoopBlocks.Add(button);
 
@@ -731,8 +755,8 @@ public class Palate : MonoBehaviour
     private void SelectOnLoopMod()
     {
         SetLoopMod.SetActive(true);
-        SelectLoopType(0);
         UpdateLoopTable();
+        SelectLoopType(0);
         OpenMainLoopInfo(false);
         infoMoveLoopWindow.index = -1;
         infoRotateLoopWindow.index = -1;
@@ -776,6 +800,7 @@ public class Palate : MonoBehaviour
 
         lb.moveLoopBlocks = new List<GameObject>();
         lb.rotateLoopBlocks = new List<GameObject>();
+        lb.fireLoopBlocks = new List<GameObject>();
 
         if (ml != null)
         {
@@ -786,7 +811,7 @@ public class Palate : MonoBehaviour
                 var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
                 button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, currentObject, ml.ml.loopList.IndexOf(c)));
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[0].transform.position.y);
+                rect.transform.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[0].transform.position.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50f, rect.rect.height);
                 lb.moveLoopBlocks.Add(button);
                 count++;
@@ -810,7 +835,7 @@ public class Palate : MonoBehaviour
 
                 RectTransform rect = button.GetComponent<RectTransform>();
                 
-                rect.position = new Vector2(LoopLines[1].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[1].transform.position.y);
+                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[1].transform.position.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
                 lb.rotateLoopBlocks.Add(button);
                 count++;
@@ -832,7 +857,7 @@ public class Palate : MonoBehaviour
                 button.GetComponent<Button>().onClick.AddListener(() => infoFireLoopWindow.OpenWindow(button, currentObject, fl.fl.loopList.IndexOf(c)));
 
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[2].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[2].transform.position.y);
+                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[2].transform.position.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50f, rect.rect.height);
                 lb.fireLoopBlocks.Add(button);
                 count++;
@@ -906,6 +931,9 @@ public class Palate : MonoBehaviour
                 MainLoopInfoInputs[2].gameObject.SetActive(false);
             }
 
+            infoMoveLoopWindow.CloseWindow();
+            infoRotateLoopWindow.CloseWindow();
+            infoFireLoopWindow.CloseWindow();
         }
     }
 
@@ -1069,7 +1097,6 @@ public class Palate : MonoBehaviour
                 break;
             case LoopType.Fire:
                 {
-                    if (lbl.fireLoopBlocks.Count <= 0) break;
                     var button = lbl.fireLoopBlocks[infoFireLoopWindow.index];
                     currentObject.GetComponent<FireLoopData>().fl.loopList.RemoveAt(index);
                     lbl.fireLoopBlocks.Remove(button);
@@ -1200,5 +1227,79 @@ public class Palate : MonoBehaviour
         }
         Destroy(currentObject);
         GroupReleaseSelection();
+    }
+
+    //Menus
+    public void SetActiveMenu(bool on)
+    {
+        Menu.SetActive(on);
+    }
+
+    public void TestPlayCheck(bool on)
+    {
+        if (on)
+        {
+            if (GameObject.FindGameObjectWithTag("PlayerStart") == null
+                || GameObject.FindGameObjectWithTag("Star") == null)
+            {
+                TestCaution.SetActive(on);
+                return;
+            }
+            else
+            {
+                EditorManager.instance.StartTesting();
+                return;
+            }
+        }
+        else
+        {
+            TestCaution.SetActive(on);
+            return;
+        }
+    }
+
+    public void SaveFile(bool on)
+    {
+        Save.SetActive(on);
+        if (on)
+        {
+            isSaved = true;
+            StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
+        }
+    }
+    public void SetActiveSaveAsWindow(bool on)
+    {
+        SaveAs.SetActive(on);
+    }
+
+    public void SaveAsOtherFile()
+    {
+        PlayerPrefs.SetString("StageName", SaveName.text);
+        StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
+        Save.SetActive(true);
+        SaveAs.SetActive(false);
+        isSaved = true;
+    }
+
+    public void ExitEditingWarningWindow(bool on)
+    {
+        Exit.SetActive(on);
+    }
+
+    public void TryExitEdit()
+    {
+        if (isSaved)
+        {
+            SceneManager.LoadScene("TitleScene");
+        }
+        else
+        {
+            Exit.SetActive(true);
+        }
+    }
+
+    public void AnywayExit()
+    {
+        SceneManager.LoadScene("TitleScene");
     }
 }

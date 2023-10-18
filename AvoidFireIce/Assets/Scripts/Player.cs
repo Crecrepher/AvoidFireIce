@@ -70,9 +70,8 @@ public class Player : MonoBehaviour
 
     public void Ouch()
     {
+        Instantiate(DeathPrefab, transform.position, Quaternion.identity);
         GameManager.instance.AutoRestart();
-        Instantiate(DeathPrefab,transform.position,Quaternion.identity);
-        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -44,11 +44,11 @@ public class EditorManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
-            SceneManager.LoadScene("TitleScene");
-        }
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
+        //    SceneManager.LoadScene("TitleScene");
+        //}
     }
 
     private void AdjustCameraOrthographicSize()
@@ -63,17 +63,6 @@ public class EditorManager : MonoBehaviour
 
     public void StartTesting()
     {
-        if (GameObject.FindGameObjectWithTag("PlayerStart") == null)
-        {
-            Debug.LogWarning("Need PlayerStartPos!");
-            return;
-        }
-
-        if (GameObject.FindGameObjectWithTag("Star") == null)
-        {
-            Debug.LogWarning("Need Star!");
-            return;
-        }
         StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
         StageSaveLoader.instance.Save("sys/TeSt6212");
         PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");

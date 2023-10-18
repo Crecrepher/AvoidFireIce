@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   element: 0
   isRay: 0
+  enemytype: 3
 --- !u!212 &7874115840889369828
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c1cce471c58998d4aa41578aab835d8a, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0

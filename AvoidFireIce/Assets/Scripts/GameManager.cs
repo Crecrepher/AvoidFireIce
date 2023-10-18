@@ -125,9 +125,38 @@ public class GameManager : MonoBehaviour
 
         if (playerInfo != null)
         {
-            Bg.transform.position = -playerInfo.transform.position / 10f;
-            Star1.transform.position = -playerInfo.transform.position / 5f;
-            Star2.transform.position = -playerInfo.transform.position / 2f;
+            {
+                Vector2 startPos = Bg.transform.position;
+                Vector2 targetPos = -playerInfo.transform.position / 10f;
+                if (Vector2.Distance(startPos, startPos) <= 0.1f)
+                {
+                    Vector2 direction = (targetPos - startPos).normalized;
+                    Vector2 newPosition = startPos + (direction * Time.deltaTime);
+                    Bg.transform.position = newPosition;
+                }
+            }
+
+            {
+                Vector2 startPos = Star1.transform.position;
+                Vector2 targetPos = -playerInfo.transform.position / 5f; 
+                if (Vector2.Distance(startPos, startPos) <= 0.1f)
+                {
+                    Vector2 direction = (targetPos - startPos).normalized;
+                    Vector2 newPosition = startPos + (direction * Time.deltaTime * 2f);
+                    Star1.transform.position = newPosition;
+                }
+            }
+
+            {
+                Vector2 startPos = Star2.transform.position;
+                Vector2 targetPos = -playerInfo.transform.position / 2f ;
+                if (Vector2.Distance(startPos, startPos) <= 0.1f)
+                {
+                    Vector2 direction = (targetPos - startPos).normalized;
+                    Vector2 newPosition = startPos + (direction * Time.deltaTime * 5f);
+                    Star2.transform.position = newPosition;
+                }
+            }
         }
         
     }
@@ -150,6 +179,7 @@ public class GameManager : MonoBehaviour
         }
         int death = PlayerPrefs.GetInt("DeathCount");
         PlayerPrefs.SetInt("DeathCount", ++death);
+        Destroy(playerInfo);
         GameObject player = Instantiate(playerPrefab, startPos, Quaternion.identity);
         playerInfo = player;
         if (bgSwipe < 0)
