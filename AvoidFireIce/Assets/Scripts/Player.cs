@@ -79,6 +79,10 @@ public class Player : MonoBehaviour
 
     public void ChangePlayerElement()
     {
+        if (Time.timeScale == 0f)
+        {
+            return;
+        }
         CurrentElemental = (Element)(((int)CurrentElemental + 1) % 2);
         foreach (var fo in FireOrb)
         {
