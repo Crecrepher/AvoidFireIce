@@ -21,6 +21,7 @@ TagManager:
   - Group
   - GroupMember
   - SmallWall
+  - Unloaded
   layers:
   - Default
   - TransparentFX

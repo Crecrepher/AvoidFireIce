@@ -98,4 +98,13 @@ public class CustomStage : MonoBehaviour
         File.Delete(Application.persistentDataPath + "/CustomLevel/" + files[selectedNum]);
         Showlists();
     }
+
+    public void PlayCustomLevel()
+    {
+        if (selectedNum == -1)
+            return;
+        PlayerPrefs.SetString("StageName", (Application.persistentDataPath + "/CustomLevel/" + files[selectedNum]).Replace(".json", ""));
+        PlayerPrefs.SetInt("StageType", (int)StageType.Custom);
+        SceneManager.LoadScene("GameScene");
+    }
 }

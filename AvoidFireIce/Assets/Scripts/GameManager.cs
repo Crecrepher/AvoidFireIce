@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     public bool isTestMode = false;
     public float RestartDelay = 1f;
     public float Zoom = 0.5f;
-    private bool isWin = false;
+    public bool isWin = false;
 
     public GameObject WinWindow;
     public List<GameObject> SpecialObjsStage1;
@@ -56,17 +56,21 @@ public class GameManager : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject starPrefab;
     private Vector2 startPos;
+    public int levelInfo;
+    public GameObject BGM;
     private void Awake()
     {
         isWin = false;
+        Time.timeScale = 1f;
         Defines.instance.DefineColor();
         if ((StageType)PlayerPrefs.GetInt("StageType") == StageType.Editing && PlayerPrefs.GetString("TestStageName") != null)
         {
             StageName = PlayerPrefs.GetString("TestStageName");
             StageManager.instance.Load(StageName);
             MapName.text = "";
+            levelInfo = 999;
         }
-        else if (PlayerPrefs.GetString("StageName") != null)
+        else if (PlayerPrefs.GetString("StageName") != null && (StageType)PlayerPrefs.GetInt("StageType") == StageType.Official)
         {
             StageName = PlayerPrefs.GetString("StageName");
             StageManager.instance.LoadStage(StageName);
@@ -74,37 +78,41 @@ public class GameManager : MonoBehaviour
             {
                 case '1':
                     Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
+                    levelInfo = 10 + int.Parse(StageName[StageName.Length - 1].ToString());
                     break;
                 case '2':
                     Instantiate(SpecialObjsStage2[int.Parse(StageName[StageName.Length - 1].ToString())]);
+                    levelInfo = 20 + int.Parse(StageName[StageName.Length - 1].ToString());
                     break;
             }
             MapName.text = PlayerPrefs.GetString("StageName");
+        }
+        else if (PlayerPrefs.GetString("StageName") != null && (StageType)PlayerPrefs.GetInt("StageType") == StageType.Custom)
+        {
+            StageName = PlayerPrefs.GetString("StageName");
+            StageManager.instance.Load(StageName);
+            MapName.text = "";
+            levelInfo = 999;
         }
         WallBind();
         GlassBind();
         SmallWallBind();
         AdjustCameraOrthographicSize();
-        DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
+        DeathCounter.text = $"Total Death: {PlayerPrefs.GetInt("DeathCount")}";
         fadeTimer = fadeMaxTimer;
         bgSwipe = 1;
         startPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        if (GameObject.FindGameObjectWithTag("Unloaded") == null)
+        {
+            Instantiate(BGM);
+        }
+        bool bg = GlobalData.instance.isBGOn;
+        Bg.SetActive(bg);
+        Star1.SetActive(bg);
+        Star2.SetActive(bg);
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)) 
-        {
-            switch ((StageType)PlayerPrefs.GetInt("StageType"))
-            {
-                case StageType.Official:
-                case StageType.Custom:
-                    SceneManager.LoadScene("TitleScene");
-                    break;
-                case StageType.Editing:
-                    SceneManager.LoadScene("EditorScene");
-                    break;
-            }
-        }
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             NextLevel();
@@ -161,6 +169,13 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void BgCheck()
+    {
+        bool bg = GlobalData.instance.isBGOn;
+        Bg.SetActive(bg);
+        Star1.SetActive(bg);
+        Star2.SetActive(bg);
+    }
     private void AdjustCameraOrthographicSize()
     {
         float mapWidth = tilemap.cellBounds.size.x * tilemap.cellSize.x;
@@ -179,6 +194,7 @@ public class GameManager : MonoBehaviour
         }
         int death = PlayerPrefs.GetInt("DeathCount");
         PlayerPrefs.SetInt("DeathCount", ++death);
+        GetComponent<InGameUi>().DeathPlus();
         Destroy(playerInfo);
         GameObject player = Instantiate(playerPrefab, startPos, Quaternion.identity);
         playerInfo = player;
@@ -196,7 +212,7 @@ public class GameManager : MonoBehaviour
         {
             Instantiate(starPrefab, item, Quaternion.identity);
         }
-        DeathCounter.text = $"Death: {PlayerPrefs.GetInt("DeathCount")}";
+        DeathCounter.text = $"Total Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
 
     public void ResetGame()
@@ -222,11 +238,19 @@ public class GameManager : MonoBehaviour
 
     public void Win()
     {
+        GetComponent<InGameUi>().SetWinTXT();
         isWin = true;
         WinWindow.SetActive(true);
-        Debug.Log("Win!");
+        if (PlayerPrefs.GetInt("Clear") < levelInfo)
+        {
+            PlayerPrefs.SetInt("Clear", levelInfo);
+        }
     }
 
+    public bool NextAble()
+    {
+        return PlayerPrefs.GetInt("Clear") >= levelInfo;
+    }
     public void NextLevel()
     {
         switch ((StageType)PlayerPrefs.GetInt("StageType"))
@@ -259,7 +283,33 @@ public class GameManager : MonoBehaviour
 
         }
     }
+    public void PreviousLevel()
+    {
+        switch ((StageType)PlayerPrefs.GetInt("StageType"))
+        {
+            case StageType.Official:
+                {
+                    if (StageName == "1-0" || (StageName == "2-0"))
+                    {
+                        SceneManager.LoadScene("TitleScene");
+                    }
+                    else
+                    {
+                        string preStage = $"{StageName.Substring(0, StageName.Length - 1)}{int.Parse(StageName[StageName.Length - 1].ToString()) - 1}";
+                        PlayerPrefs.SetString("StageName", preStage);
+                        SceneManager.LoadScene("GameScene");
+                    }
+                }
+                break;
+            case StageType.Custom:
+                { SceneManager.LoadScene("TitleScene"); }
+                break;
+            case StageType.Editing:
+                { SceneManager.LoadScene("EditorScene"); }
+                break;
 
+        }
+    }
     private void WallBind()
     {
         var walls = GameObject.FindGameObjectsWithTag("Wall");

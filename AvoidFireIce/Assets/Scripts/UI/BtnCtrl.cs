@@ -24,6 +24,9 @@ public class BtnCtrl : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         btnScale.localScale = defaultScale;
     }
+    public void ReturnScale()
+    {
+        transform.localScale = defaultScale;
+    }
 
- 
 }
