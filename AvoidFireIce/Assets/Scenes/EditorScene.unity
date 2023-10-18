@@ -27356,6 +27356,8 @@ MonoBehaviour:
   palate: {fileID: 2050599744}
   tilemap: {fileID: 41100941}
   Zoom: 0.2
+  SFX: {fileID: 583260367676701482, guid: 063f56b76ef2f124cabbf98bb2a2bb16, type: 3}
+  BGM: {fileID: 810499966660901656, guid: 3e5177ad1f31ff143b6f07cb7edd543a, type: 3}
 --- !u!114 &1605763244
 MonoBehaviour:
   m_ObjectHideFlags: 0

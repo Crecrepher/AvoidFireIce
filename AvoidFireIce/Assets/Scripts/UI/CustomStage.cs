@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ public class CustomStage : MonoBehaviour
     public ToggleGroup group;
     public GameObject NewFileWindow;
     public TMP_InputField NameBox;
+    public GameObject PlayB;
 
     public int selectedNum;
 
@@ -37,20 +39,21 @@ public class CustomStage : MonoBehaviour
 
     public void Showlists()
     {
+        selectedNum = -1;
         this.files = new List<string>();
         var lists = GameObject.FindGameObjectsWithTag("CustomFileList");
         foreach (var list in lists)
         {
             Destroy(list);
         }
-        DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath+ "/CustomLevel");
+        DirectoryInfo directory = new DirectoryInfo(Application.persistentDataPath + "/CustomLevel");
         FileInfo[] files = directory.GetFiles();
         int count = 0;
-        foreach (var file in files) 
+        foreach (var file in files)
         {
             GameObject listB = Instantiate(FileFreefab);
             listB.transform.SetParent(ListArea.transform);
-            listB.GetComponentInChildren<Text>().text = file.Name.Replace(".json","");
+            listB.GetComponentInChildren<Text>().text = file.Name.Replace(".json", "");
             listB.GetComponent<SaveDataListInfo>().num = count++;
             listB.transform.localScale = Vector3.one;
             Toggle toggle = listB.GetComponent<Toggle>();
@@ -61,11 +64,16 @@ public class CustomStage : MonoBehaviour
                 {
                     SelectList(toggle);
                 }
+                PlayB.SetActive(value);
             });
             this.files.Add(file.Name);
         }
     }
 
+    public void ActivePlayB(bool on)
+    {
+        PlayB.SetActive(on);
+    }
     public void SelectList(Toggle toggle)
     {
         selectedNum = toggle.GetComponent<SaveDataListInfo>().num;
@@ -93,7 +101,7 @@ public class CustomStage : MonoBehaviour
     public void Delete()
     {
         Debug.Log(selectedNum);
-        if(selectedNum == -1)
+        if (selectedNum == -1)
             return;
         File.Delete(Application.persistentDataPath + "/CustomLevel/" + files[selectedNum]);
         Showlists();

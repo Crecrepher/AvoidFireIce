@@ -57,7 +57,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -2965206879311147235, guid: 742dc7b8de5b0584880a0b5229a40f7c, type: 2}
   m_audioClip: {fileID: 8300000, guid: 68d56672b938d4aed9997d499be7e8de, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -155,3 +155,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isBGOn: 1
+  MainMenuClip: {fileID: 8300000, guid: 816b6eab58d24c646a55f35fb63b0f1f, type: 3}
+  audioClips:
+  - {fileID: 8300000, guid: aaf862bcdea1641c4845adebc4936ec3, type: 3}
+  - {fileID: 8300000, guid: 68d56672b938d4aed9997d499be7e8de, type: 3}
+  - {fileID: 8300000, guid: 26728bad8530044378dad6e9476caa1a, type: 3}
+  - {fileID: 8300000, guid: 434c130b472b342beac734c6ce5bcc74, type: 3}
+  - {fileID: 8300000, guid: ce2bdc71de8221046b5109f02c551f46, type: 3}
+  - {fileID: 8300000, guid: b19771b6181b948f0bb7e2f6befd9561, type: 3}
+  - {fileID: 8300000, guid: 7c1569858257a42849270a0cf86dba4d, type: 3}
+  mixer: {fileID: 24100000, guid: 742dc7b8de5b0584880a0b5229a40f7c, type: 2}

@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
     private Vector2 startPos;
     public int levelInfo;
     public GameObject BGM;
+    public GameObject SFX;
     private void Awake()
     {
         isWin = false;
@@ -68,13 +69,13 @@ public class GameManager : MonoBehaviour
             StageName = PlayerPrefs.GetString("TestStageName");
             StageManager.instance.Load(StageName);
             MapName.text = "";
-            levelInfo = 999;
+            levelInfo = -1;
         }
         else if (PlayerPrefs.GetString("StageName") != null && (StageType)PlayerPrefs.GetInt("StageType") == StageType.Official)
         {
             StageName = PlayerPrefs.GetString("StageName");
             StageManager.instance.LoadStage(StageName);
-            switch(StageName[0])
+            switch (StageName[0])
             {
                 case '1':
                     Instantiate(SpecialObjsStage1[int.Parse(StageName[StageName.Length - 1].ToString())]);
@@ -92,7 +93,7 @@ public class GameManager : MonoBehaviour
             StageName = PlayerPrefs.GetString("StageName");
             StageManager.instance.Load(StageName);
             MapName.text = "";
-            levelInfo = 999;
+            levelInfo = -1;
         }
         WallBind();
         GlassBind();
@@ -101,15 +102,21 @@ public class GameManager : MonoBehaviour
         DeathCounter.text = $"Total Death: {PlayerPrefs.GetInt("DeathCount")}";
         fadeTimer = fadeMaxTimer;
         bgSwipe = 1;
-        startPos = GameObject.FindGameObjectWithTag("Player").transform.position;
+        GameObject playerFind = GameObject.FindGameObjectWithTag("Player");
+        if (playerFind != null)
+        {
+            startPos = playerFind.transform.position;
+        }
         if (GameObject.FindGameObjectWithTag("Unloaded") == null)
         {
             Instantiate(BGM);
+            Instantiate(SFX);
         }
         bool bg = GlobalData.instance.isBGOn;
         Bg.SetActive(bg);
         Star1.SetActive(bg);
         Star2.SetActive(bg);
+        GlobalData.instance.PlayNextRandomAudioClip();
     }
     private void Update()
     {
@@ -119,15 +126,15 @@ public class GameManager : MonoBehaviour
         }
 
         if (fadeTimer < fadeMaxTimer && fadeTimer > -fadeMaxTimer)
-        { 
+        {
             fadeTimer += Time.deltaTime * bgSwipe * FadeSpd;
             foreach (var item in BgFire)
             {
-                item.color = new Color(1, 1, 1, Mathf.Min(fadeTimer / fadeMaxTimer,1f));
+                item.color = new Color(1, 1, 1, Mathf.Min(fadeTimer / fadeMaxTimer, 1f));
             }
             foreach (var item in BgIce)
             {
-                item.color = new Color(1, 1, 1, Mathf.Max(-(fadeTimer / fadeMaxTimer),0));
+                item.color = new Color(1, 1, 1, Mathf.Max(-(fadeTimer / fadeMaxTimer), 0));
             }
         }
 
@@ -136,7 +143,7 @@ public class GameManager : MonoBehaviour
             {
                 Vector2 startPos = Bg.transform.position;
                 Vector2 targetPos = -playerInfo.transform.position / 10f;
-                if (Vector2.Distance(startPos, startPos) <= 0.1f)
+                if (Vector2.Distance(startPos, targetPos) >= 0.1f)
                 {
                     Vector2 direction = (targetPos - startPos).normalized;
                     Vector2 newPosition = startPos + (direction * Time.deltaTime);
@@ -146,8 +153,8 @@ public class GameManager : MonoBehaviour
 
             {
                 Vector2 startPos = Star1.transform.position;
-                Vector2 targetPos = -playerInfo.transform.position / 5f; 
-                if (Vector2.Distance(startPos, startPos) <= 0.1f)
+                Vector2 targetPos = -playerInfo.transform.position / 5f;
+                if (Vector2.Distance(startPos, targetPos) >= 0.1f)
                 {
                     Vector2 direction = (targetPos - startPos).normalized;
                     Vector2 newPosition = startPos + (direction * Time.deltaTime * 2f);
@@ -157,8 +164,8 @@ public class GameManager : MonoBehaviour
 
             {
                 Vector2 startPos = Star2.transform.position;
-                Vector2 targetPos = -playerInfo.transform.position / 2f ;
-                if (Vector2.Distance(startPos, startPos) <= 0.1f)
+                Vector2 targetPos = -playerInfo.transform.position / 2f;
+                if (Vector2.Distance(startPos, targetPos) >= 0.1f)
                 {
                     Vector2 direction = (targetPos - startPos).normalized;
                     Vector2 newPosition = startPos + (direction * Time.deltaTime * 5f);
@@ -166,7 +173,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        
+
     }
 
     public void BgCheck()
@@ -224,7 +231,7 @@ public class GameManager : MonoBehaviour
     public void CheckWin(GameObject star)
     {
         Destroy(star);
-        Invoke("StarFinder",0.1f);
+        Invoke("StarFinder", 0.1f);
     }
 
     public void StarFinder()
@@ -245,6 +252,7 @@ public class GameManager : MonoBehaviour
         {
             PlayerPrefs.SetInt("Clear", levelInfo);
         }
+        Time.timeScale = 0f;
     }
 
     public bool NextAble()
@@ -268,7 +276,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        string nextStage = $"{StageName.Substring(0, StageName.Length - 1)}{int.Parse(StageName[StageName.Length - 1].ToString()) +  1}";
+                        string nextStage = $"{StageName.Substring(0, StageName.Length - 1)}{int.Parse(StageName[StageName.Length - 1].ToString()) + 1}";
                         PlayerPrefs.SetString("StageName", nextStage);
                         SceneManager.LoadScene("GameScene");
                     }
@@ -315,7 +323,7 @@ public class GameManager : MonoBehaviour
         var walls = GameObject.FindGameObjectsWithTag("Wall");
         foreach (var wall in walls)
         {
-            if(wall.name == "Tilemap" || wall.name == "WallBinder" || wall.name == "GlassBinder")
+            if (wall.name == "Tilemap" || wall.name == "WallBinder" || wall.name == "GlassBinder")
             {
                 continue;
             }
@@ -377,5 +385,8 @@ public class GameManager : MonoBehaviour
 
     }
 
-
+    public void ButtonSoundPlay()
+    {
+        ButtonPlaySound.instance.PlayBSound();
+    }
 }

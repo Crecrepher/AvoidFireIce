@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     public List<GameObject> IceOrb;
     public GameObject DeathPrefab;
     public GameObject Background;
+    public AudioClip MoveSound;
+    public AudioClip ChangeSound;
+
 
     public float speed = 1f;
 
@@ -16,12 +19,16 @@ public class Player : MonoBehaviour
 
 
     private Rigidbody2D rb;
+    private AudioSource audioSource;
     private bool isWall = false;
-
+    private bool isLoopSoundPlaying = false;
 
     private void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = true;
+        audioSource.clip = MoveSound;
     }
     private void FixedUpdate()
     {
@@ -52,12 +59,28 @@ public class Player : MonoBehaviour
             ChangePlayerElement();
         }
 
+        if (direction != Vector2.zero)
+        {
+            if (!isLoopSoundPlaying)
+            {
+                audioSource.Play();
+                isLoopSoundPlaying = true;
+            }
+        }
+        else
+        {
+            if (isLoopSoundPlaying)
+            {
+                audioSource.Stop();
+                isLoopSoundPlaying = false;
+            }
+        }
     }
 
     public void ChangePlayerElement()
     {
         CurrentElemental = (Element)(((int)CurrentElemental + 1) % 2);
-        foreach (var fo in FireOrb) 
+        foreach (var fo in FireOrb)
         {
             fo.SetActive((CurrentElemental == Element.Fire));
         }
@@ -66,6 +89,7 @@ public class Player : MonoBehaviour
             fo.SetActive((CurrentElemental == Element.Ice));
         }
         GameManager.instance.SwipeBG();
+        audioSource.PlayOneShot(ChangeSound);
     }
 
     public void Ouch()
@@ -80,7 +104,7 @@ public class Player : MonoBehaviour
         {
             isWall = true;
         }
-        
+
     }
 
     private void OnCollisionExit2D(Collision2D collision)

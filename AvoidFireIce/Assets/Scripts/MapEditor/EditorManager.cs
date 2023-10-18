@@ -11,6 +11,9 @@ public class EditorManager : MonoBehaviour
     public Palate palate;
     public Tilemap tilemap;
     public float Zoom = 0.3f;
+
+    public GameObject SFX;
+    public GameObject BGM;
     public static EditorManager instance
     {
         get
@@ -34,7 +37,13 @@ public class EditorManager : MonoBehaviour
             StageSaveLoader.instance.Load("CustomLevel/" + PlayerPrefs.GetString("StageName"));
         }
         Debug.Log(PlayerPrefs.GetString("StageName"));
-        PlayerPrefs.SetInt("StageType",(int)StageType.Editing);
+        PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
+        GlobalData.instance.StopMusic();
+        if (GameObject.FindGameObjectWithTag("Unloaded") == null)
+        {
+            Instantiate(BGM);
+            Instantiate(SFX);
+        }
     }
 
     private void OnEnable()

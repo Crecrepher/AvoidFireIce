@@ -13,7 +13,6 @@ public class UiFunction : MonoBehaviour
     public CustomStage CustomStageManager;
 
     public GameObject StageLevelButtons;
-    public GameObject CustomLevelButtons;
 
     public GameObject DeleteWarning;
     public GameObject OptionWindow;
@@ -23,6 +22,7 @@ public class UiFunction : MonoBehaviour
     public AudioMixer audioMixer;
 
     public GameObject BGM;
+    public GameObject SFX;
 
     public GameObject Locker2;
     public GameObject Locker3;
@@ -41,11 +41,12 @@ public class UiFunction : MonoBehaviour
             EditMenu.SetActive(true);
             MainMenu.SetActive(false);
             CustomStageManager.Showlists();
-            PlayerPrefs.SetInt("StageType",(int)StageType.Official);
+            PlayerPrefs.SetInt("StageType", (int)StageType.Official);
         }
-        if (GameObject.FindGameObjectWithTag("Unloaded") ==  null)
+        if (GameObject.FindGameObjectWithTag("Unloaded") == null)
         {
             Instantiate(BGM);
+            Instantiate(SFX);
         }
         if (PlayerPrefs.GetInt("Clear") >= 16)
         {
@@ -55,7 +56,8 @@ public class UiFunction : MonoBehaviour
         {
             Locker3.SetActive(false);
         }
-        PlayerPrefs.SetInt("First",1);
+        PlayerPrefs.SetInt("First", 1);
+        GlobalData.instance.PlayMainAudiClip();
     }
     public void ActiveMainUi(bool on)
     {
@@ -81,7 +83,6 @@ public class UiFunction : MonoBehaviour
     public void ActiveStageLevels(bool on)
     {
         StageLevelButtons.SetActive(on);
-        CustomLevelButtons.SetActive(!on);
     }
 
     public void StartStage(string stageNum)
@@ -127,5 +128,10 @@ public class UiFunction : MonoBehaviour
     public void SetSFXVolume()
     {
         audioMixer.SetFloat("SFX", Mathf.Log10(SFXVolume.value) * 20);
+    }
+
+    public void ButtonSoundPlay()
+    {
+        ButtonPlaySound.instance.PlayBSound();
     }
 }
