@@ -20,7 +20,6 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private AudioSource audioSource;
     private bool isWall = false;
-    private bool isLoopSoundPlaying = false;
 
     private void OnEnable()
     {
