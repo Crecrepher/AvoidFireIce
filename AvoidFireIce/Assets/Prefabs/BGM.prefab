@@ -156,6 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isBGOn: 1
   MainMenuClip: {fileID: 8300000, guid: cccea2254874a344a819e26766518eaf, type: 3}
+  EndingClip: {fileID: 8300000, guid: 07f391589664f4e85904fa28802b4aa8, type: 3}
   audioClips:
   - {fileID: 8300000, guid: 281954e697fb875499d8ddc6dc9264c5, type: 3}
   - {fileID: 8300000, guid: d2458193fae3573449cd25838261e7b9, type: 3}

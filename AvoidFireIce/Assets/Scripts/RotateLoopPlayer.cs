@@ -41,7 +41,6 @@ public class RotateLoopPlayer : MonoBehaviour
             {
                 easedSpeed = Mathf.Lerp(2f, 0f, (timer - currRot.startTime) / currRot.playTime);
             }
-            Debug.Log(easedSpeed);
             transform.Rotate(new Vector3(0, 0, rotValue / currRot.playTime * Time.deltaTime* easedSpeed));
         }
 

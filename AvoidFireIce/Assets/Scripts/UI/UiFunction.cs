@@ -27,6 +27,8 @@ public class UiFunction : MonoBehaviour
     public GameObject Locker2;
     public GameObject Locker3;
 
+    public GameObject EndingObject;
+
     public void Awake()
     {
         if (PlayerPrefs.GetInt("First") != 1)
@@ -58,6 +60,11 @@ public class UiFunction : MonoBehaviour
         }
         PlayerPrefs.SetInt("First", 1);
         GlobalData.instance.PlayMainAudiClip();
+
+        if (PlayerPrefs.GetInt("Clear") >= 36)
+        {
+            EndingObject.SetActive(true);
+        }
     }
     public void ActiveMainUi(bool on)
     {

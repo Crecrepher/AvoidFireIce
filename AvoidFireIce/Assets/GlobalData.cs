@@ -22,6 +22,7 @@ public class GlobalData : MonoBehaviour
     public bool isBGOn = true;
 
     public AudioClip MainMenuClip;
+    public AudioClip EndingClip;
     public AudioClip[] audioClips;
     public AudioMixer mixer;
 
@@ -75,7 +76,14 @@ public class GlobalData : MonoBehaviour
         {
             audioSource.Stop();
         }
-        audioSource.clip = MainMenuClip;
+        if (PlayerPrefs.GetInt("Clear") >= 36)
+        {
+            audioSource.clip = EndingClip;
+        }
+        else
+        {
+            audioSource.clip = MainMenuClip;
+        }
         audioSource.loop = true;
         audioSource.Play();
     }

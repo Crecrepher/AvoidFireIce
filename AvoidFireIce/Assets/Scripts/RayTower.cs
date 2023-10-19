@@ -68,7 +68,7 @@ public class RayTower : MonoBehaviour
                         direction = Vector2.Reflect(direction, hit.normal);
                         hitPosition = hit.point;
                     }
-                    else if (hit.collider.CompareTag("Bullet"))
+                    else if (hit.collider.CompareTag("Orb"))
                     {
                         hitPosition = hit.point;
                     }

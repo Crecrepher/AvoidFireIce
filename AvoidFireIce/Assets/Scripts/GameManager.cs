@@ -85,6 +85,9 @@ public class GameManager : MonoBehaviour
                     Instantiate(SpecialObjsStage2[int.Parse(StageName[StageName.Length - 1].ToString())]);
                     levelInfo = 20 + int.Parse(StageName[StageName.Length - 1].ToString());
                     break;
+                case '3':
+                    levelInfo = 30 + int.Parse(StageName[StageName.Length - 1].ToString());
+                    break;
             }
             MapName.text = PlayerPrefs.GetString("StageName");
         }
@@ -216,6 +219,7 @@ public class GameManager : MonoBehaviour
         {
             SwipeBG();
         }
+
         var stars = GameObject.FindGameObjectsWithTag("Star");
         foreach (var item in stars)
         {
@@ -226,6 +230,14 @@ public class GameManager : MonoBehaviour
         {
             Instantiate(starPrefab, item, Quaternion.identity);
         }
+
+        var orbs = GameObject.FindGameObjectsWithTag("Orb");
+        foreach (var item in orbs)
+        {
+            Destroy(item);
+        }
+        StageManager.instance.RespawnOrbs();
+
         DeathCounter.text = $"Total Death: {PlayerPrefs.GetInt("DeathCount")}";
     }
 
@@ -273,9 +285,14 @@ public class GameManager : MonoBehaviour
         {
             case StageType.Official:
                 {
-                    if (StageName == "2-7")
+                    if (StageName == "3-7")
                     {
                         SceneManager.LoadScene("TitleScene");
+                    }
+                    else if (StageName == "2-7")
+                    {
+                        PlayerPrefs.SetString("StageName", "3-0");
+                        SceneManager.LoadScene("GameScene");
                     }
                     else if (StageName == "1-6")
                     {
@@ -305,7 +322,7 @@ public class GameManager : MonoBehaviour
         {
             case StageType.Official:
                 {
-                    if (StageName == "1-0" || (StageName == "2-0"))
+                    if (StageName == "1-0" || StageName == "2-0" || StageName == "3-0")
                     {
                         SceneManager.LoadScene("TitleScene");
                     }

@@ -25,6 +25,8 @@ public class StageManager : MonoBehaviour
 
     public List<GameObject> ObjsPrefab;
     public List<Vector2> Stars;
+    public List<Vector2> Orbs;
+    public List<int> OrbsEle;
 
     public void LoadStage(string fileName)
     {
@@ -53,6 +55,9 @@ public class StageManager : MonoBehaviour
     private void MakeObjs(string json)
     {
         Stars = new List<Vector2>();
+        Orbs = new List<Vector2>();
+        OrbsEle = new List<int>();
+
         var saveData = JsonConvert.DeserializeObject<SaveData>(json, new EditorObjInfoConverter(), new MoveLoopConverter(), new RotateLoopConverter(), new FireLoopConverter());
 
         int loadCount = 0;
@@ -91,6 +96,11 @@ public class StageManager : MonoBehaviour
             else if (loadedObj.code == (int)ObjectType.Star)
             {
                 Stars.Add(loadedObj.pos);
+            }
+            else if (loadedObj.code == (int)ObjectType.Bullet)
+            {
+                Orbs.Add(loadedObj.pos);
+                OrbsEle.Add(loadedObj.element);
             }
             if (Defines.instance.isHaveElement(loadedObj.code))
             {
@@ -177,6 +187,18 @@ public class StageManager : MonoBehaviour
                 obj.transform.SetParent(currentGroup.transform);
             }
             loadCount++;
+        }
+    }
+
+    public void RespawnOrbs() 
+    {
+        for (int i = 0; i < Orbs.Count; i++)
+        {
+            GameObject obj = Instantiate(ObjsPrefab[2], Orbs[i], Quaternion.identity);
+            DangerObject dangerObj = obj.GetComponent<DangerObject>();
+            dangerObj.element = (Element)OrbsEle[i];
+            dangerObj.SetColor();
+            obj.GetComponent<Bullet>().SetEffect(dangerObj.element);
         }
     }
 }

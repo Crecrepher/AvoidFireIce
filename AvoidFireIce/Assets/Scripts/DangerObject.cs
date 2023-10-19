@@ -24,6 +24,15 @@ public class DangerObject : MonoBehaviour
             player.Ouch();
         }
     }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        Player player = collision.gameObject.GetComponent<Player>();
+        if (collision.gameObject.CompareTag("Player") && player.CurrentElemental != element)
+        {
+            player.Ouch();
+        }
+    }
     private void OnTriggerStay2D(Collider2D collision)
     {
          Player player = collision.gameObject.GetComponent<Player>();
