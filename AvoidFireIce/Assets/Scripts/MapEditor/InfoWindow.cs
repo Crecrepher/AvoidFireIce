@@ -44,8 +44,8 @@ public class InfoWindow : MonoBehaviour
         }
         else if (selected.CompareTag("Group"))
         {
-            PivotX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString();
-            PivotY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString();
+            PivotX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString("F1");
+            PivotY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString("F1");
             InfoWindowPvot.SetActive(true);
             InfoWindowElement.SetActive(false);
         }
@@ -60,9 +60,9 @@ public class InfoWindow : MonoBehaviour
             sprite.sprite = spriteInfo.sprite;
             sprite.color = Color.white;
         }
-        PosX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString();
-        PosY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString();
-        Rotate.text = (selectedObject.transform.rotation.eulerAngles.z).ToString();
+        PosX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString("F1");
+        PosY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString("F1");
+        Rotate.text = (selectedObject.transform.rotation.eulerAngles.z).ToString("F1");
     }
 
     public void CloseWindow() 
@@ -80,7 +80,7 @@ public class InfoWindow : MonoBehaviour
                 Vector3 newPosition = selectedObject.transform.position;
                 newPosition.x = value + MapLeftBottom.transform.position.x;
                 selectedObject.transform.position = newPosition;
-                PivotX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString();
+                PivotX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString("F1");
             }
         }
     }
@@ -95,7 +95,7 @@ public class InfoWindow : MonoBehaviour
                 Vector3 newPosition = selectedObject.transform.position;
                 newPosition.y = value + MapLeftBottom.transform.position.y;
                 selectedObject.transform.position = newPosition;
-                PivotY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString();
+                PivotY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString("F1");
 
             }
         }
@@ -153,7 +153,7 @@ public class InfoWindow : MonoBehaviour
                         }
                         item.transform.SetParent(selectedObject.transform);
                     }
-                    PosX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString();
+                    PosX.text = (selectedObject.transform.position.x - MapLeftBottom.transform.position.x).ToString("F1");
                 }
                 
             }
@@ -191,7 +191,7 @@ public class InfoWindow : MonoBehaviour
                         }
                         item.transform.SetParent(selectedObject.transform);
                     }
-                    PosY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString();
+                    PosY.text = (selectedObject.transform.position.y - MapLeftBottom.transform.position.y).ToString("F1");
                 }
             }
         }

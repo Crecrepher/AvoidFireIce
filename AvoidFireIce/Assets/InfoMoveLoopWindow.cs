@@ -18,6 +18,9 @@ public class InfoMoveLoopWindow : MonoBehaviour
     public GameObject MapLeftBottom;
     public GameObject MainLoopInfo;
 
+    public Toggle EaseIn;
+    public Toggle EaseOut;
+
     private GameObject currentObject;
     private MoveLoopData ml;
     private GameObject button;
@@ -48,19 +51,22 @@ public class InfoMoveLoopWindow : MonoBehaviour
         this.index = index;
         Window.SetActive(true);
         MoveMarker.SetActive(true);
-        InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString();
-        InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString();
+        InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString("F1");
+        InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString("F1");
 
         Vector2 endPos = currentObject.transform.position;
         for (int i = 0; i <= index; i++)
         {
             endPos += ml.ml.loopList[i].moveVector;
         }
-        InputBoxes[2].text = (endPos.x - MapLeftBottom.transform.position.x).ToString();
-        InputBoxes[3].text = (endPos.y - MapLeftBottom.transform.position.y).ToString();
+        InputBoxes[2].text = (endPos.x - MapLeftBottom.transform.position.x).ToString("F1");
+        InputBoxes[3].text = (endPos.y - MapLeftBottom.transform.position.y).ToString("F1");
 
-        InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString();
-        InputBoxes[5].text = (ml.ml.loopList[index].moveVector.y).ToString();
+        InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString("F1");
+        InputBoxes[5].text = (ml.ml.loopList[index].moveVector.y).ToString("F1");
+
+        EaseIn.isOn = ml.ml.loopList[index].easeIn;
+        EaseOut.isOn = ml.ml.loopList[index].easeOut;
         MainLoopInfo.SetActive(false);
     }
 
@@ -103,7 +109,7 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 ml.ml.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.position = new Vector2(MoveLoopLine.transform.position.x + ml.ml.loopList[index].startTime * 50f * Screen.width / 800f, button.transform.position.y);
-                InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString();
+                InputBoxes[0].text = ml.ml.loopList[index].startTime.ToString("F1");
             }
         }
     }
@@ -129,7 +135,7 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(ml.ml.loopList[index].playTime * 50, rect.rect.height);
                 button.GetComponent<RectTransform>().sizeDelta = rect.sizeDelta;
-                InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString();
+                InputBoxes[1].text = ml.ml.loopList[index].playTime.ToString("F1");
             }
         }
     }
@@ -150,8 +156,8 @@ public class InfoMoveLoopWindow : MonoBehaviour
             if (float.TryParse(newValue, out value))
             {
                 ml.ml.loopList[index].moveVector.x = (value - startPos.x) + MapLeftBottom.transform.position.x;
-                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString();
-                InputBoxes[2].text = (value - MapLeftBottom.transform.position.x).ToString();
+                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString("F1");
+                InputBoxes[2].text = (value - MapLeftBottom.transform.position.x).ToString("F1");
             }
         }
     }
@@ -172,8 +178,8 @@ public class InfoMoveLoopWindow : MonoBehaviour
             if (float.TryParse(newValue, out value))
             {
                 ml.ml.loopList[index].moveVector.y = (value - startPos.y) + MapLeftBottom.transform.position.y;
-                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.y).ToString();
-                InputBoxes[2].text = (value - MapLeftBottom.transform.position.y).ToString();
+                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.y).ToString("F1");
+                InputBoxes[2].text = (value - MapLeftBottom.transform.position.y).ToString("F1");
             }
         }
     }
@@ -191,8 +197,8 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 {
                     endPos += ml.ml.loopList[i].moveVector;
                 }
-                InputBoxes[2].text = (endPos.x - MapLeftBottom.transform.position.x).ToString();
-                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString();
+                InputBoxes[2].text = (endPos.x - MapLeftBottom.transform.position.x).ToString("F1");
+                InputBoxes[4].text = (ml.ml.loopList[index].moveVector.x).ToString("F1");
             }
         }
     }
@@ -210,9 +216,19 @@ public class InfoMoveLoopWindow : MonoBehaviour
                 {
                     endPos += ml.ml.loopList[i].moveVector;
                 }
-                InputBoxes[3].text = (endPos.y - MapLeftBottom.transform.position.y).ToString();
-                InputBoxes[5].text = (ml.ml.loopList[index].moveVector.y).ToString();
+                InputBoxes[3].text = (endPos.y - MapLeftBottom.transform.position.y).ToString("F1");
+                InputBoxes[5].text = (ml.ml.loopList[index].moveVector.y).ToString("F1");
             }
         }
+    }
+
+    public void SetEaseIn()
+    {
+        ml.ml.loopList[index].easeIn = EaseIn.isOn;
+    }
+
+    public void SetEaseOut()
+    {
+        ml.ml.loopList[index].easeOut = EaseOut.isOn;
     }
 }

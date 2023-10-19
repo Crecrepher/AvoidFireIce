@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -33,6 +34,9 @@ public class Palate : MonoBehaviour
     public Toggle MainLoopInfoBind;
     public List<GameObject> FireLoopUi;
     public Toggle ElementToggle;
+    public Toggle SwipeModToggle;
+    public bool isSwipeMod = false;
+    private bool isDragging = false;
 
     private InfoMoveLoopWindow infoMoveLoopWindow;
     private InfoRotateLoopWindow infoRotateLoopWindow;
@@ -45,6 +49,10 @@ public class Palate : MonoBehaviour
 
     private EditMode editMode;
     private LoopType currentLoopEdit;
+    private int[] gridCells;
+
+    public Toggle toggleMoveGrid;
+    public List<GameObject> MoveGridBT;
 
     //MultipleSelect
     public Toggle MultiSelectToggle;
@@ -72,6 +80,9 @@ public class Palate : MonoBehaviour
         currentObjects = new List<GameObject>();
         isMultiSelect = false;
         isSaved = false;
+        isSwipeMod = false;
+        isDragging = false;
+        gridCells = new int[25 * 20];
     }
     private void OnEnable()
     {
@@ -96,7 +107,53 @@ public class Palate : MonoBehaviour
         {
             case EditMode.Place:
                 {
-                    if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
+                    if (isSwipeMod && !IsPointerOverUIObject() &&ToggleChecker() &&SelectedObject!=null && MouseAvailable())
+                    {
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            isDragging = true;
+                        }
+
+                        if (Input.GetMouseButtonUp(0))
+                        {
+                            isDragging = false;
+                            gridCells = new int[25 * 20];
+                        }
+
+                        if (isDragging)
+                        {
+                            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                            Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
+
+                            Vector3Int gridCell = new Vector3Int((int)((cellPosition.x - tilemap.origin.x)),(int)((cellPosition.y - tilemap.origin.y)),0);
+
+                            int index = gridCell.x + (gridCell.y * 25);
+
+                            if (gridCells[index] == 0)
+                            {
+                                Debug.Log(index);
+                                gridCells[index] = 1;
+                                if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
+                                {
+                                    var playerSpawnPoint = GameObject.FindGameObjectWithTag("PlayerStart");
+                                    if (playerSpawnPoint != null)
+                                    {
+                                        Destroy(playerSpawnPoint);
+                                    }
+                                }
+                                GameObject madeObject = Instantiate(SelectedObject, tilemap.CellToWorld(cellPosition) + tilemap.cellSize / 2f, Quaternion.identity);
+                                var mi = madeObject.GetComponent<MarkerInfo>();
+                                if (Defines.instance.isHaveElement(mi.ObjectType))
+                                {
+                                    madeObject.GetComponent<DangerObject>().element = ElementToggle.isOn ? Element.Fire : Element.Ice;
+                                }
+                                HandleSelection(madeObject);
+                            }
+
+                           
+                        }
+                    }
+                    else if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
                     {
                         if (!ToggleChecker())
                         {
@@ -123,6 +180,8 @@ public class Palate : MonoBehaviour
                             {
                                 Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                                 Vector3Int cellPosition = tilemap.WorldToCell(mouseWorldPos);
+
+
 
                                 if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
                                 {
@@ -178,7 +237,66 @@ public class Palate : MonoBehaviour
                 }
                 break;
         }
-
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                MoveHorizontalCurrentObj(-1f);
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                MoveHorizontalCurrentObj(1f);
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                MoveVerticalCurrentObj(1f);
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                MoveVerticalCurrentObj(-1f);
+            }
+            if (Input.GetKeyDown(KeyCode.PageUp))
+            {
+                RotateCurrentObj(-45f);
+            }
+            else if (Input.GetKeyDown(KeyCode.PageDown))
+            {
+                RotateCurrentObj(45f);
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                MoveHorizontalCurrentObj(-0.1f);
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                MoveHorizontalCurrentObj(0.1f);
+            }
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                MoveVerticalCurrentObj(0.1f);
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                MoveVerticalCurrentObj(-0.1f);
+            }
+            if (Input.GetKeyDown(KeyCode.PageUp))
+            {
+                RotateCurrentObj(-15f);
+            }
+            else if (Input.GetKeyDown(KeyCode.PageDown))
+            {
+                RotateCurrentObj(15f);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Space)&&currentObject !=null && Defines.instance.isHaveElement(currentObject.GetComponent<MarkerInfo>().ObjectType))
+        {
+            DangerObject target = currentObject.GetComponent<DangerObject>();
+            target.element = (Element)(((int)target.element+1) % 2);
+            target.SetColor();
+        }
     }
 
     private bool ToggleChecker()
@@ -460,19 +578,32 @@ public class Palate : MonoBehaviour
         Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + scale, 1f, 10f); 
     }
 
+    public void SwipeToggle()
+    {
+        isSwipeMod = SwipeModToggle.isOn;
+    }
     public void MoveVerticalCurrentObj(float distance)
     {
-        currentObject.transform.position = currentObject.transform.position + new Vector3(0, distance, 0);
+        if (currentObject != null)
+        {
+            currentObject.transform.position = currentObject.transform.position + new Vector3(0, distance, 0);
+        }
     }
 
     public void MoveHorizontalCurrentObj(float distance)
     {
-        currentObject.transform.position = currentObject.transform.position + new Vector3(distance, 0, 0);
+        if (currentObject != null)
+        {
+            currentObject.transform.position = currentObject.transform.position + new Vector3(distance, 0, 0);
+        }
     }
 
     public void RotateCurrentObj(float rotation)
     {
-        currentObject.transform.Rotate(0f, 0f, rotation);
+        if (currentObject != null)
+        {
+            currentObject.transform.Rotate(0f, 0f, rotation);
+        }
     }
 
     public void FlipXCurrentObj()
@@ -507,7 +638,8 @@ public class Palate : MonoBehaviour
 
     public void DuplicateCurrentObj()
     {
-        if (currentObject !=null || currentObject.CompareTag("PlayerStart")) { return; }
+        if (currentObject ==null) { return; }
+        if(currentObject.CompareTag("PlayerStart")) { return; }
         GameObject madeObject = Instantiate(currentObject, currentObject.transform.position + new Vector3(0.5f, 0f, 0f), currentObject.transform.rotation);
         MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
         if (ml != null)
@@ -547,9 +679,17 @@ public class Palate : MonoBehaviour
         {
             InfoButton.SetActive(true);
         }
-
+        toggleMoveGrid.gameObject.SetActive(on);
+        SwipeModToggle.gameObject.SetActive(on);
     }
 
+    public void ActiveMoveGridB()
+    {
+        foreach (var item in MoveGridBT)
+        {
+            item.SetActive(toggleMoveGrid.isOn);
+        }
+    }
 
     //Loop
 
@@ -571,6 +711,8 @@ public class Palate : MonoBehaviour
             ChekNeedFireLoop();
         }
         InfoButton.SetActive(false);
+        toggleMoveGrid.gameObject.SetActive(!on);
+        SwipeModToggle.gameObject.SetActive(!on);
     }
 
     public void SelectLoopType(int type)
@@ -669,7 +811,7 @@ public class Palate : MonoBehaviour
                     ml.ml.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[0].transform.position.y);
+                    rect.localPosition = new Vector2(LoopLines[0].transform.localPosition.x + block.startTime * 50 -30f ,LoopLines[0].transform.localPosition.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.moveLoopBlocks.Add(button);
 
@@ -705,7 +847,7 @@ public class Palate : MonoBehaviour
                     rl.rl.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50 *Screen.width/800f, LoopLines[1].transform.position.y);
+                    rect.localPosition = new Vector2(LoopLines[1].transform.localPosition.x + block.startTime * 50 - 30f, LoopLines[1].transform.localPosition.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.rotateLoopBlocks.Add(button);
 
@@ -742,7 +884,7 @@ public class Palate : MonoBehaviour
                     fl.fl.loopList.Add(block);
 
                     RectTransform rect = button.GetComponent<RectTransform>();
-                    rect.position = new Vector2(LoopLines[0].transform.position.x + block.startTime * 50 * Screen.width / 800f, LoopLines[2].transform.position.y);
+                    rect.localPosition = new Vector2(LoopLines[2].transform.localPosition.x + block.startTime * 50 - 30f, LoopLines[2].transform.localPosition.y);
                     rect.sizeDelta = new Vector2(block.playTime * 50, rect.rect.height);
                     lbl.fireLoopBlocks.Add(button);
 
@@ -811,7 +953,7 @@ public class Palate : MonoBehaviour
                 var button = Instantiate(LoopBlocks[0], LoopLines[0].transform);
                 button.GetComponent<Button>().onClick.AddListener(() => infoMoveLoopWindow.OpenWindow(button, currentObject, ml.ml.loopList.IndexOf(c)));
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.transform.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[0].transform.position.y);
+                rect.localPosition = new Vector2(LoopLines[0].transform.localPosition.x + c.startTime * 50 - 30f, LoopLines[0].transform.localPosition.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50f, rect.rect.height);
                 lb.moveLoopBlocks.Add(button);
                 count++;
@@ -834,8 +976,8 @@ public class Palate : MonoBehaviour
                 button.GetComponent<Button>().onClick.AddListener(() => infoRotateLoopWindow.OpenWindow(button, currentObject, rl.rl.loopList.IndexOf(c)));
 
                 RectTransform rect = button.GetComponent<RectTransform>();
-                
-                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[1].transform.position.y);
+
+                rect.localPosition = new Vector2(LoopLines[1].transform.localPosition.x + c.startTime * 50 - 30f, LoopLines[1].transform.localPosition.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50, rect.rect.height);
                 lb.rotateLoopBlocks.Add(button);
                 count++;
@@ -857,7 +999,7 @@ public class Palate : MonoBehaviour
                 button.GetComponent<Button>().onClick.AddListener(() => infoFireLoopWindow.OpenWindow(button, currentObject, fl.fl.loopList.IndexOf(c)));
 
                 RectTransform rect = button.GetComponent<RectTransform>();
-                rect.position = new Vector2(LoopLines[0].transform.position.x + c.startTime * 50f * Screen.width / 800f, LoopLines[2].transform.position.y);
+                rect.localPosition = new Vector2(LoopLines[2].transform.localPosition.x + c.startTime * 50-30f, LoopLines[2].transform.localPosition.y);
                 rect.sizeDelta = new Vector2(c.playTime * 50f, rect.rect.height);
                 lb.fireLoopBlocks.Add(button);
                 count++;
@@ -884,13 +1026,13 @@ public class Palate : MonoBehaviour
             MoveLoopData ml = currentObject.GetComponent<MoveLoopData>();
             if (ml != null)
             {
-                MainLoopInfoInputs[0].text = ml.ml.loopTime.ToString();
+                MainLoopInfoInputs[0].text = ml.ml.loopTime.ToString("F1");
                 RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
                 rt.sizeDelta = new Vector2(ml.ml.loopTime * 50f, rt.sizeDelta.y);
             }
             else
             {
-                MainLoopInfoInputs[0].text = 10f.ToString();
+                MainLoopInfoInputs[0].text = 10f.ToString("F1");
                 RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
                 rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
             }
@@ -898,13 +1040,13 @@ public class Palate : MonoBehaviour
             RotateLoopData rl = currentObject.GetComponent<RotateLoopData>();
             if (rl != null)
             {
-                MainLoopInfoInputs[1].text = rl.rl.loopTime.ToString();
+                MainLoopInfoInputs[1].text = rl.rl.loopTime.ToString("F1");
                 RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
                 rt.sizeDelta = new Vector2(rl.rl.loopTime * 50f, rt.sizeDelta.y);
             }
             else
             {
-                MainLoopInfoInputs[1].text = 10f.ToString();
+                MainLoopInfoInputs[1].text = 10f.ToString("F1");
                 RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
                 rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
             }
@@ -915,13 +1057,13 @@ public class Palate : MonoBehaviour
                 FireLoopData fl = currentObject.GetComponent<FireLoopData>();
                 if (fl != null)
                 {
-                    MainLoopInfoInputs[2].text = fl.fl.loopTime.ToString();
+                    MainLoopInfoInputs[2].text = fl.fl.loopTime.ToString("F1");
                     RectTransform rt = LoopLines[2].GetComponent<RectTransform>();
                     rt.sizeDelta = new Vector2(fl.fl.loopTime * 50f, rt.sizeDelta.y);
                 }
                 else
                 {
-                    MainLoopInfoInputs[2].text = 10f.ToString();
+                    MainLoopInfoInputs[2].text = 10f.ToString("F1");
                     RectTransform rt = LoopLines[2].GetComponent<RectTransform>();
                     rt.sizeDelta = new Vector2(500f, rt.sizeDelta.y);
                 }
@@ -956,7 +1098,7 @@ public class Palate : MonoBehaviour
             ml.ml.loopTime = value;
             RectTransform rt = LoopLines[0].GetComponent<RectTransform>();
             rt.sizeDelta = new Vector2(ml.ml.loopTime * 50f, rt.sizeDelta.y);
-            MainLoopInfoInputs[0].text = value.ToString();
+            MainLoopInfoInputs[0].text = value.ToString("F1");
         }
         DrawLoopTableLine();
     }
@@ -974,7 +1116,7 @@ public class Palate : MonoBehaviour
             rl.rl.loopTime = value;
             RectTransform rt = LoopLines[1].GetComponent<RectTransform>();
             rt.sizeDelta = new Vector2(rl.rl.loopTime * 50f, rt.sizeDelta.y);
-            MainLoopInfoInputs[1].text = value.ToString();
+            MainLoopInfoInputs[1].text = value.ToString("F1");
         }
         DrawLoopTableLine();
     }
@@ -992,7 +1134,7 @@ public class Palate : MonoBehaviour
             fl.fl.loopTime = value;
             RectTransform rt = LoopLines[2].GetComponent<RectTransform>();
             rt.sizeDelta = new Vector2(fl.fl.loopTime * 50f, rt.sizeDelta.y);
-            MainLoopInfoInputs[2].text = value.ToString();
+            MainLoopInfoInputs[2].text = value.ToString("F1");
         }
         DrawLoopTableLine();
     }

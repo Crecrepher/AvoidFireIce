@@ -40,14 +40,14 @@ public class InfoFireLoopWindow : MonoBehaviour
         this.button.GetComponent<Image>().color = Color.yellow;
         this.index = index;
         Window.SetActive(true);
-        InputBoxes[0].text = fl.fl.loopList[index].startTime.ToString();
-        InputBoxes[1].text = fl.fl.loopList[index].playTime.ToString();
+        InputBoxes[0].text = fl.fl.loopList[index].startTime.ToString("F1");
+        InputBoxes[1].text = fl.fl.loopList[index].playTime.ToString("F1");
         if (currentObject.GetComponent<MarkerInfo>().ObjectType == (int)ObjectType.BulletTower)
         {
             InputBoxes[2].gameObject.SetActive(true);
             InputBoxes[3].gameObject.SetActive(true);
-            InputBoxes[2].text = fl.fl.loopList[index].rate.ToString();
-            InputBoxes[3].text = fl.fl.loopList[index].speed.ToString();
+            InputBoxes[2].text = fl.fl.loopList[index].rate.ToString("F1");
+            InputBoxes[3].text = fl.fl.loopList[index].speed.ToString("F1");
         }
         else
         {
@@ -96,7 +96,7 @@ public class InfoFireLoopWindow : MonoBehaviour
                 fl.fl.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.position = new Vector2(FireLoopLine.transform.position.x + fl.fl.loopList[index].startTime * 50f * Screen.width / 800f, button.transform.position.y);
-                InputBoxes[0].text = fl.fl.loopList[index].startTime.ToString();
+                InputBoxes[0].text = fl.fl.loopList[index].startTime.ToString("F1");
             }
         }
     }
@@ -122,7 +122,7 @@ public class InfoFireLoopWindow : MonoBehaviour
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(fl.fl.loopList[index].playTime * 50, rect.rect.height);
                 button.GetComponent<RectTransform>().sizeDelta = rect.sizeDelta;
-                InputBoxes[1].text = fl.fl.loopList[index].playTime.ToString();
+                InputBoxes[1].text = fl.fl.loopList[index].playTime.ToString("F1");
             }
         }
     }

@@ -38,12 +38,12 @@ public class EditorManager : MonoBehaviour
         }
         Debug.Log(PlayerPrefs.GetString("StageName"));
         PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
-        GlobalData.instance.StopMusic();
         if (GameObject.FindGameObjectWithTag("Unloaded") == null)
         {
             Instantiate(BGM);
             Instantiate(SFX);
         }
+        GlobalData.instance.StopMusic();
     }
 
     private void OnEnable()

@@ -42,9 +42,9 @@ public class InfoRotateLoopWindow : MonoBehaviour
         this.index = index;
         Window.SetActive(true);
         RotateMarker.SetActive(true);
-        InputBoxes[0].text = rl.rl.loopList[index].startTime.ToString();
-        InputBoxes[1].text = rl.rl.loopList[index].playTime.ToString();
-        InputBoxes[2].text = rl.rl.loopList[index].rot.ToString();
+        InputBoxes[0].text = rl.rl.loopList[index].startTime.ToString("F1" );
+        InputBoxes[1].text = rl.rl.loopList[index].playTime.ToString("F1");
+        InputBoxes[2].text = rl.rl.loopList[index].rot.ToString("F1");
         EaseIn.isOn = rl.rl.loopList[index].easeIn;
         EaseOut.isOn = rl.rl.loopList[index].easeOut;
         MainLoopInfo.SetActive(false);
@@ -90,7 +90,7 @@ public class InfoRotateLoopWindow : MonoBehaviour
                 rl.rl.loopList[index].startTime = value;
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.position = new Vector2(RotateLoopLine.transform.position.x + rl.rl.loopList[index].startTime * 50f * Screen.width / 800f, button.transform.position.y);
-                InputBoxes[0].text = rl.rl.loopList[index].startTime.ToString();
+                InputBoxes[0].text = rl.rl.loopList[index].startTime.ToString("F1");
             }
         }
     }
@@ -116,7 +116,7 @@ public class InfoRotateLoopWindow : MonoBehaviour
                 RectTransform rect = button.GetComponent<RectTransform>();
                 rect.sizeDelta = new Vector2(rl.rl.loopList[index].playTime * 50, rect.rect.height);
                 button.GetComponent<RectTransform>().sizeDelta = rect.sizeDelta;
-                InputBoxes[1].text = rl.rl.loopList[index].playTime.ToString();
+                InputBoxes[1].text = rl.rl.loopList[index].playTime.ToString("F1");
             }
         }
     }
