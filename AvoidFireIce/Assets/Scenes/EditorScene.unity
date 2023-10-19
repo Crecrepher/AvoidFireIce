@@ -588,7 +588,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 31787653}
   m_OnClick:
     m_PersistentCalls:
@@ -4054,7 +4054,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 146113316}
   m_OnClick:
     m_PersistentCalls:
@@ -5155,7 +5155,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 193181369}
   m_OnClick:
     m_PersistentCalls:
@@ -10929,7 +10929,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 504494984}
   m_OnClick:
     m_PersistentCalls:
@@ -12776,7 +12776,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 570606517}
   m_OnClick:
     m_PersistentCalls:
@@ -15051,7 +15051,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 712006456}
   m_OnClick:
     m_PersistentCalls:
@@ -17787,7 +17787,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 976562054}
   m_OnClick:
     m_PersistentCalls:
@@ -25751,7 +25751,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1411677559}
   m_OnClick:
     m_PersistentCalls:
@@ -31979,7 +31979,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1736314155}
   m_OnClick:
     m_PersistentCalls:
@@ -33473,7 +33473,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1778340760}
   m_OnClick:
     m_PersistentCalls:
@@ -33945,7 +33945,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1821415700}
   m_OnClick:
     m_PersistentCalls:
@@ -36549,7 +36549,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1945801403}
   m_OnClick:
     m_PersistentCalls:
@@ -37097,7 +37097,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1993486140}
   m_OnClick:
     m_PersistentCalls:
@@ -37995,6 +37995,21 @@ MonoBehaviour:
   - {fileID: 16049460}
   ElementToggle: {fileID: 2114825224}
   SwipeModToggle: {fileID: 638265188}
+  SelectNeedB:
+  - {fileID: 193181368}
+  - {fileID: 2100467344}
+  - {fileID: 1821415699}
+  - {fileID: 1778340759}
+  - {fileID: 1736314154}
+  - {fileID: 1411677558}
+  - {fileID: 504494983}
+  - {fileID: 712006455}
+  - {fileID: 31787652}
+  - {fileID: 570606516}
+  - {fileID: 1945801402}
+  - {fileID: 146113315}
+  - {fileID: 1993486139}
+  - {fileID: 976562053}
   isSwipeMod: 0
   usedLayer:
     serializedVersion: 2
@@ -38640,7 +38655,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2100467345}
   m_OnClick:
     m_PersistentCalls:

@@ -35,6 +35,7 @@ public class Palate : MonoBehaviour
     public List<GameObject> FireLoopUi;
     public Toggle ElementToggle;
     public Toggle SwipeModToggle;
+    public List<Button> SelectNeedB;
     public bool isSwipeMod = false;
     private bool isDragging = false;
 
@@ -335,6 +336,11 @@ public class Palate : MonoBehaviour
 
     private void HandleSelection(GameObject selectedObject)
     {
+        foreach (var obj in SelectNeedB)
+        {
+            obj.interactable = true;
+        }
+        
         if (selectedObject.CompareTag("GroupMember"))
         {
             GroupHandleSelection(selectedObject.transform.parent.gameObject);
@@ -420,6 +426,10 @@ public class Palate : MonoBehaviour
     {
         if (currentObject != null)
         {
+            foreach (var obj in SelectNeedB)
+            {
+                obj.interactable = false;
+            }
             if (currentObject.CompareTag("Group"))
             {
                 GroupReleaseSelection();

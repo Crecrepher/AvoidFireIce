@@ -18,6 +18,8 @@ public class CustomStage : MonoBehaviour
     public GameObject NewFileWindow;
     public TMP_InputField NameBox;
     public GameObject PlayB;
+    public Button StartB;
+    public Button DeleteB;
 
     public int selectedNum;
 
@@ -65,6 +67,8 @@ public class CustomStage : MonoBehaviour
                     SelectList(toggle);
                 }
                 PlayB.SetActive(value);
+                StartB.interactable = value;
+                DeleteB.interactable = value;
             });
             this.files.Add(file.Name);
         }
@@ -73,6 +77,8 @@ public class CustomStage : MonoBehaviour
     public void ActivePlayB(bool on)
     {
         PlayB.SetActive(on);
+        StartB.interactable = on;
+        DeleteB.interactable = on;
     }
     public void SelectList(Toggle toggle)
     {
