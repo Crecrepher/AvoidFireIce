@@ -31,15 +31,15 @@ public class MoveLoopPlayer : MonoBehaviour
             float easedSpeed = 1f;
             if (currMove.easeIn && currMove.easeOut)
             {
-                easedSpeed = (timer - currMove.startTime) / currMove.playTime < 0.5 ? Mathf.Lerp(0f, 4f, timer - currMove.startTime / currMove.playTime) : easedSpeed = Mathf.Lerp(4f, 0f, timer - currMove.startTime / currMove.playTime);
+                easedSpeed = (timer - currMove.startTime) / currMove.playTime < 0.5 ? Mathf.Lerp(0f, 4f, (timer - currMove.startTime) / currMove.playTime) : easedSpeed = Mathf.Lerp(4f, 0f,(timer - currMove.startTime) / currMove.playTime);
             }
             else if (currMove.easeIn)
             {
-                easedSpeed = Mathf.Lerp(0f, 2f, timer - currMove.startTime / currMove.playTime);
+                easedSpeed = Mathf.Lerp(0f, 2f, (timer - currMove.startTime) / currMove.playTime);
             }
             else if (currMove.easeOut)
             {
-                easedSpeed = Mathf.Lerp(2f, 0f, timer - currMove.startTime / currMove.playTime);
+                easedSpeed = Mathf.Lerp(2f, 0f, (timer - currMove.startTime) / currMove.playTime);
             }
 
             Vector2 moveAmount = currMove.moveVector / currMove.playTime * Time.deltaTime;

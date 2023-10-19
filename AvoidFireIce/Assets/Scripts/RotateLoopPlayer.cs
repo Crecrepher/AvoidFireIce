@@ -31,17 +31,17 @@ public class RotateLoopPlayer : MonoBehaviour
             float easedSpeed = 1f;
             if (currRot.easeIn && currRot.easeOut)
             {
-                easedSpeed = (timer - currRot.startTime) / currRot.playTime < 0.5 ? Mathf.Lerp(0f, 4f, timer - currRot.startTime / currRot.playTime) : easedSpeed = Mathf.Lerp(4f, 0f, timer - currRot.startTime / currRot.playTime);
+                easedSpeed = (timer - currRot.startTime) / currRot.playTime < 0.5 ? Mathf.Lerp(0f, 4f, (timer - currRot.startTime) / currRot.playTime) : easedSpeed = Mathf.Lerp(4f, 0f, (timer - currRot.startTime) / currRot.playTime);
             }
             else if (currRot.easeIn)
             {
-                easedSpeed = Mathf.Lerp(0f, 2f, timer - currRot.startTime / currRot.playTime);
+                easedSpeed = Mathf.Lerp(0f, 2f, (timer - currRot.startTime) / currRot.playTime);
             }
             else if (currRot.easeOut)
             {
-                easedSpeed = Mathf.Lerp(2f, 0f, timer - currRot.startTime / currRot.playTime);
+                easedSpeed = Mathf.Lerp(2f, 0f, (timer - currRot.startTime) / currRot.playTime);
             }
-
+            Debug.Log(easedSpeed);
             transform.Rotate(new Vector3(0, 0, rotValue / currRot.playTime * Time.deltaTime* easedSpeed));
         }
 
