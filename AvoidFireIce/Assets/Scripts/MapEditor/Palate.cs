@@ -336,13 +336,12 @@ public class Palate : MonoBehaviour
 
     private void HandleSelection(GameObject selectedObject)
     {
-        foreach (var obj in SelectNeedB)
-        {
-            obj.interactable = true;
-        }
-        
         if (selectedObject.CompareTag("GroupMember"))
         {
+            foreach (var obj in SelectNeedB)
+            {
+                obj.interactable = true;
+            }
             GroupHandleSelection(selectedObject.transform.parent.gameObject);
             return;
         }
@@ -371,7 +370,10 @@ public class Palate : MonoBehaviour
         {
             SelectOnLoopMod();
         }
-
+        foreach (var obj in SelectNeedB)
+        {
+            obj.interactable = true;
+        }
     }
 
     private void GroupHandleSelection(GameObject obj)
@@ -643,6 +645,10 @@ public class Palate : MonoBehaviour
             Destroy(currentObject);
             currentObject = null;
             InfoButton.SetActive(false);
+            foreach (var obj in SelectNeedB)
+            {
+                obj.interactable = false;
+            }
         }
     }
 
