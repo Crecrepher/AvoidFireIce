@@ -108,7 +108,7 @@ public class Palate : MonoBehaviour
         {
             case EditMode.Place:
                 {
-                    if (isSwipeMod && !IsPointerOverUIObject() &&ToggleChecker() &&SelectedObject!=null && MouseAvailable())
+                    if (isSwipeMod &&ToggleChecker() &&SelectedObject!=null && MouseAvailable())
                     {
                         if (Input.GetMouseButtonDown(0))
                         {

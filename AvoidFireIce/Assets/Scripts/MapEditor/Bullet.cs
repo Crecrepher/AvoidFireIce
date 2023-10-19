@@ -83,6 +83,8 @@ public class Bullet : MonoBehaviour
                 // 반사 방향 계산
                 Vector2 reflectDirection = Vector2.Reflect(projectileDirection, contactNormal);
                 // 방향과 속도 업데이트
+                float angle = Mathf.Atan2(reflectDirection.y, reflectDirection.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
                 rb2d.velocity = reflectDirection * speed;
 
             }
