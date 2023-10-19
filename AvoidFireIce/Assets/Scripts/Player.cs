@@ -9,7 +9,6 @@ public class Player : MonoBehaviour
     public List<GameObject> IceOrb;
     public GameObject DeathPrefab;
     public GameObject Background;
-    public AudioClip MoveSound;
     public AudioClip ChangeSound;
 
 
@@ -27,8 +26,6 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
-        audioSource.loop = true;
-        audioSource.clip = MoveSound;
     }
     private void FixedUpdate()
     {
@@ -57,23 +54,6 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangePlayerElement();
-        }
-
-        if (direction != Vector2.zero)
-        {
-            if (!isLoopSoundPlaying)
-            {
-                audioSource.Play();
-                isLoopSoundPlaying = true;
-            }
-        }
-        else
-        {
-            if (isLoopSoundPlaying)
-            {
-                audioSource.Stop();
-                isLoopSoundPlaying = false;
-            }
         }
     }
 

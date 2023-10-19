@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Sound: {fileID: 8300000, guid: efb5f1b0875bbc7408e2352c2367f89a, type: 3}
   Group: {fileID: 5122188073102262653, guid: 742dc7b8de5b0584880a0b5229a40f7c, type: 2}
+  winSound: {fileID: 8300000, guid: 20619856a87a55d4aaeb0739b4a984d6, type: 3}
 --- !u!114 &5798320647825710596
 MonoBehaviour:
   m_ObjectHideFlags: 0

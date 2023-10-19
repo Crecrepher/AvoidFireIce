@@ -10,6 +10,7 @@ public class ButtonPlaySound : MonoBehaviour
     public AudioClip Sound;
     public AudioMixerGroup Group;
     private AudioSource source;
+    public AudioClip winSound;
     public static ButtonPlaySound instance
     {
         get
@@ -33,5 +34,10 @@ public class ButtonPlaySound : MonoBehaviour
     public void PlayBSound()
     {
         source.PlayOneShot(Sound);
+    }
+
+    public void WinSound()
+    {
+        source.PlayOneShot(winSound);
     }
 }

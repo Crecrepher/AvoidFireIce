@@ -260,6 +260,7 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetInt("Clear", levelInfo);
         }
         Time.timeScale = 0f;
+        ButtonPlaySound.instance.WinSound();
     }
 
     public bool NextAble()
