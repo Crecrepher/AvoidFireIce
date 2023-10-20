@@ -14385,7 +14385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoomSpeed: 1
   minOrthoSize: 1
-  maxOrthoSize: 10
+  maxOrthoSize: 15
 --- !u!1 &681358103
 GameObject:
   m_ObjectHideFlags: 0

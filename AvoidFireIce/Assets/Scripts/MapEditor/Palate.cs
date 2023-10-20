@@ -587,7 +587,7 @@ public class Palate : MonoBehaviour
 
     public void Zoom(float scale)
     {
-        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + scale, 1f, 10f); 
+        Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize + scale, 1f, 15f); 
     }
 
     public void SwipeToggle()
