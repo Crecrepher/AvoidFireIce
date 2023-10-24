@@ -89,7 +89,6 @@ public class UiFunction : MonoBehaviour
 
     public void GameExit()
     {
-        Debug.Log("EndGame");
         Application.Quit();
     }
 

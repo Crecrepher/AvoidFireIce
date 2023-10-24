@@ -38,7 +38,6 @@ public class EditorManager : MonoBehaviour
         {
             StageSaveLoader.instance.Load("CustomLevel/" + PlayerPrefs.GetString("StageName"));
         }
-        Debug.Log(PlayerPrefs.GetString("StageName"));
         PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
         if (GameObject.FindGameObjectWithTag("Unloaded") == null)
         {

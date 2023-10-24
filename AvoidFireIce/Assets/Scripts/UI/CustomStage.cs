@@ -108,7 +108,6 @@ public class CustomStage : MonoBehaviour
 
     public void Delete()
     {
-        Debug.Log(selectedNum);
         if (selectedNum == -1)
             return;
         File.Delete(Application.persistentDataPath + "/CustomLevel/" + files[selectedNum]);

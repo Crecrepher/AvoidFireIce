@@ -61,7 +61,8 @@ public class GameManager : MonoBehaviour
     public GameObject SFX;
     private void Awake()
     {
-        isWin = false;
+        Application.targetFrameRate = 60;
+		isWin = false;
         Time.timeScale = 1f;
         Defines.instance.DefineColor();
         if ((StageType)PlayerPrefs.GetInt("StageType") == StageType.Editing && PlayerPrefs.GetString("TestStageName") != null)

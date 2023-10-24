@@ -95,14 +95,10 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// <param name="data"></param>
     public void OnPointerDown(PointerEventData data)
     {
-        //Detect if is the default touchID
         if (lastId == -2)
         {
-            //then get the current id of the current touch.
-            //this for avoid that other touch can take effect in the drag position event.
-            //we only need get the position of this touch
             lastId = data.pointerId;
-            StopAllCoroutines();
+			StopAllCoroutines();
             StartCoroutine(ScaleJoysctick(true));
             OnDrag(data);
             if (backImage != null)
@@ -234,10 +230,10 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
 
     public Vector2 Direction
-    {
+	{
 		get
 		{
-			return (StickRect.position - DeathArea).normalized;
+			return ((StickRect.position - DeathArea) / Radio).normalized;
 		}
 	}
 }

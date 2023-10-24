@@ -132,7 +132,6 @@ public class Palate : MonoBehaviour
 
                             if (gridCells[index] == 0)
                             {
-                                Debug.Log(index);
                                 gridCells[index] = 1;
                                 if (SelectedObject == PalateObjects[(int)ObjectType.PlayerMark])
                                 {
