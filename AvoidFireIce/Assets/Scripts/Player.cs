@@ -40,8 +40,8 @@ public class Player : MonoBehaviour
     {
         var h = Input.GetAxisRaw("Horizontal");
         var v = Input.GetAxisRaw("Vertical");
-		v += Mathf.Clamp(Joystick.Vertical, -1f,1f);
-		h += Mathf.Clamp(Joystick.Horizontal, -1f, 1f);
+		v += Mathf.Clamp(Joystick.Direction.y, -1f,1f);
+		h += Mathf.Clamp(Joystick.Direction.x, -1f, 1f);
 
 		direction = new Vector3(h, v);
         if (!isWall && direction.magnitude > 1)

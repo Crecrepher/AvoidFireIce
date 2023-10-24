@@ -21875,6 +21875,10 @@ PrefabInstance:
       value: Joy
       objectReference: {fileID: 0}
     - target: {fileID: 11467636, guid: 7973d81b61b491640b7a0d00c9de83d3, type: 3}
+      propertyPath: Duration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11467636, guid: 7973d81b61b491640b7a0d00c9de83d3, type: 3}
       propertyPath: SmoothTime
       value: 1
       objectReference: {fileID: 0}

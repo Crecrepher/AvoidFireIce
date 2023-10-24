@@ -232,4 +232,12 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             return (StickRect.position.y - DeathArea.y) / Radio;
         }
     }
+
+    public Vector2 Direction
+    {
+		get
+		{
+			return (StickRect.position - DeathArea).normalized;
+		}
+	}
 }
