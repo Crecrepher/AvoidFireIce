@@ -25,15 +25,17 @@ public class CustomStage : MonoBehaviour
 
     private void Awake()
     {
-        string directoryPath = Application.persistentDataPath + "\\sys";
-        DirectoryInfo directory = new DirectoryInfo(directoryPath);
+		//string directoryPath = Application.persistentDataPath + "\\sys";
+		string directoryPath = Path.Combine(Application.persistentDataPath,"sys");
+		DirectoryInfo directory = new DirectoryInfo(directoryPath);
         if (!directory.Exists)
         {
             directory.Create();
         }
-        string directoryPath2 = Application.persistentDataPath + "\\CustomLevel";
-        DirectoryInfo directory2 = new DirectoryInfo(directoryPath2);
-        if (!directory2.Exists)
+		//string directoryPath2 = Application.persistentDataPath + "\\CustomLevel";
+		string directoryPath2 = Path.Combine(Application.persistentDataPath, "CustomLevel");
+		DirectoryInfo directory2 = new DirectoryInfo(directoryPath2);
+		if (!directory2.Exists)
         {
             directory2.Create();
         }

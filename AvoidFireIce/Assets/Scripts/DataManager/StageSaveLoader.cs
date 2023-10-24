@@ -51,14 +51,16 @@ public class StageSaveLoader : MonoBehaviour
 
     private void Awake()
     {
-        string directoryPath = Application.persistentDataPath + "\\sys";
-        DirectoryInfo directory = new DirectoryInfo(directoryPath);
+		//var directoryPath = Application.persistentDataPath + "\\sys";
+		var directoryPath = Path.Combine(Application.persistentDataPath, "sys");
+		DirectoryInfo directory = new DirectoryInfo(directoryPath);
         if (!directory.Exists)
         {
             directory.Create();
         }
-        string directoryPath2 = Application.persistentDataPath + "\\CustomLevel";
-        DirectoryInfo directory2 = new DirectoryInfo(directoryPath2);
+		//string directoryPath2 = Application.persistentDataPath + "\\CustomLevel";
+		var directoryPath2 = Path.Combine(Application.persistentDataPath, "CustomLevel");
+		DirectoryInfo directory2 = new DirectoryInfo(directoryPath2);
         if (!directory2.Exists)
         {
             directory2.Create();

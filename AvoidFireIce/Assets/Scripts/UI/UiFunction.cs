@@ -65,7 +65,13 @@ public class UiFunction : MonoBehaviour
         {
             EndingObject.SetActive(true);
         }
-    }
+
+		float currentAspectRatio = Screen.width / Screen.height;
+        if (Screen.width / Screen.height < 1.5f )
+		{
+            MainMenu.transform.localScale = new Vector2(0.8f,0.8f);
+		}
+	}
     public void ActiveMainUi(bool on)
     {
         MainMenu.SetActive(on);

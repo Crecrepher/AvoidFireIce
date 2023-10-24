@@ -680,7 +680,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 22, y: -16}
+  m_AnchoredPosition: {x: 22, y: -15.999985}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &34599177
@@ -14370,7 +14370,7 @@ MonoBehaviour:
   palate: {fileID: 2050599744}
   minPosition: {x: -10, y: -10}
   maxPosition: {x: 10, y: 10}
-  dragSpeed: 3
+  dragSpeed: 1
 --- !u!114 &678923919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15492,9 +15492,9 @@ RectTransform:
   - {fileID: 619372547}
   m_Father: {fileID: 1460169727}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 251}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &753017362
@@ -29731,6 +29731,7 @@ MonoBehaviour:
   palate: {fileID: 2050599744}
   tilemap: {fileID: 41100941}
   Zoom: 0.2
+  scaler: {fileID: 1460169729}
   SFX: {fileID: 583260367676701482, guid: 063f56b76ef2f124cabbf98bb2a2bb16, type: 3}
   BGM: {fileID: 810499966660901656, guid: 3e5177ad1f31ff143b6f07cb7edd543a, type: 3}
 --- !u!114 &1605763244

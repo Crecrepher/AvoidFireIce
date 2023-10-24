@@ -199,8 +199,7 @@ public class GameManager : MonoBehaviour
         float mapHeight = tilemap.cellBounds.size.y * tilemap.cellSize.y;
         float targetOrthographicSize = Mathf.Max(mapWidth, mapHeight) * Zoom;
         Camera.main.orthographicSize = targetOrthographicSize;
-
-        Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
+        Camera.main.transform.position = new Vector3(0.21f, 0, Camera.main.transform.position.z);
     }
 
     public void AutoRestart()

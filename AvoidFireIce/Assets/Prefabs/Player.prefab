@@ -117,10 +117,10 @@ MonoBehaviour:
   - {fileID: 794702707222903110}
   DeathPrefab: {fileID: 9169863999176627214, guid: d4a70e1ff0c9000408b5865200df81d5, type: 3}
   Background: {fileID: 0}
-  MoveSound: {fileID: 8300000, guid: ab382e36f13a1dc448d212c2bf6c91d4, type: 3}
   ChangeSound: {fileID: 8300000, guid: 753f1d1dacb52274fb9df7a142f8b4a9, type: 3}
-  DieSound: {fileID: 8300000, guid: 138ca79e8dc41ed4395011cdf48ff781, type: 3}
+  Joystick: {fileID: 0}
   speed: 5
+  isWall: 0
 --- !u!50 &6577223779604666058
 Rigidbody2D:
   serializedVersion: 4

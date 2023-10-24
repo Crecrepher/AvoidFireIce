@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
@@ -10,53 +11,59 @@ public class Player : MonoBehaviour
     public GameObject DeathPrefab;
     public GameObject Background;
     public AudioClip ChangeSound;
+	private bl_Joystick Joystick;
 
+	public float speed = 1f;
 
-    public float speed = 1f;
-
-    private Vector2 direction = Vector2.zero;
+	private Vector2 direction = Vector2.zero;
 
 
     private Rigidbody2D rb;
     private AudioSource audioSource;
-    private bool isWall = false;
+    public bool isWall = false;
 
     private void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
-    }
+		Joystick = GameObject.FindGameObjectWithTag("Joy").GetComponent<bl_Joystick>();
+
+	}
     private void FixedUpdate()
     {
         Vector2 position = rb.position;
         position += direction * speed * Time.fixedDeltaTime;
         rb.MovePosition(position);
-
     }
 
     private void Update()
     {
         var h = Input.GetAxisRaw("Horizontal");
         var v = Input.GetAxisRaw("Vertical");
+		v += Mathf.Clamp(Joystick.Vertical, -1f,1f);
+		h += Mathf.Clamp(Joystick.Horizontal, -1f, 1f);
 
-        direction = new Vector3(h, v);
-        if (!isWall)
-        {
-            direction = new Vector3(h, v);
-            float directionMag = direction.magnitude;
-            if (directionMag > 1)
-            {
-                direction.Normalize();
-            }
-        }
+		direction = new Vector3(h, v);
+        if (!isWall && direction.magnitude > 1)
+		{
+			direction.Normalize();
+		}
 
-        if (Input.GetKeyDown(KeyCode.Space))
+		if (Input.GetKeyDown(KeyCode.Space) || (Input.GetMouseButtonDown(0) && Input.mousePosition.x >= Screen.width / 2f && !IsPointerOverUIObject()))
         {
             ChangePlayerElement();
         }
     }
+	bool IsPointerOverUIObject()
+	{
+		List<RaycastResult> results = new List<RaycastResult>();
+		PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+		eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
 
-    public void ChangePlayerElement()
+		return results.Count > 0;
+	}
+	public void ChangePlayerElement()
     {
         if (Time.timeScale == 0f)
         {

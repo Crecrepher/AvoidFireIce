@@ -5,12 +5,14 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using UnityEngine.UI;
 
 public class EditorManager : MonoBehaviour
 {
     public Palate palate;
     public Tilemap tilemap;
     public float Zoom = 0.3f;
+    public CanvasScaler scaler;
 
     public GameObject SFX;
     public GameObject BGM;
@@ -44,7 +46,15 @@ public class EditorManager : MonoBehaviour
             Instantiate(SFX);
         }
         GlobalData.instance.StopMusic();
-    }
+		if (Screen.width / Screen.height < 1.5f)
+		{
+            scaler.matchWidthOrHeight = 0f;
+		}
+        else
+        {
+			scaler.matchWidthOrHeight = 1f;
+		}
+	}
 
     private void OnEnable()
     {
@@ -70,12 +80,16 @@ public class EditorManager : MonoBehaviour
         Camera.main.transform.position = new Vector3(0, -3, Camera.main.transform.position.z);
     }
 
+
     public void StartTesting()
     {
-        StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
-        StageSaveLoader.instance.Save("sys/TeSt6212");
-        PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");
-        PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
+		//StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
+		StageSaveLoader.instance.Save(Path.Combine("CustomLevel", PlayerPrefs.GetString("StageName")));
+		//StageSaveLoader.instance.Save("sys/TeSt6212");
+		StageSaveLoader.instance.Save(Path.Combine("sys", "TeSt6212"));
+		//PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");
+		PlayerPrefs.SetString("TestStageName", Path.Combine(Application.persistentDataPath, "sys", "TeSt6212"));
+		PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
         SceneManager.LoadScene("GameScene");
     }
 

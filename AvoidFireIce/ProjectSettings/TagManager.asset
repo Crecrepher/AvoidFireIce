@@ -23,6 +23,7 @@ TagManager:
   - SmallWall
   - Unloaded
   - Orb
+  - Joy
   layers:
   - Default
   - TransparentFX
