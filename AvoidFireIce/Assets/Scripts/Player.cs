@@ -21,8 +21,9 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private AudioSource audioSource;
     public bool isWall = false;
+	private Touch tempTouchs;
 
-    private void OnEnable()
+	private void OnEnable()
     {
         rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
@@ -49,7 +50,22 @@ public class Player : MonoBehaviour
 			direction.Normalize();
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space) || (Input.GetMouseButtonDown(0) && Input.mousePosition.x >= Screen.width / 2f && !IsPointerOverUIObject()))
+        if (Input.touchCount > 0)
+        {    
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                tempTouchs = Input.GetTouch(i);
+                if (tempTouchs.phase == TouchPhase.Began)
+                {
+                    if (tempTouchs.position.x >= Screen.width / 2f)
+                    {
+                        ChangePlayerElement();
+                        break;
+					}
+                }
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangePlayerElement();
         }
