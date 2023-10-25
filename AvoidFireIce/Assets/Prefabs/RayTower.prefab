@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3080429994845894375}
   - component: {fileID: 2388052696618428511}
   - component: {fileID: -7393302039630145166}
+  - component: {fileID: -6670213384151993628}
   m_Layer: 6
   m_Name: RayTower
   m_TagString: Untagged
@@ -303,6 +304,18 @@ MonoBehaviour:
   element: 0
   isRay: 0
   enemytype: 1
+--- !u!114 &-6670213384151993628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2395748989603193111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c07da95da1236a7408234a5b8c1c430a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4876067838243603996
 GameObject:
   m_ObjectHideFlags: 0

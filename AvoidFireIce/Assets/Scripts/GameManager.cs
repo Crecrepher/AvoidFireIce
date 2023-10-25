@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     public GameObject SFX;
     private void Awake()
     {
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 120;
 		isWin = false;
         Time.timeScale = 1f;
         Defines.instance.DefineColor();
@@ -273,6 +273,10 @@ public class GameManager : MonoBehaviour
         }
         Time.timeScale = 0f;
         ButtonPlaySound.instance.WinSound();
+        if ((StageType)PlayerPrefs.GetInt("StageType") != StageType.Official)
+        {
+			PlayerPrefs.SetInt(PlayerPrefs.GetString("StageName"), 1);
+		}
     }
 
     public bool NextAble()

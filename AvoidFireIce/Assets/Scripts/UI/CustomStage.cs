@@ -68,11 +68,22 @@ public class CustomStage : MonoBehaviour
                 {
                     SelectList(toggle);
                 }
-                PlayB.SetActive(value);
+                if (PlayerPrefs.GetInt(file.Name.Replace(".json", "")) == 1)
+                {
+					PlayB.SetActive(value);
+				}
                 StartB.interactable = value;
                 DeleteB.interactable = value;
             });
-            this.files.Add(file.Name);
+            if (PlayerPrefs.GetInt(file.Name.Replace(".json", "")) == 1)
+            {
+                listB.GetComponent<SaveDataListInfo>().IsVerified(true);
+			}
+            else
+            {
+				listB.GetComponent<SaveDataListInfo>().IsVerified(false);
+			}
+			this.files.Add(file.Name.Replace(".json", ""));
         }
     }
 
@@ -95,7 +106,8 @@ public class CustomStage : MonoBehaviour
     public void StartNewEdit()
     {
         PlayerPrefs.SetString("StageName", NameBox.text);
-        SceneManager.LoadScene("EditorScene");
+		PlayerPrefs.SetInt(NameBox.text, 0);
+		SceneManager.LoadScene("EditorScene");
     }
 
     public void Open()

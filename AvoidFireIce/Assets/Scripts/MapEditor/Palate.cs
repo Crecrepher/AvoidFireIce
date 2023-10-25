@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using TMPro;
@@ -16,6 +17,7 @@ using UnityEngine.UI;
 
 public class Palate : MonoBehaviour
 {
+    public TMP_Text SaveDir;
     public Tilemap tilemap;
     public BoxCollider2D DrawZone;
     public ToggleGroup ObjectPalateGroup;
@@ -73,6 +75,8 @@ public class Palate : MonoBehaviour
     public TMP_InputField SaveName;
     public GameObject Exit;
     private bool isSaved = false;
+
+    private bool isChanged = false;
     private void Awake()
     {
         MainLoopInfoInputs[0].onEndEdit.AddListener(MoveLoopLengthChanged);
@@ -81,10 +85,12 @@ public class Palate : MonoBehaviour
         currentObjects = new List<GameObject>();
         isMultiSelect = false;
         isSaved = false;
+        isChanged = false;
         isSwipeMod = false;
         isDragging = false;
         gridCells = new int[25 * 20];
-    }
+        SaveDir.text = Path.Combine(Application.persistentDataPath, "CustomLevel");
+	}
     private void OnEnable()
     {
         SelectedObject = null;
@@ -148,11 +154,10 @@ public class Palate : MonoBehaviour
                                     madeObject.GetComponent<DangerObject>().element = ElementToggle.isOn ? Element.Fire : Element.Ice;
                                 }
                                 HandleSelection(madeObject);
-                            }
-
-                           
+								isChanged = true;
+							}
                         }
-                    }
+					}
                     else if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
                     {
                         if (!ToggleChecker())
@@ -174,7 +179,7 @@ public class Palate : MonoBehaviour
                                 }
                             }
                         }
-                        else
+						else
                         {
                             if (SelectedObject != null && MouseAvailable())
                             {
@@ -207,15 +212,14 @@ public class Palate : MonoBehaviour
                                 }
                             }
                         }
-
-                    }
+						isChanged = true;
+					}
                 }
                 break;
             case EditMode.Loop:
                 {
                     if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
                     {
-
                         Vector3 mouseDownPos = Input.mousePosition;
                         Vector2 pos = Camera.main.ScreenToWorldPoint(mouseDownPos);
                         RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 100f, usedLayer);
@@ -229,11 +233,11 @@ public class Palate : MonoBehaviour
                         {
                             if (!IsPointerOverUIObject())
                             {
-                                ReleaseSelection();
-                            }
-                        }
-
-                    }
+								ReleaseSelection();
+							}
+						}
+						isChanged = true;
+					}
                 }
                 break;
         }
@@ -342,7 +346,8 @@ public class Palate : MonoBehaviour
                 obj.interactable = true;
             }
             GroupHandleSelection(selectedObject.transform.parent.gameObject);
-            return;
+			isChanged = true;
+			return;
         }
         if (!isMultiSelect)
         {
@@ -373,7 +378,8 @@ public class Palate : MonoBehaviour
         {
             obj.interactable = true;
         }
-    }
+		isChanged = true;
+	}
 
     private void GroupHandleSelection(GameObject obj)
     {
@@ -599,7 +605,8 @@ public class Palate : MonoBehaviour
         {
             currentObject.transform.position = currentObject.transform.position + new Vector3(0, distance, 0);
         }
-    }
+		isChanged = true;
+	}
 
     public void MoveHorizontalCurrentObj(float distance)
     {
@@ -607,7 +614,8 @@ public class Palate : MonoBehaviour
         {
             currentObject.transform.position = currentObject.transform.position + new Vector3(distance, 0, 0);
         }
-    }
+		isChanged = true;
+	}
 
     public void RotateCurrentObj(float rotation)
     {
@@ -615,7 +623,8 @@ public class Palate : MonoBehaviour
         {
             currentObject.transform.Rotate(0f, 0f, rotation);
         }
-    }
+		isChanged = true;
+	}
 
     public void FlipXCurrentObj()
     {
@@ -649,7 +658,8 @@ public class Palate : MonoBehaviour
                 obj.interactable = false;
             }
         }
-    }
+		isChanged = true;
+	}
 
     public void DuplicateCurrentObj()
     {
@@ -1423,7 +1433,8 @@ public class Palate : MonoBehaviour
             isSaved = true;
             StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
         }
-    }
+        if (isChanged) { VerifyOff(); }
+	}
     public void SetActiveSaveAsWindow(bool on)
     {
         SaveAs.SetActive(on);
@@ -1436,7 +1447,8 @@ public class Palate : MonoBehaviour
         Save.SetActive(true);
         SaveAs.SetActive(false);
         isSaved = true;
-    }
+		if (isChanged) { VerifyOff(); }
+	}
 
     public void ExitEditingWarningWindow(bool on)
     {
@@ -1459,4 +1471,10 @@ public class Palate : MonoBehaviour
     {
         SceneManager.LoadScene("TitleScene");
     }
+
+    private void VerifyOff()
+    {
+        PlayerPrefs.SetInt(PlayerPrefs.GetString("StageName"),0);
+        Debug.Log(PlayerPrefs.GetString("StageName"));
+	}
 }

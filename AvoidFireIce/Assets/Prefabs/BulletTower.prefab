@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8465461048126639355}
   - component: {fileID: 2282721393498294616}
   - component: {fileID: -3661956400894183675}
+  - component: {fileID: 2834479909137891008}
   m_Layer: 6
   m_Name: BulletTower
   m_TagString: Untagged
@@ -186,6 +187,18 @@ MonoBehaviour:
   element: 0
   isRay: 0
   enemytype: 0
+--- !u!114 &2834479909137891008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5644275076887108887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c07da95da1236a7408234a5b8c1c430a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4193299878562784271
 PrefabInstance:
   m_ObjectHideFlags: 0
