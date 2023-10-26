@@ -108,5 +108,9 @@ public class InGameUi : MonoBehaviour
         string formattedTime = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
         WinPlayTimeTXT.text = formattedTime;
         WinDeathCountTXT.text = deathCount.ToString();
-    }
+        if (PlayerPrefs.GetFloat(PlayerPrefs.GetString("StageName") + "Score") == 0f || playTime < PlayerPrefs.GetFloat(PlayerPrefs.GetString("StageName") + "Score"))
+        {
+			PlayerPrefs.SetFloat(PlayerPrefs.GetString("StageName") + "Score", playTime);
+		}
+	}
 }
