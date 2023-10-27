@@ -22,7 +22,7 @@ public class GooglePlay : MonoBehaviour
 			{
 				CompactTime += PlayerPrefs.GetFloat($"1-{i}" + "Score");
 			}
-			PlayGamesPlatform.Instance.ReportScore((long)CompactTime * 1000, "CgkIipnPp7EPEAIQBQ", (bool success) =>
+			PlayGamesPlatform.Instance.ReportScore((long)(CompactTime * 1000f), "CgkIipnPp7EPEAIQBQ", (bool success) =>
 			{
 				// Handle success or failure
 			});
@@ -34,7 +34,7 @@ public class GooglePlay : MonoBehaviour
 			{
 				CompactTime += PlayerPrefs.GetFloat($"2-{i}" + "Score");
 			}
-			PlayGamesPlatform.Instance.ReportScore((long)CompactTime * 1000, "CgkIipnPp7EPEAIQAw", (bool success) =>
+			PlayGamesPlatform.Instance.ReportScore((long)(CompactTime * 1000f), "CgkIipnPp7EPEAIQAw", (bool success) =>
 			{
 				// Handle success or failure
 			});
@@ -46,7 +46,7 @@ public class GooglePlay : MonoBehaviour
 			{
 				CompactTime += PlayerPrefs.GetFloat($"3-{i}" + "Score");
 			}
-			PlayGamesPlatform.Instance.ReportScore((long)CompactTime * 1000, "CgkIipnPp7EPEAIQBA", (bool success) =>
+			PlayGamesPlatform.Instance.ReportScore((long)(CompactTime * 1000f), "CgkIipnPp7EPEAIQBA", (bool success) =>
 			{
 				// Handle success or failure
 			});
