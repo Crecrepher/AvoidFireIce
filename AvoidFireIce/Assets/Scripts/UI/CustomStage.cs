@@ -122,7 +122,7 @@ public class CustomStage : MonoBehaviour
     {
         if (selectedNum == -1)
             return;
-        File.Delete(Application.persistentDataPath + "/CustomLevel/" + files[selectedNum]);
+        File.Delete(Path.Combine(Application.persistentDataPath , "CustomLevel" , files[selectedNum] + ".json"));
         Showlists();
     }
 

@@ -131,10 +131,6 @@ public class GameManager : MonoBehaviour
                 NextLevel();
             }
         }
-        if (Input.GetKeyDown(KeyCode.BackQuote))
-        {
-            NextLevel();
-        }
 
         if (fadeTimer < fadeMaxTimer && fadeTimer > -fadeMaxTimer)
         {

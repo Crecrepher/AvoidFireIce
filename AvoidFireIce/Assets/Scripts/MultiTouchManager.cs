@@ -37,15 +37,11 @@ public class MultiTouchManager : MonoBehaviour
 				currentTouchPos[i] = touch.position;
 				prevFirstTouchPos[i] = touch.position - touch.deltaPosition;
 			}
-			//prev distance
 			var prevFrameDist = Vector2.Distance(prevFirstTouchPos[0], prevFirstTouchPos[1]);
 
-			//CurrFrame Distance
 			var currFrameDist = Vector2.Distance(currentTouchPos[0], currentTouchPos[1]);
 
 			var distancePixel = prevFrameDist - currFrameDist;
-			//var distanceInch = distancePixel * Screen.dpi;
-			//Debug.Log(distanceInch);
 		}
 	}
 	public void Update()

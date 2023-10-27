@@ -36,7 +36,6 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (StickRect == null)
         {
-            Debug.LogError("Please add the stick for joystick work!.");
             this.enabled = false;
             return;
         }
@@ -51,7 +50,6 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         else
         {
-            Debug.LogError("Required at lest one canvas for joystick work.!");
             this.enabled = false;
             return;
         }

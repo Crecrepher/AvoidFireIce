@@ -41,11 +41,6 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IPointerDownHandler,
 		}
         return 0f;
     }
-
-	private void Update()
-	{
-		//Debug.Log($"{GetAxis(Axis.Horizontal)} / {GetAxis(Axis.Vertical)}");
-	}
 	public void UpdateStickPos(Vector3 screenPos)
 	{
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(

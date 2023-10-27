@@ -60,7 +60,6 @@ public class GlobalData : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Audio clips array is empty.");
         }
     }
 

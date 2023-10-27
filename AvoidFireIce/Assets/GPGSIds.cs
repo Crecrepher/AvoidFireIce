@@ -26,7 +26,7 @@ public static class GPGSIds
 {
         public const string leaderboard_world3_cleartime = "CgkIipnPp7EPEAIQBA"; // <GPGSID>
         public const string leaderboard_world2_cleartime = "CgkIipnPp7EPEAIQAw"; // <GPGSID>
-        public const string leaderboard_world1_cleartime = "CgkIipnPp7EPEAIQAg"; // <GPGSID>
+        public const string leaderboard_world1_cleartime = "CgkIipnPp7EPEAIQBQ"; // <GPGSID>
 
 }
 

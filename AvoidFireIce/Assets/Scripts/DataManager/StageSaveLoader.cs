@@ -212,7 +212,6 @@ public class StageSaveLoader : MonoBehaviour
         var path = Path.Combine(Application.persistentDataPath, fileName + ".json");
         if (!File.Exists(path))
         { return; }
-        Debug.Log(Application.persistentDataPath);
         int LoadCount = 0;
         int LoadMoveLoopCount = 0;
         int LoadRotateLoopCount = 0;

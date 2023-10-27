@@ -829,7 +829,6 @@ public class Palate : MonoBehaviour
                         if (block.playTime <= 0)
                         {
                             Destroy(button);
-                            Debug.Log("TooMuchButtons!");
                             return;
                         }
                     }
@@ -865,7 +864,6 @@ public class Palate : MonoBehaviour
                         if (block.playTime <= 0)
                         {
                             Destroy(button);
-                            Debug.Log("TooMuchButtons!");
                             return;
                         }
                     }
@@ -902,7 +900,6 @@ public class Palate : MonoBehaviour
                         if (block.playTime <= 0)
                         {
                             Destroy(button);
-                            Debug.Log("TooMuchButtons!");
                             return;
                         }
                     }
@@ -1475,6 +1472,5 @@ public class Palate : MonoBehaviour
     private void VerifyOff()
     {
         PlayerPrefs.SetInt(PlayerPrefs.GetString("StageName"),0);
-        Debug.Log(PlayerPrefs.GetString("StageName"));
 	}
 }
