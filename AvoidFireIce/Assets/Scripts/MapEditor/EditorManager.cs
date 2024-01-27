@@ -45,15 +45,15 @@ public class EditorManager : MonoBehaviour
             Instantiate(SFX);
         }
         GlobalData.instance.StopMusic();
-		if (Screen.width / Screen.height < 1.5f)
-		{
+        if (Screen.width / Screen.height < 800 / 480)
+        {
             scaler.matchWidthOrHeight = 0f;
-		}
+        }
         else
         {
-			scaler.matchWidthOrHeight = 1f;
-		}
-	}
+            scaler.matchWidthOrHeight = 1f;
+        }
+    }
 
     private void OnEnable()
     {
@@ -82,13 +82,13 @@ public class EditorManager : MonoBehaviour
 
     public void StartTesting()
     {
-		//StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
-		StageSaveLoader.instance.Save(Path.Combine("CustomLevel", PlayerPrefs.GetString("StageName")));
-		//StageSaveLoader.instance.Save("sys/TeSt6212");
-		StageSaveLoader.instance.Save(Path.Combine("sys", "TeSt6212"));
-		//PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");
-		PlayerPrefs.SetString("TestStageName", Path.Combine(Application.persistentDataPath, "sys", "TeSt6212"));
-		PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
+        //StageSaveLoader.instance.Save("CustomLevel/" + PlayerPrefs.GetString("StageName"));
+        StageSaveLoader.instance.Save(Path.Combine("CustomLevel", PlayerPrefs.GetString("StageName")));
+        //StageSaveLoader.instance.Save("sys/TeSt6212");
+        StageSaveLoader.instance.Save(Path.Combine("sys", "TeSt6212"));
+        //PlayerPrefs.SetString("TestStageName", Application.persistentDataPath + "\\sys\\TeSt6212");
+        PlayerPrefs.SetString("TestStageName", Path.Combine(Application.persistentDataPath, "sys", "TeSt6212"));
+        PlayerPrefs.SetInt("StageType", (int)StageType.Editing);
         SceneManager.LoadScene("GameScene");
     }
 

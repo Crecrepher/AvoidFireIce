@@ -67,7 +67,7 @@ public class UiFunction : MonoBehaviour
         }
 
 		float currentAspectRatio = Screen.width / Screen.height;
-        if (Screen.width / Screen.height < 1.5f )
+        if (currentAspectRatio < 800/480 )
 		{
             MainMenu.transform.localScale = new Vector2(0.8f,0.8f);
 		}
